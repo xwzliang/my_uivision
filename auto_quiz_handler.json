@@ -1,0 +1,150 @@
+{
+  "Name": "Auto_Quiz_Handler",
+  "CreationDate": "2025-12-16",
+  "Commands": [
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorIgnore",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "1",
+      "Value": "!timeout_wait",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "loop",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!statusOK",
+      "Description": ""
+    },
+    {
+      "Command": "verifyElementPresent",
+      "Target": "xpath=//div[contains(@class,'v-modal')]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${!statusOK} == false",
+      "Value": "no_quiz",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!statusOK",
+      "Description": ""
+    },
+    {
+      "Command": "verifyElementPresent",
+      "Target": "xpath=//div[@role='dialog' and (@aria-label='开始答题' or .//span[contains(@class,'el-dialog__title') and normalize-space()='开始答题']) and (not(@style) or not(contains(@style,'display: none')))]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${!statusOK} == false",
+      "Value": "no_quiz",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=(//div[@role='dialog' and (@aria-label='开始答题' or .//span[contains(@class,'el-dialog__title') and normalize-space()='开始答题'])]//div[@role='radiogroup']//label[@role='radio'])[1]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "200",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//div[@role='dialog' and (@aria-label='开始答题' or .//span[contains(@class,'el-dialog__title') and normalize-space()='开始答题'])]//button[.//span[contains(normalize-space(.),'确')]]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!statusOK",
+      "Description": ""
+    },
+    {
+      "Command": "verifyElementPresent",
+      "Target": "xpath=//div[@role='dialog' and (@aria-label='开始答题' or .//span[contains(@class,'el-dialog__title') and normalize-space()='开始答题']) and (not(@style) or not(contains(@style,'display: none')))]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${!statusOK} == false",
+      "Value": "after_submit",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=(//div[@role='dialog' and (@aria-label='开始答题' or .//span[contains(@class,'el-dialog__title') and normalize-space()='开始答题'])]//div[@role='radiogroup']//label[@role='radio'])[2]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "200",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//div[@role='dialog' and (@aria-label='开始答题' or .//span[contains(@class,'el-dialog__title') and normalize-space()='开始答题'])]//button[.//span[contains(normalize-space(.),'确')]]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "after_submit",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "no_quiz",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "loop",
+      "Value": "",
+      "Description": ""
+    }
+  ]
+}

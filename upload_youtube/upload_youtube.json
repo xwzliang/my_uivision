@@ -1,0 +1,151 @@
+{
+    "Name": "UploadVideoToYouTube",
+    "CreationDate": "2025-7-9",
+    "Commands": [
+      {
+        "Command": "store",
+        "Target": "SLOW",
+        "Value": "!replayspeed",
+        "Description": ""
+      },
+      {
+        "Command": "open",
+        "Target": "https://studio.youtube.com/channel/UCUGLdSAbIfhiKi_wYfQ8pOw",
+        "Value": "",
+        "Description": ""
+      },
+      {
+        "Command": "pause",
+        "Target": "5000",
+        "Value": "",
+        "Description": ""
+      },
+      {
+        "Command": "click",
+        "Target": "xpath=//*[@id=\"create-icon\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+        "Value": "",
+        "Targets": [
+          "xpath=//*[@id=\"create-icon\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+          "xpath=//header/div/div/ytcp-button/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+          "css=#create-icon > ytcp-button-shape > button > yt-touch-feedback-shape > div > div.yt-spec-touch-feedback-shape__fill"
+        ],
+        "Description": ""
+      },
+      {
+        "Command": "click",
+        "Target": "xpath=//*[@id=\"text-item-0\"]/ytcp-ve/tp-yt-paper-item-body/div/div/div/yt-formatted-string",
+        "Value": "",
+        "Targets": [
+          "xpath=//*[@id=\"text-item-0\"]/ytcp-ve/tp-yt-paper-item-body/div/div/div/yt-formatted-string",
+          "xpath=//tp-yt-paper-item-body/div/div/div/yt-formatted-string",
+          "css=#text-item-0 > ytcp-ve > tp-yt-paper-item-body > div > div > div > yt-formatted-string"
+        ],
+        "Description": ""
+      },
+      {
+        "Command": "pause",
+        "Target": "2000",
+        "Value": "",
+        "Description": ""
+      },
+      {
+        "Command": "type",
+        "Target": "css=input[type=\"file\"]",
+        "Value": "/Users/broliang/sync/cat/2025-07-08_cat_120/final_video.mp4",
+        "Description": ""
+      },
+      {
+        "Command": "pause",
+        "Target": "5000",
+        "Value": "",
+        "Description": ""
+      },
+      {
+        "Command": "XClick",
+        "Target": "youtube_title_textarea.png",
+        "Value": "",
+        "Description": ""
+      },
+      {
+        "Command": "pause",
+        "Target": "3000",
+        "Value": "",
+        "Description": ""
+      },
+      {
+        "Command": "comment",
+        "Target": "XType // ${KEY_TAB}${KEY_TAB}${KEY_TAB}${KEY_TAB}${KEY_TAB}${KEY_TAB}",
+        "Value": "",
+        "Description": ""
+      },
+      {
+        "Command": "comment",
+        "Target": "pause // 3000",
+        "Value": "",
+        "Description": ""
+      },
+      {
+        "Command": "XType",
+        "Target": "${KEY_CMD+KEY_A}${KEY_BACKSPACE}${KEY_BACKSPACE}${KEY_BACKSPACE}${KEY_BACKSPACE}${KEY_BACKSPACE}",
+        "Value": "",
+        "Description": ""
+      },
+      {
+        "Command": "pause",
+        "Target": "1000",
+        "Value": "",
+        "Description": ""
+      },
+      {
+        "Command": "XType",
+        "Target": "My ${KEY_RIGHT}${KEY_RIGHT}${KEY_RIGHT}New ${KEY_RIGHT}${KEY_RIGHT}${KEY_RIGHT}Video ${KEY_RIGHT}${KEY_RIGHT}${KEY_RIGHT}Title",
+        "Value": "",
+        "Description": ""
+      },
+      {
+        "Command": "click",
+        "Target": "xpath=//*[@id=\"next-button\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+        "Value": "",
+        "Targets": [
+          "xpath=//*[@id=\"next-button\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+          "xpath=//ytcp-button[2]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+          "css=#next-button > ytcp-button-shape > button > yt-touch-feedback-shape > div > div.yt-spec-touch-feedback-shape__fill"
+        ],
+        "Description": ""
+      },
+      {
+        "Command": "click",
+        "Target": "xpath=//*[@id=\"next-button\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+        "Value": "",
+        "Targets": [
+          "xpath=//*[@id=\"next-button\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+          "xpath=//ytcp-button[2]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+          "css=#next-button > ytcp-button-shape > button > yt-touch-feedback-shape > div > div.yt-spec-touch-feedback-shape__fill"
+        ],
+        "Description": ""
+      },
+      {
+        "Command": "click",
+        "Target": "xpath=//*[@id=\"next-button\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+        "Value": "",
+        "Targets": [
+          "xpath=//*[@id=\"next-button\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+          "xpath=//ytcp-button[2]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+          "css=#next-button > ytcp-button-shape > button > yt-touch-feedback-shape > div > div.yt-spec-touch-feedback-shape__fill"
+        ],
+        "Description": ""
+      },
+      {
+        "Command": "click",
+        "Target": "xpath=//tp-yt-paper-radio-button[3]/div/div",
+        "Value": "",
+        "Targets": [
+          "id=offRadio",
+          "xpath=//*[@id=\"offRadio\"]",
+          "xpath=//tp-yt-paper-radio-button[3]/div/div",
+          "css=#offRadio"
+        ],
+        "Description": ""
+      }
+    ]
+  }

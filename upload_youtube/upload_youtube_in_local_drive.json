@@ -1,0 +1,238 @@
+{
+  "Name": "upload_youtube_in_local_drive",
+  "CreationDate": "2025-7-17",
+  "Commands": [
+    {
+      "Command": "store",
+      "Target": "SLOW",
+      "Value": "!replayspeed",
+      "Description": ""
+    },
+    {
+      "Command": "csvRead",
+      "Target": "youtube_video_sources.csv",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "open",
+      "Target": "https://studio.youtube.com/channel/UCUGLdSAbIfhiKi_wYfQ8pOw",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "bringBrowserToForeground",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "3000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//*[@id=\"create-icon\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+      "Value": "",
+      "Targets": [
+        "xpath=//*[@id=\"create-icon\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+        "xpath=//header/div/div/ytcp-button/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+        "css=#create-icon > ytcp-button-shape > button > yt-touch-feedback-shape > div > div.yt-spec-touch-feedback-shape__fill"
+      ],
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//*[@id=\"text-item-0\"]/ytcp-ve/tp-yt-paper-item-body/div/div/div/yt-formatted-string",
+      "Value": "",
+      "Targets": [
+        "xpath=//*[@id=\"text-item-0\"]/ytcp-ve/tp-yt-paper-item-body/div/div/div/yt-formatted-string",
+        "xpath=//tp-yt-paper-item-body/div/div/div/yt-formatted-string",
+        "css=#text-item-0 > ytcp-ve > tp-yt-paper-item-body > div > div > div > yt-formatted-string"
+      ],
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "type",
+      "Target": "css=input[type=\"file\"]",
+      "Value": "${!COL1}/final_video.mp4",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "5000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "XRunAndWait",
+      "Target": "/bin/bash",
+      "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && cat ${!COL1}/description.txt | pbcopy\"",
+      "Description": ""
+    },
+    {
+      "Command": "visualVerify",
+      "Target": "video_link_for_textarea_location.png",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Number(${!imageY})",
+      "Value": "clickY",
+      "Description": ""
+    },
+    {
+      "Command": "XClick",
+      "Target": "video_link_for_textarea_location.png",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "visualVerify",
+      "Target": "youtube_title_textarea.png",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Number(${!imageX})",
+      "Value": "clickX",
+      "Description": ""
+    },
+    {
+      "Command": "XClick",
+      "Target": "${clickX},${clickY}",
+      "Value": "#doubleclick",
+      "Description": ""
+    },
+    {
+      "Command": "XType",
+      "Target": "${KEY_CMD+KEY_V}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "XRunAndWait",
+      "Target": "/bin/bash",
+      "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && cat ${!COL1}/title.txt | pbcopy\"",
+      "Description": ""
+    },
+    {
+      "Command": "XClick",
+      "Target": "youtube_title_textarea.png",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "3000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "XType",
+      "Target": "${KEY_CMD+KEY_A}${KEY_BACKSPACE}${KEY_BACKSPACE}${KEY_BACKSPACE}${KEY_BACKSPACE}${KEY_BACKSPACE}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "XType",
+      "Target": "${KEY_CMD+KEY_V}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//*[@id=\"next-button\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//*[@id=\"next-button\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "5000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//*[@id=\"next-button\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//tp-yt-paper-radio-button[3]/div/div",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//*[@id=\"done-button\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "comment",
+      "Target": "storeAttribute // xpath=//a[@id='share-url']@href",
+      "Value": "shareURL",
+      "Description": ""
+    },
+    {
+      "Command": "comment",
+      "Target": "selectWindow // tab=open",
+      "Value": "${shareURL}",
+      "Description": ""
+    },
+    {
+      "Command": "comment",
+      "Target": "pause // 40000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "comment",
+      "Target": "selectWindow // tab=CLOSE",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "comment",
+      "Target": "selectWindow // tab=0",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//*[@id=\"close-button\"]/ytcp-button-shape/button/yt-touch-feedback-shape/div/div[2]",
+      "Value": "",
+      "Description": ""
+    }
+  ]
+}
