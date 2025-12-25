@@ -1,0 +1,126 @@
+{
+  "Name": "Auto_Play_Next_Video",
+  "CreationDate": "2025-12-25",
+  "Commands": [
+    {
+      "Command": "store",
+      "Target": "2",
+      "Value": "!timeout_wait",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "loop",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "storeEval",
+      "Target": "(function(){\n  var v=document.getElementById('myVideo');\n  if(!v) return 'NO_VIDEO';\n  var tEl=document.getElementById('dyna_video_time');\n  var target=tEl ? parseFloat(tEl.value) : NaN;\n  var info=[\n    'ct='+(v.currentTime||0),\n    'paused='+(!!v.paused),\n    'ended='+(!!v.ended),\n    'readyState='+(v.readyState),\n    'networkState='+(v.networkState),\n    'dyna_video_time='+(isFinite(target)?target:'NaN')\n  ].join(' | ');\n  window.__uiv_ct1 = v.currentTime||0;\n  return info;\n})()",
+      "Value": "vinfo1",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "V1 ${vinfo1}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "15000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "storeEval",
+      "Target": "(function(){\n  var v=document.getElementById('myVideo');\n  if(!v) return 'NO_VIDEO';\n  var ct2=v.currentTime||0;\n  var ct1=(typeof window.__uiv_ct1==='number')?window.__uiv_ct1:NaN;\n  var dt=(isFinite(ct1)&&isFinite(ct2))?(ct2-ct1):NaN;\n  var tEl=document.getElementById('dyna_video_time');\n  var target=tEl ? parseFloat(tEl.value) : NaN;\n  var info=[\n    'ct1='+(isFinite(ct1)?ct1:'NaN'),\n    'ct2='+ct2,\n    'dt='+(isFinite(dt)?dt:'NaN'),\n    'paused='+(!!v.paused),\n    'ended='+(!!v.ended),\n    'readyState='+(v.readyState),\n    'networkState='+(v.networkState),\n    'dyna_video_time='+(isFinite(target)?target:'NaN')\n  ].join(' | ');\n  window.__uiv_dt = isFinite(dt)?dt:-999;\n  return info;\n})()",
+      "Value": "vinfo2",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "V2 ${vinfo2}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "storeEval",
+      "Target": "(function(){return (typeof window.__uiv_dt==='number') ? String(window.__uiv_dt) : 'NaN';})()",
+      "Value": "dt",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "DT ${dt}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${dt} >= 0.3",
+      "Value": "still_playing",
+      "Description": ""
+    },
+    {
+      "Command": "storeEval",
+      "Target": "(function(){\n  var cur=document.querySelector('tr.data.cur');\n  if(!cur) return 'NO_CUR';\n  var next=cur.nextElementSibling;\n  while(next && !(next.matches && next.matches('tr.data'))) next=next.nextElementSibling;\n  if(!next) return 'NO_NEXT';\n  var title=(next.querySelector('p.title')||{}).textContent||'';\n  return 'CLICK_NEXT title='+title.trim();\n})()",
+      "Value": "nextPlan",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "NEXTPLAN ${nextPlan}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=(//tr[contains(concat(' ',normalize-space(@class),' '),' data ') and contains(concat(' ',normalize-space(@class),' '),' cur ')]/following::tr[contains(concat(' ',normalize-space(@class),' '),' data ')])[1]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "storeEval",
+      "Target": "(function(){\n  var v=document.getElementById('myVideo');\n  if(!v) return 'NO_VIDEO';\n  var before=[v.paused,v.ended,v.currentTime,v.readyState,v.networkState].join(',');\n  var r='';\n  try{ v.muted=true; }catch(e){}\n  try{ var p=v.play(); r=(p&&typeof p.then==='function')?'promise':'nopromise'; }catch(e){ r='PLAY_THROW:'+String(e); }\n  var after=[v.paused,v.ended,v.currentTime,v.readyState,v.networkState].join(',');\n  return 'play='+r+' | before='+before+' | after='+after;\n})()",
+      "Value": "playDebug",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "PLAY ${playDebug}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "5000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "still_playing",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "5000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "loop",
+      "Value": "",
+      "Description": ""
+    }
+  ]
+}
