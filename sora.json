@@ -1,0 +1,864 @@
+{
+  "Name": "SoraVideo",
+  "CreationDate": "2026-4-2",
+  "Commands": [
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "300",
+      "Value": "!TIMEOUT_WAIT",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "120",
+      "Value": "!TIMEOUT_PAGELOAD",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "=== MACRO START ===",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "csvRead",
+      "Target": "/Users/broliang/Pictures/short_drama/ui_vision.csv",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "${!COL1}",
+      "Value": "BASE",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "BASE=${BASE}",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "2",
+      "Value": "!csvReadLineNumber",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "LOOP_START",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "=== READING NEXT VIDEO ROW ===",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "csvRead",
+      "Target": "${BASE}/video_prompts.csv",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "if_v2",
+      "Target": "${!csvReadStatus} != 'OK'",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Done. End of csv file reached.",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "MACRO_END",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Number(${!csvReadLineNumber}) + 1",
+      "Value": "!csvReadLineNumber",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "${!COL1}",
+      "Value": "segment_name",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "${!COL2}",
+      "Value": "segment_dir",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "${!COL3}",
+      "Value": "prompt_text",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "${!COL4}",
+      "Value": "image_path_raw",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "${prompt_text}",
+      "Value": "PROMPT",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "var p='${image_path_raw}'; p=p.trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); return p.trim();",
+      "Value": "IMAGE_PATH",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "segment_name=${segment_name}",
+      "Value": "green",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "segment_dir=${segment_dir}",
+      "Value": "green",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "IMAGE_PATH=${IMAGE_PATH}",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "0",
+      "Value": "SEG_RETRY",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "SEGMENT_RETRY_LOOP",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "==== SEGMENT TRY ${SEG_RETRY}/3 : ${segment_name} ====",
+      "Value": "purple",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${SEG_RETRY} >= 3",
+      "Value": "SEGMENT_FAILED",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "300",
+      "Value": "!TIMEOUT_WAIT",
+      "Description": ""
+    },
+    {
+      "Command": "open",
+      "Target": "https://sora.chatgpt.com/drafts",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "waitForPageToLoad",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "10000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Opening media picker",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "XClick",
+      "Target": "xpath=(//button[.//span[normalize-space()='Attach media']])[1]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1200",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Uploading image ${IMAGE_PATH}",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "XRunAndWait",
+      "Target": "/bin/bash",
+      "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && printf %s '${IMAGE_PATH}' | pbcopy\"",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "XType",
+      "Target": "${KEY_CMD+KEY_SHIFT+KEY_G}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "XType",
+      "Target": "${KEY_CMD+KEY_V}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "XType",
+      "Target": "${KEY_ENTER}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "XType",
+      "Target": "${KEY_ENTER}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2500",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Filling prompt",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=(//textarea[@placeholder='Optionally describe your video...'])[1]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "300",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "editContent",
+      "Target": "xpath=(//textarea[@placeholder='Optionally describe your video...'])[1]",
+      "Value": "${PROMPT}",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1500",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Waiting for create button",
+      "Value": "purple",
+      "Description": ""
+    },
+    {
+      "Command": "waitForElementPresent",
+      "Target": "xpath=(//button[.//span[normalize-space()='Create video'] and not(@disabled) and @data-disabled='false'])[1]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "storeEval",
+      "Target": "Date.now().toString()",
+      "Value": "GEN_START_MS",
+      "Description": ""
+    },
+    {
+      "Command": "comment",
+      "Target": "click // xpath=(//button[.//span[normalize-space()='Create video'] and not(@disabled) and @data-disabled='false'])[1]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1200",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Checking whether generation started",
+      "Value": "purple",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "waitForElementPresent",
+      "Target": "xpath=(//div[contains(@class,'absolute') and contains(@class,'inset-0') and .//circle])[1]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "if_v2",
+      "Target": "${!statusOK} == false",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Generation spinner did not appear, retrying segment",
+      "Value": "red",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Number(${SEG_RETRY}) + 1",
+      "Value": "SEG_RETRY",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "SEGMENT_RETRY_LOOP",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Generation started",
+      "Value": "green",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "0",
+      "Value": "WAIT_ROUND",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "WAIT_FOR_RESULT",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${WAIT_ROUND} >= 180",
+      "Value": "SEGMENT_WAIT_TIMEOUT",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Polling result state, round ${WAIT_ROUND}",
+      "Value": "purple",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "verifyElementPresent",
+      "Target": "xpath=//*[contains(normalize-space(.),'Something went wrong')]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "if_v2",
+      "Target": "${!statusOK} == true",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Sora reported failure, retrying segment",
+      "Value": "red",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Number(${SEG_RETRY}) + 1",
+      "Value": "SEG_RETRY",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "SEGMENT_RETRY_LOOP",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "verifyElementPresent",
+      "Target": "xpath=(//div[@data-index='0'][.//span[normalize-space()='NEW']]//a)[1]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "if_v2",
+      "Target": "${!statusOK} == true",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "RESULT_READY",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "5000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Number(${WAIT_ROUND}) + 1",
+      "Value": "WAIT_ROUND",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "WAIT_FOR_RESULT",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "SEGMENT_WAIT_TIMEOUT",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Timed out waiting for result, retrying segment",
+      "Value": "red",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Number(${SEG_RETRY}) + 1",
+      "Value": "SEG_RETRY",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "SEGMENT_RETRY_LOOP",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "RESULT_READY",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Newest generated video is ready",
+      "Value": "green",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=(//div[@data-index='0'][.//span[normalize-space()='NEW']]//a)[1]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "waitForPageToLoad",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2500",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "0",
+      "Value": "DL_RETRY",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "DOWNLOAD_RETRY_LOOP",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${DL_RETRY} >= 3",
+      "Value": "DOWNLOAD_FAILED",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Opening download menu",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=(//button[@aria-haspopup='menu' and .//*[name()='svg']])[1]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "if_v2",
+      "Target": "${!statusOK} == false",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Menu button not found, refreshing detail page",
+      "Value": "red",
+      "Description": ""
+    },
+    {
+      "Command": "refresh",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "waitForPageToLoad",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Number(${DL_RETRY}) + 1",
+      "Value": "DL_RETRY",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "DOWNLOAD_RETRY_LOOP",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "800",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "storeEval",
+      "Target": "Date.now().toString()",
+      "Value": "DOWNLOAD_EPOCH",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Starting download",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=(//div[@role='menuitem'][.//div[normalize-space()='Download']])[1]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1200",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Waiting for a new mp4 file in Downloads",
+      "Value": "purple",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "XRunAndWait",
+      "Target": "/bin/bash",
+      "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && start_ms='${DOWNLOAD_EPOCH}' && segdir='${BASE}/${segment_dir}' && outdir=\\\"$segdir/output\\\" && mkdir -p \\\"$outdir\\\" && deadline=$(( $(date +%s) + 240 )) && found='' && while [ $(date +%s) -lt $deadline ]; do found=''; for f in \\\"$HOME\\\"/Downloads/*.mp4; do [ -e \\\"$f\\\" ] || continue; m=$(stat -f %m \\\"$f\\\" 2>/dev/null || echo 0); if [ \\\"$m\\\" -ge $((start_ms/1000)) ]; then found=\\\"$f\\\"; break; fi; done; if [ -n \\\"$found\\\" ]; then break; fi; sleep 2; done; [ -n \\\"$found\\\" ] || exit 1; mv -f \\\"$found\\\" \\\"$outdir/sora.mp4\\\"\"",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "if_v2",
+      "Target": "${!statusOK} == false",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "No new mp4 detected yet, retrying download",
+      "Value": "red",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Number(${DL_RETRY}) + 1",
+      "Value": "DL_RETRY",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1500",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "DOWNLOAD_RETRY_LOOP",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Video downloaded and moved to ${BASE}/${segment_dir}/output/sora.mp4",
+      "Value": "green",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "SEGMENT_DONE",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "DOWNLOAD_FAILED",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Download failed after 3 retries, moving to next segment",
+      "Value": "red",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "SEGMENT_DONE",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1200",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "=== SEGMENT FINISHED: ${segment_name} ===",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "LOOP_START",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "SEGMENT_FAILED",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Segment failed after 3 tries, skipping to next segment: ${segment_name}",
+      "Value": "red",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "LOOP_START",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "MACRO_END",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "=== MACRO END ===",
+      "Value": "blue",
+      "Description": ""
+    }
+  ]
+}
