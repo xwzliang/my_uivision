@@ -46,7 +46,7 @@
         },
         {
             "Command": "store",
-            "Target": "2",
+            "Target": "1",
             "Value": "!csvReadLineNumber",
             "Description": ""
         },
