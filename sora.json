@@ -46,7 +46,7 @@
     },
     {
       "Command": "store",
-      "Target": "2",
+      "Target": "8",
       "Value": "!csvReadLineNumber",
       "Description": ""
     },
@@ -315,7 +315,7 @@
       "Description": ""
     },
     {
-      "Command": "editContent",
+      "Command": "type",
       "Target": "xpath=(//textarea[@placeholder='Optionally describe your video...'])[1]",
       "Value": "${PROMPT}",
       "Description": ""
@@ -339,20 +339,38 @@
       "Description": ""
     },
     {
-      "Command": "storeEval",
-      "Target": "Date.now().toString()",
-      "Value": "GEN_START_MS",
-      "Description": ""
-    },
-    {
-      "Command": "comment",
-      "Target": "click // xpath=(//button[.//span[normalize-space()='Create video'] and not(@disabled) and @data-disabled='false'])[1]",
+      "Command": "click",
+      "Target": "xpath=(//button[.//span[normalize-space()='Create video'] and not(@disabled) and @data-disabled='false'])[1]",
       "Value": "",
       "Description": ""
     },
     {
       "Command": "pause",
       "Target": "1200",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "XType",
+      "Target": "${KEY_ESC}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "XType",
+      "Target": "${KEY_ESC}",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
       "Value": "",
       "Description": ""
     },
@@ -364,14 +382,50 @@
     },
     {
       "Command": "store",
+      "Target": "0",
+      "Value": "PREWAIT_ROUND",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "PREWAIT_GRID0_POLL",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${PREWAIT_ROUND} >= 60",
+      "Value": "PREWAIT_GRID0_DONE",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Pre-wait grid0 poll round ${PREWAIT_ROUND}/60",
+      "Value": "purple",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "",
+      "Value": "PREWAIT_GRID0_TEXT",
+      "Description": ""
+    },
+    {
+      "Command": "store",
       "Target": "true",
       "Value": "!errorignore",
       "Description": ""
     },
     {
-      "Command": "waitForElementPresent",
-      "Target": "xpath=(//div[contains(@class,'absolute') and contains(@class,'inset-0') and .//circle])[1]",
-      "Value": "",
+      "Command": "store",
+      "Target": "1",
+      "Value": "!TIMEOUT_WAIT",
+      "Description": ""
+    },
+    {
+      "Command": "storeText",
+      "Target": "xpath=(//div[@data-index='0'])[1]",
+      "Value": "PREWAIT_GRID0_TEXT",
       "Description": ""
     },
     {
@@ -381,26 +435,26 @@
       "Description": ""
     },
     {
-      "Command": "if_v2",
-      "Target": "${!statusOK} == false",
-      "Value": "",
+      "Command": "store",
+      "Target": "300",
+      "Value": "!TIMEOUT_WAIT",
       "Description": ""
     },
     {
       "Command": "echo",
-      "Target": "Generation spinner did not appear, retrying segment",
-      "Value": "red",
+      "Target": "PREWAIT GRID0 | text=${PREWAIT_GRID0_TEXT}",
+      "Value": "blue",
       "Description": ""
     },
     {
-      "Command": "executeScript_Sandbox",
-      "Target": "return Number(${SEG_RETRY}) + 1",
-      "Value": "SEG_RETRY",
+      "Command": "if_v2",
+      "Target": "'${PREWAIT_GRID0_TEXT}' == 'NEW'",
+      "Value": "",
       "Description": ""
     },
     {
       "Command": "gotoLabel",
-      "Target": "SEGMENT_RETRY_LOOP",
+      "Target": "RESULT_READY",
       "Value": "",
       "Description": ""
     },
@@ -411,8 +465,32 @@
       "Description": ""
     },
     {
+      "Command": "pause",
+      "Target": "5000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Number(${PREWAIT_ROUND}) + 1",
+      "Value": "PREWAIT_ROUND",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "PREWAIT_GRID0_POLL",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "PREWAIT_GRID0_DONE",
+      "Value": "",
+      "Description": ""
+    },
+    {
       "Command": "echo",
-      "Target": "Generation started",
+      "Target": "Finished pre-wait grid polling",
       "Value": "green",
       "Description": ""
     },
@@ -438,6 +516,48 @@
       "Command": "echo",
       "Target": "Polling result state, round ${WAIT_ROUND}",
       "Value": "purple",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "",
+      "Value": "GRID0_TEXT",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "1",
+      "Value": "!TIMEOUT_WAIT",
+      "Description": ""
+    },
+    {
+      "Command": "storeText",
+      "Target": "xpath=(//div[@data-index='0'])[1]",
+      "Value": "GRID0_TEXT",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "300",
+      "Value": "!TIMEOUT_WAIT",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "GRID0 debug | text=${GRID0_TEXT}",
+      "Value": "blue",
       "Description": ""
     },
     {
@@ -495,20 +615,8 @@
       "Description": ""
     },
     {
-      "Command": "verifyElementPresent",
-      "Target": "xpath=(//div[@data-index='0'][.//span[normalize-space()='NEW']]//a)[1]",
-      "Value": "",
-      "Description": ""
-    },
-    {
-      "Command": "store",
-      "Target": "false",
-      "Value": "!errorignore",
-      "Description": ""
-    },
-    {
       "Command": "if_v2",
-      "Target": "${!statusOK} == true",
+      "Target": "'${GRID0_TEXT}' == 'NEW'",
       "Value": "",
       "Description": ""
     },
@@ -633,8 +741,8 @@
       "Description": ""
     },
     {
-      "Command": "click",
-      "Target": "xpath=(//button[@aria-haspopup='menu' and .//*[name()='svg']])[1]",
+      "Command": "XClick",
+      "Target": "xpath=(//button[@aria-haspopup='menu' and not(@aria-label='Settings') and .//*[name()='path' and @d='M3 12a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0']])[1]",
       "Value": "",
       "Description": ""
     },
@@ -699,12 +807,6 @@
       "Description": ""
     },
     {
-      "Command": "storeEval",
-      "Target": "Date.now().toString()",
-      "Value": "DOWNLOAD_EPOCH",
-      "Description": ""
-    },
-    {
       "Command": "echo",
       "Target": "Starting download",
       "Value": "blue",
@@ -737,7 +839,7 @@
     {
       "Command": "XRunAndWait",
       "Target": "/bin/bash",
-      "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && start_ms='${DOWNLOAD_EPOCH}' && segdir='${BASE}/${segment_dir}' && outdir=\\\"$segdir/output\\\" && mkdir -p \\\"$outdir\\\" && deadline=$(( $(date +%s) + 240 )) && found='' && while [ $(date +%s) -lt $deadline ]; do found=''; for f in \\\"$HOME\\\"/Downloads/*.mp4; do [ -e \\\"$f\\\" ] || continue; m=$(stat -f %m \\\"$f\\\" 2>/dev/null || echo 0); if [ \\\"$m\\\" -ge $((start_ms/1000)) ]; then found=\\\"$f\\\"; break; fi; done; if [ -n \\\"$found\\\" ]; then break; fi; sleep 2; done; [ -n \\\"$found\\\" ] || exit 1; mv -f \\\"$found\\\" \\\"$outdir/sora.mp4\\\"\"",
+      "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && segdir='${BASE}/${segment_dir}' && outdir=\\\"$segdir/output\\\" && mkdir -p \\\"$outdir\\\" && marker=$(mktemp /tmp/uiv_sora_marker.XXXXXX) && ls -1 \\\"$HOME\\\"/Downloads/*.mp4 2>/dev/null > \\\"$marker\\\" || true && start_s=$(date +%s) && deadline=$(( start_s + 240 )) && found='' && while [ $(date +%s) -lt $deadline ]; do found=''; for f in \\\"$HOME\\\"/Downloads/*.mp4; do [ -e \\\"$f\\\" ] || continue; if ! grep -Fqx \\\"$f\\\" \\\"$marker\\\"; then found=\\\"$f\\\"; break; fi; m=$(stat -f %m \\\"$f\\\" 2>/dev/null || echo 0); if [ \\\"$m\\\" -ge $start_s ]; then found=\\\"$f\\\"; break; fi; done; if [ -n \\\"$found\\\" ]; then break; fi; sleep 2; done; rm -f \\\"$marker\\\"; [ -n \\\"$found\\\" ] || exit 1; mv -f \\\"$found\\\" \\\"$outdir/sora.mp4\\\"\"",
       "Description": ""
     },
     {
