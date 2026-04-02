@@ -562,7 +562,7 @@
         },
         {
             "Command": "if_v2",
-            "Target": "${!LastCommandOK} == false",
+            "Target": "${!statusOK} == false",
             "Value": "",
             "Description": ""
         },
@@ -622,7 +622,7 @@
         },
         {
             "Command": "if_v2",
-            "Target": "${!LastCommandOK} == false",
+            "Target": "${!statusOK} == false",
             "Value": "",
             "Description": ""
         },
@@ -682,7 +682,7 @@
         },
         {
             "Command": "if_v2",
-            "Target": "${!LastCommandOK} == false",
+            "Target": "${!statusOK} == false",
             "Value": "",
             "Description": ""
         },
@@ -730,7 +730,7 @@
         },
         {
             "Command": "store",
-            "Target": "180",
+            "Target": "120",
             "Value": "!TIMEOUT_WAIT",
             "Description": ""
         },
@@ -759,8 +759,68 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
             "Command": "click",
             "Target": "xpath=(//button[@data-test-id='download-generated-image-button'])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Download button not found, refreshing page before retry",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "refresh",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "waitForPageToLoad",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${DL_RETRY}) + 1",
+            "Value": "DL_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "DOWNLOAD_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
             "Value": "",
             "Description": ""
         },
@@ -898,116 +958,26 @@
         },
         {
             "Command": "echo",
-            "Target": "No final result detected yet, waiting a bit more",
+            "Target": "No final result detected yet, refreshing page before retry",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "refresh",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "waitForPageToLoad",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Page refreshed, preparing to click download again",
             "Value": "purple",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "5000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "true",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "verifyElementPresent",
-            "Target": "xpath=//div[contains(@class,'cdk-overlay-pane')]//*[contains(normalize-space(.),'Image downloaded')]",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "false",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "if_v2",
-            "Target": "${!statusOK} == true",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Image downloaded successfully after extra wait",
-            "Value": "green",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "DOWNLOAD_SUCCESS",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "end",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "true",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "verifyElementPresent",
-            "Target": "xpath=//*[contains(normalize-space(.),\"Couldn't download image\")]",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "false",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "if_v2",
-            "Target": "${!statusOK} == true",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Download failed after extra wait, will retry",
-            "Value": "red",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${DL_RETRY}) + 1",
-            "Value": "DL_RETRY",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "2000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "DOWNLOAD_RETRY_LOOP",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "end",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "No success/failure text detected, retrying download",
-            "Value": "red",
             "Description": ""
         },
         {
@@ -1036,7 +1006,7 @@
         },
         {
             "Command": "echo",
-            "Target": "Download failed after 3 retries, skipping move step for this segment",
+            "Target": "Download failed after 3 retries, moving to next segment",
             "Value": "red",
             "Description": ""
         },
