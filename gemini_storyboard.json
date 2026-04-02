@@ -93,6 +93,12 @@
             "Description": ""
         },
         {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "end",
             "Target": "",
             "Value": "",
@@ -198,6 +204,12 @@
             "Command": "gotoIf",
             "Target": "${SEG_RETRY} >= 3",
             "Value": "SEGMENT_FAILED",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
             "Description": ""
         },
         {
@@ -1086,6 +1098,18 @@
             "Command": "gotoLabel",
             "Target": "LOOP_START",
             "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== MACRO END ===",
+            "Value": "blue",
             "Description": ""
         }
     ]
