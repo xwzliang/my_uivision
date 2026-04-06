@@ -544,7 +544,7 @@
         },
         {
             "Command": "pause",
-            "Target": "1000",
+            "Target": "5000",
             "Value": "",
             "Description": ""
         },
@@ -556,32 +556,98 @@
         },
         {
             "Command": "store",
-            "Target": "true",
-            "Value": "!errorignore",
+            "Target": "0",
+            "Value": "SPINNER_FOUND",
             "Description": ""
         },
         {
-            "Command": "waitForElementPresent",
+            "Command": "store",
+            "Target": "0",
+            "Value": "SPINNER_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SPINNER_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${SPINNER_POLL} >= 40",
+            "Value": "SPINNER_WAIT_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
             "Target": "xpath=(//div[contains(@class,'bard-avatar') and contains(@class,'thinking')])[last()]",
+            "Value": "SPINNER_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${SPINNER_COUNT} > 0",
             "Value": "",
             "Description": ""
         },
         {
             "Command": "store",
-            "Target": "false",
-            "Value": "!errorignore",
+            "Target": "1",
+            "Value": "SPINNER_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SPINNER_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SPINNER_POLL}) + 1",
+            "Value": "SPINNER_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SPINNER_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SPINNER_WAIT_DONE",
+            "Value": "",
             "Description": ""
         },
         {
             "Command": "if_v2",
-            "Target": "${!statusOK} == false",
+            "Target": "${SPINNER_FOUND} == 0",
             "Value": "",
             "Description": ""
         },
         {
             "Command": "echo",
-            "Target": "Thinking spinner did not appear, retrying segment",
+            "Target": "Thinking spinner did not appear within 60 seconds, retrying segment",
             "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
             "Description": ""
         },
         {
@@ -645,6 +711,12 @@
             "Description": ""
         },
         {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "executeScript_Sandbox",
             "Target": "return Number(${SEG_RETRY}) + 1",
             "Value": "SEG_RETRY",
@@ -705,6 +777,12 @@
             "Description": ""
         },
         {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "executeScript_Sandbox",
             "Target": "return Number(${SEG_RETRY}) + 1",
             "Value": "SEG_RETRY",
@@ -742,6 +820,12 @@
         },
         {
             "Command": "store",
+            "Target": "0",
+            "Value": "DL_STATUS_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "store",
             "Target": "120",
             "Value": "!TIMEOUT_WAIT",
             "Description": ""
@@ -772,6 +856,12 @@
         },
         {
             "Command": "store",
+            "Target": "0",
+            "Value": "DL_STATUS_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "store",
             "Target": "true",
             "Value": "!errorignore",
             "Description": ""
@@ -796,37 +886,13 @@
         },
         {
             "Command": "echo",
-            "Target": "Download button not found, refreshing page before retry",
+            "Target": "Download button not found, preparing retry",
             "Value": "red",
             "Description": ""
         },
         {
-            "Command": "refresh",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "waitForPageToLoad",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${DL_RETRY}) + 1",
-            "Value": "DL_RETRY",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "2000",
-            "Value": "",
-            "Description": ""
-        },
-        {
             "Command": "gotoLabel",
-            "Target": "DOWNLOAD_RETRY_LOOP",
+            "Target": "DOWNLOAD_PREPARE_RETRY",
             "Value": "",
             "Description": ""
         },
@@ -838,38 +904,26 @@
         },
         {
             "Command": "echo",
-            "Target": "Waiting for 'Downloading full size...' status",
+            "Target": "Download click sent, allowing overlays to appear",
             "Value": "purple",
             "Description": ""
         },
         {
-            "Command": "store",
-            "Target": "true",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "waitForElementPresent",
-            "Target": "xpath=//*[contains(normalize-space(.),'Downloading full size')]",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "false",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Download started or status wait finished",
-            "Value": "green",
-            "Description": ""
-        },
-        {
             "Command": "pause",
-            "Target": "2000",
+            "Target": "1500",
             "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "DOWNLOAD_STATUS_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${DL_STATUS_POLL} >= 20",
+            "Value": "DOWNLOAD_STATUS_TIMEOUT",
             "Description": ""
         },
         {
@@ -922,7 +976,7 @@
         },
         {
             "Command": "verifyElementPresent",
-            "Target": "xpath=//*[contains(normalize-space(.),\"Couldn't download image\")]",
+            "Target": "xpath=//*[contains(normalize-space(.),'Downloading full size')]",
             "Value": "",
             "Description": ""
         },
@@ -940,26 +994,8 @@
         },
         {
             "Command": "echo",
-            "Target": "Download failed, will retry",
-            "Value": "red",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${DL_RETRY}) + 1",
-            "Value": "DL_RETRY",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "2000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "DOWNLOAD_RETRY_LOOP",
-            "Value": "",
+            "Target": "Download is still in progress",
+            "Value": "blue",
             "Description": ""
         },
         {
@@ -969,9 +1005,69 @@
             "Description": ""
         },
         {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${DL_STATUS_POLL}) + 1",
+            "Value": "DL_STATUS_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "DOWNLOAD_STATUS_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "DOWNLOAD_STATUS_TIMEOUT",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "echo",
-            "Target": "No final result detected yet, refreshing page before retry",
+            "Target": "Image downloaded confirmation timed out, preparing retry",
             "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "DOWNLOAD_PREPARE_RETRY",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "DOWNLOAD_PREPARE_RETRY",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${DL_RETRY}) + 1",
+            "Value": "DL_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Preparing download retry ${DL_RETRY}/3",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${DL_RETRY} >= 3",
+            "Value": "DOWNLOAD_FAILED",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
             "Description": ""
         },
         {
@@ -987,21 +1083,15 @@
             "Description": ""
         },
         {
-            "Command": "echo",
-            "Target": "Page refreshed, preparing to click download again",
-            "Value": "purple",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${DL_RETRY}) + 1",
-            "Value": "DL_RETRY",
-            "Description": ""
-        },
-        {
             "Command": "pause",
-            "Target": "2000",
+            "Target": "5000",
             "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Page refreshed and stabilized, trying download again",
+            "Value": "purple",
             "Description": ""
         },
         {
@@ -1018,13 +1108,133 @@
         },
         {
             "Command": "echo",
-            "Target": "Download failed after 3 retries, moving to next segment",
+            "Target": "Download failed after 3 retries, trying fallback save from rendered image",
             "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "storeAttribute",
+            "Target": "xpath=(//div[contains(@class,'attachment-container') and contains(@class,'generated-images')]//img[contains(@class,'image') and contains(@class,'loaded')])[last()]@src",
+            "Value": "RENDERED_IMAGE_SRC",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Fallback save failed because rendered image src was not found",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
             "Description": ""
         },
         {
             "Command": "gotoLabel",
             "Target": "SEGMENT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Fallback rendered image src captured",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${RENDERED_IMAGE_SRC}'; s=(s||'').trim(); if(!s){return 'jpg';} var m=s.match(/\\.([a-zA-Z0-9]+)(?:[?#].*)?$/); if(!m){return 'jpg';} var ext=m[1].toLowerCase(); if(ext==='jpeg' || ext==='jpg' || ext==='png' || ext==='webp'){ return ext; } return 'jpg';",
+            "Value": "RENDERED_IMAGE_EXT",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${segment_dir}'; s=(s||'storyboard').replace(/[^a-zA-Z0-9._-]+/g,'_'); if(!s){s='storyboard';} return s;",
+            "Value": "RENDERED_IMAGE_BASENAME",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Saving rendered image fallback to Downloads as ${RENDERED_IMAGE_BASENAME}.${RENDERED_IMAGE_EXT}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && url='${RENDERED_IMAGE_SRC}' && ext='${RENDERED_IMAGE_EXT}' && base='${RENDERED_IMAGE_BASENAME}' && out=\\\"$HOME/Downloads/${RENDERED_IMAGE_BASENAME}.${RENDERED_IMAGE_EXT}\\\" && rm -f \\\"$out\\\" && curl -L --fail --silent --show-error \\\"$url\\\" -o \\\"$out\\\"\"",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Fallback rendered image save failed, moving to next segment",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SEGMENT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Fallback rendered image save succeeded",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "DOWNLOAD_SUCCESS",
             "Value": "",
             "Description": ""
         },
@@ -1042,14 +1252,14 @@
         },
         {
             "Command": "echo",
-            "Target": "Moving latest downloaded PNG to ${BASE}/${segment_dir}/output/storyboard.png",
+            "Target": "Moving latest downloaded image to ${BASE}/${segment_dir}/output/",
             "Value": "blue",
             "Description": ""
         },
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && segdir='${BASE}/${segment_dir}' && outdir=\\\"$segdir/output\\\" && mkdir -p \\\"$outdir\\\" && latest=$(ls -t ~/Downloads/*.png 2>/dev/null | head -n 1) && if [[ -n \\\"$latest\\\" ]]; then mv -f \\\"$latest\\\" \\\"$outdir/storyboard.png\\\"; fi\"",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && segdir='${BASE}/${segment_dir}' && outdir=\\\"$segdir/output\\\" && mkdir -p \\\"$outdir\\\" && latest=$(ls -t ~/Downloads/*.png ~/Downloads/*.jpg ~/Downloads/*.jpeg 2>/dev/null | head -n 1) && if [[ -n \\\"$latest\\\" ]]; then ext=${latest##*.}; ext=$(printf %s \\\"$ext\\\" | tr '[:upper:]' '[:lower:]'); mv -f \\\"$latest\\\" \\\"$outdir/storyboard.$ext\\\"; fi\"",
             "Description": ""
         },
         {

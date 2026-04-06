@@ -1,6 +1,6 @@
 {
   "Name": "SoraVideo",
-  "CreationDate": "2026-4-3",
+  "CreationDate": "2026-4-6",
   "Commands": [
     {
       "Command": "store",
@@ -923,6 +923,12 @@
     {
       "Command": "label",
       "Target": "SEGMENT_DONE",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "XType",
+      "Target": "${KEY_ESC}",
       "Value": "",
       "Description": ""
     },
