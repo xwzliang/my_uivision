@@ -465,8 +465,38 @@
             "Description": ""
         },
         {
+            "Command": "if_v2",
+            "Target": "${CARD_INDEX} == 1",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "click",
             "Target": "xpath=//*[@data-e2e='video-player-share']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SHARE_CLICK_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//*[@data-e2e='video-player-share'])[2]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SHARE_CLICK_DONE",
             "Value": "",
             "Description": ""
         },

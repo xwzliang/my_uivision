@@ -34,6 +34,9 @@ def cmd_append(csvfile: Path, desc: str, author: str, posted: str, url: str) -> 
     ensure_csv(csvfile)
     key = normalize(desc) + "||" + normalize(author)
     clean_url = (url or "").strip()
+    if "http" not in clean_url:
+        print("MISSING_HTTP")
+        return 0
     seen_urls = set()
     seen_keys = set()
     with csvfile.open("r", newline="", encoding="utf-8-sig") as f:
