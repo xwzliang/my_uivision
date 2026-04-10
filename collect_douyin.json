@@ -40,6 +40,18 @@
         },
         {
             "Command": "store",
+            "Target": "${OUTDIR}/douyin_key_check.csv",
+            "Value": "KEYCHECKFILE",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "/Users/broliang/git/my_uivision/douyin_csv_helper.py",
+            "Value": "CSVHELPER",
+            "Description": ""
+        },
+        {
+            "Command": "store",
             "Target": "0",
             "Value": "SCROLL_ROUND",
             "Description": ""
@@ -59,7 +71,7 @@
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-lc \"mkdir -p '${OUTDIR}'; if [ ! -f '${CSVFILE}' ]; then printf 'description,author,posted_time,url\\n' > '${CSVFILE}'; fi\"",
+            "Value": "-lc \"mkdir -p '${OUTDIR}'; if [ ! -f '${CSVFILE}' ]; then printf 'description,author,posted_time,url\\n' > '${CSVFILE}'; fi; printf 'NOT_FOUND\\n' > '${KEYCHECKFILE}'\"",
             "Description": ""
         },
         {
@@ -267,6 +279,12 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "NOT_FOUND",
+            "Value": "KEY_EXISTS",
+            "Description": ""
+        },
+        {
             "Command": "storeText",
             "Target": "xpath=((//div[contains(@class,'search-result-card')][.//*[contains(@class,'videoImage')] and .//div[contains(@class,'BjLsdJMi')] and .//span[contains(@class,'WldPmwm5')] and .//span[contains(@class,'dO8W7uoF')]])[${CARD_INDEX}]//div[contains(@class,'BjLsdJMi')])[1]",
             "Value": "CUR_DESC",
@@ -336,6 +354,66 @@
             "Command": "echo",
             "Target": "Matched 集, opening detail popup",
             "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-lc \"python3 '${CSVHELPER}' check '${CSVFILE}' '${CUR_DESC}' '${CUR_AUTHOR}' > '${KEYCHECKFILE}'\"",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "${KEYCHECKFILE}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "KEY_EXISTS",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "KEY_CHECK=${KEY_EXISTS}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${KEY_EXISTS} == 'FOUND'",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Skip: description+author already exists in CSV",
+            "Value": "gray",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${CARD_INDEX}) + 1",
+            "Value": "CARD_INDEX",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "CARD_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
             "Description": ""
         },
         {
@@ -539,7 +617,7 @@
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-lc \"python3 - <<'PY'\nfrom pathlib import Path\nimport csv\ncsvfile = Path(r'''${CSVFILE}''')\ndesc = r'''${CUR_DESC}'''\nauthor = r'''${CUR_AUTHOR}'''\nposted = r'''${CUR_POSTED}'''\nurl = r'''${VIDEO_URL}'''\ncsvfile.parent.mkdir(parents=True, exist_ok=True)\nif not csvfile.exists():\n    with csvfile.open('w', newline='', encoding='utf-8-sig') as f:\n        csv.writer(f).writerow(['description','author','posted_time','url'])\nseen = set()\nwith csvfile.open('r', newline='', encoding='utf-8-sig') as f:\n    for row in csv.DictReader(f):\n        u = row.get('url') or ''\n        seen.add(u)\nif url and url not in seen:\n    with csvfile.open('a', newline='', encoding='utf-8-sig') as f:\n        csv.writer(f).writerow([desc, author, posted, url])\n        print('APPENDED')\nelse:\n    print('DUPLICATE_OR_EMPTY')\nPY\"",
+            "Value": "-lc \"python3 '${CSVHELPER}' append '${CSVFILE}' '${CUR_DESC}' '${CUR_AUTHOR}' '${CUR_POSTED}' '${VIDEO_URL}'\"",
             "Description": ""
         },
         {

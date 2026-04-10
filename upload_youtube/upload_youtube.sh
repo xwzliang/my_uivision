@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+# The image used by uivision should be putted to the images folder like: ~/Desktop/uivision/images/*.png
+
 set -euo pipefail
 
 export LC_CTYPE="en_US.UTF-8"
