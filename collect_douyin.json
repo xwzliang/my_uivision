@@ -63,6 +63,12 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "0",
+            "Value": "LAST_CARD_COUNT",
+            "Description": ""
+        },
+        {
             "Command": "echo",
             "Target": "=== MACRO START ===",
             "Value": "blue",
@@ -196,7 +202,13 @@
         },
         {
             "Command": "store",
-            "Target": "1",
+            "Target": "${LAST_CARD_COUNT}",
+            "Value": "CARD_INDEX",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${CARD_INDEX}) + 1",
             "Value": "CARD_INDEX",
             "Description": ""
         },
@@ -216,6 +228,12 @@
             "Command": "echo",
             "Target": "Finished this batch, scroll for more results.",
             "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${CARD_COUNT}",
+            "Value": "LAST_CARD_COUNT",
             "Description": ""
         },
         {
