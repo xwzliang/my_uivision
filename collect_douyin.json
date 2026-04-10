@@ -1,0 +1,594 @@
+{
+    "Name": "DouyinCollectWithJi_Complete_v5",
+    "CreationDate": "2026-04-10",
+    "Commands": [
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "60",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "120",
+            "Value": "!TIMEOUT_PAGELOAD",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "https://www.douyin.com/jingxuan/search/%23%E5%8E%9F%E5%88%9B%E5%8A%A8%E7%94%BB?aid=f5362bb5-0e9a-4af3-a7fa-0961e050300b&type=general",
+            "Value": "START_URL",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "/Users/broliang/Pictures/douyin_collect",
+            "Value": "OUTDIR",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${OUTDIR}/douyin_videos.csv",
+            "Value": "CSVFILE",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "SCROLL_ROUND",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "50",
+            "Value": "MAX_SCROLL_ROUND",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== MACRO START ===",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-lc \"mkdir -p '${OUTDIR}'; if [ ! -f '${CSVFILE}' ]; then printf 'description,author,posted_time,url\\n' > '${CSVFILE}'; fi\"",
+            "Description": ""
+        },
+        {
+            "Command": "open",
+            "Target": "${START_URL}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "waitForPageToLoad",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "8000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SCROLL_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${SCROLL_ROUND} >= ${MAX_SCROLL_ROUND}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Reached max scroll rounds, stop.",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== SCROLL ROUND ${SCROLL_ROUND} ===",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//div[contains(@class,'search-result-card')][.//*[contains(@class,'videoImage')] and .//div[contains(@class,'BjLsdJMi')] and .//span[contains(@class,'WldPmwm5')] and .//span[contains(@class,'dO8W7uoF')]]",
+            "Value": "CARD_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "VIDEO_CARD_COUNT=${CARD_COUNT}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${CARD_COUNT} < 1",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "No video cards found yet, scroll down.",
+            "Value": "orange",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_END}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SCROLL_ROUND}) + 1",
+            "Value": "SCROLL_ROUND",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SCROLL_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "CARD_INDEX",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "CARD_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${CARD_INDEX} > ${CARD_COUNT}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Finished this batch, scroll for more results.",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_END}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SCROLL_ROUND}) + 1",
+            "Value": "SCROLL_ROUND",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SCROLL_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "--- CARD_INDEX=${CARD_INDEX} ---",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "",
+            "Value": "CUR_DESC",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "",
+            "Value": "CUR_AUTHOR",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "",
+            "Value": "CUR_POSTED",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "",
+            "Value": "VIDEO_URL",
+            "Description": ""
+        },
+        {
+            "Command": "storeText",
+            "Target": "xpath=((//div[contains(@class,'search-result-card')][.//*[contains(@class,'videoImage')] and .//div[contains(@class,'BjLsdJMi')] and .//span[contains(@class,'WldPmwm5')] and .//span[contains(@class,'dO8W7uoF')]])[${CARD_INDEX}]//div[contains(@class,'BjLsdJMi')])[1]",
+            "Value": "CUR_DESC",
+            "Description": ""
+        },
+        {
+            "Command": "storeText",
+            "Target": "xpath=((//div[contains(@class,'search-result-card')][.//*[contains(@class,'videoImage')] and .//div[contains(@class,'BjLsdJMi')] and .//span[contains(@class,'WldPmwm5')] and .//span[contains(@class,'dO8W7uoF')]])[${CARD_INDEX}]//span[contains(@class,'WldPmwm5')])[1]",
+            "Value": "CUR_AUTHOR",
+            "Description": ""
+        },
+        {
+            "Command": "storeText",
+            "Target": "xpath=((//div[contains(@class,'search-result-card')][.//*[contains(@class,'videoImage')] and .//div[contains(@class,'BjLsdJMi')] and .//span[contains(@class,'WldPmwm5')] and .//span[contains(@class,'dO8W7uoF')]])[${CARD_INDEX}]//span[contains(@class,'dO8W7uoF')])[1]",
+            "Value": "CUR_POSTED",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DESC=${CUR_DESC}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "AUTHOR=${CUR_AUTHOR}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "POSTED=${CUR_POSTED}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "if",
+            "Target": "${CUR_DESC}.indexOf('集') == -1",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Skip: description does not contain 集",
+            "Value": "gray",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${CARD_INDEX}) + 1",
+            "Value": "CARD_INDEX",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "CARD_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Matched 集, opening detail popup",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=((//div[contains(@class,'search-result-card')][.//*[contains(@class,'videoImage')] and .//div[contains(@class,'BjLsdJMi')] and .//span[contains(@class,'WldPmwm5')] and .//span[contains(@class,'dO8W7uoF')]])[${CARD_INDEX}]//*[contains(@class,'videoImage')])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XClick",
+            "Target": "xpath=((//div[contains(@class,'search-result-card')][.//*[contains(@class,'videoImage')] and .//div[contains(@class,'BjLsdJMi')] and .//span[contains(@class,'WldPmwm5')] and .//span[contains(@class,'dO8W7uoF')]])[${CARD_INDEX}]//*[contains(@class,'videoImage')])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "verifyElementPresent",
+            "Target": "xpath=//*[@data-e2e='video-player-share']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=//*[@data-e2e='video-player-share']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Trying copy-link button",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "XClick",
+            "Target": "xpath=(//div[contains(@class,'zZsaABqs')]//button[contains(@class,'jOGZuiV9') and contains(@class,'xXJT1nct') and contains(normalize-space(.),'复制链接')])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//button[contains(normalize-space(.),'复制链接')])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "CLIP_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "CLIPBOARD_POLL",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${CLIP_POLL} >= 5",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "CLIPBOARD_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!CLIPBOARD}",
+            "Value": "VIDEO_URL",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "CLIPBOARD_POLL_${CLIP_POLL}=${VIDEO_URL}",
+            "Value": "brown",
+            "Description": ""
+        },
+        {
+            "Command": "if",
+            "Target": "${VIDEO_URL}.indexOf('http') > -1",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "CLIPBOARD_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "800",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${CLIP_POLL}) + 1",
+            "Value": "CLIP_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "CLIPBOARD_POLL",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "CLIPBOARD_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "COPIED_URL=${VIDEO_URL}",
+            "Value": "brown",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-lc \"python3 - <<'PY'\nfrom pathlib import Path\nimport csv\ncsvfile = Path(r'''${CSVFILE}''')\ndesc = r'''${CUR_DESC}'''\nauthor = r'''${CUR_AUTHOR}'''\nposted = r'''${CUR_POSTED}'''\nurl = r'''${VIDEO_URL}'''\ncsvfile.parent.mkdir(parents=True, exist_ok=True)\nif not csvfile.exists():\n    with csvfile.open('w', newline='', encoding='utf-8-sig') as f:\n        csv.writer(f).writerow(['description','author','posted_time','url'])\nseen = set()\nwith csvfile.open('r', newline='', encoding='utf-8-sig') as f:\n    for row in csv.DictReader(f):\n        u = row.get('url') or ''\n        seen.add(u)\nif url and url not in seen:\n    with csvfile.open('a', newline='', encoding='utf-8-sig') as f:\n        csv.writer(f).writerow([desc, author, posted, url])\n        print('APPENDED')\nelse:\n    print('DUPLICATE_OR_EMPTY')\nPY\"",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "800",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing popup with close button",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//div[contains(@class,'pGZF8lyn') and contains(@class,'isDark')])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${CARD_INDEX}) + 1",
+            "Value": "CARD_INDEX",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "CARD_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== MACRO END ===",
+            "Value": "blue",
+            "Description": ""
+        }
+    ]
+}
