@@ -1,6 +1,6 @@
 {
     "Name": "GeminiStoryboard",
-    "CreationDate": "2026-4-2",
+    "CreationDate": "2026-4-11",
     "Commands": [
         {
             "Command": "store",
@@ -513,6 +513,12 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
             "Command": "waitForElementPresent",
             "Target": "xpath=//button[contains(@class,'send-button') and @aria-disabled='false']",
             "Value": "",
@@ -706,25 +712,13 @@
         },
         {
             "Command": "echo",
-            "Target": "Placeholder image wait failed, retrying segment",
-            "Value": "red",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "5000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${SEG_RETRY}) + 1",
-            "Value": "SEG_RETRY",
+            "Target": "Placeholder image wait failed, continuing to final image wait",
+            "Value": "purple",
             "Description": ""
         },
         {
             "Command": "gotoLabel",
-            "Target": "SEGMENT_RETRY_LOOP",
+            "Target": "PLACEHOLDER_WAIT_DONE",
             "Value": "",
             "Description": ""
         },
@@ -741,6 +735,12 @@
             "Description": ""
         },
         {
+            "Command": "label",
+            "Target": "PLACEHOLDER_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "echo",
             "Target": "Waiting for final loaded image",
             "Value": "purple",
@@ -748,31 +748,97 @@
         },
         {
             "Command": "store",
-            "Target": "true",
-            "Value": "!errorignore",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
             "Description": ""
         },
         {
-            "Command": "waitForElementPresent",
+            "Command": "store",
+            "Target": "0",
+            "Value": "FINAL_IMAGE_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "FINAL_IMAGE_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "FINAL_IMAGE_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${FINAL_IMAGE_POLL} >= 200",
+            "Value": "FINAL_IMAGE_WAIT_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
             "Target": "xpath=(//div[contains(@class,'attachment-container') and contains(@class,'generated-images')]//img[contains(@class,'image') and contains(@class,'loaded')])[last()]",
+            "Value": "FINAL_IMAGE_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${FINAL_IMAGE_COUNT} > 0",
             "Value": "",
             "Description": ""
         },
         {
             "Command": "store",
-            "Target": "false",
-            "Value": "!errorignore",
+            "Target": "1",
+            "Value": "FINAL_IMAGE_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "FINAL_IMAGE_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${FINAL_IMAGE_POLL}) + 1",
+            "Value": "FINAL_IMAGE_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "FINAL_IMAGE_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "FINAL_IMAGE_WAIT_DONE",
+            "Value": "",
             "Description": ""
         },
         {
             "Command": "if_v2",
-            "Target": "${!statusOK} == false",
+            "Target": "${FINAL_IMAGE_FOUND} == 0",
             "Value": "",
             "Description": ""
         },
         {
             "Command": "echo",
-            "Target": "Final generated image wait failed, retrying segment",
+            "Target": "Final generated image wait failed after full polling window, retrying segment",
             "Value": "red",
             "Description": ""
         },
@@ -828,6 +894,132 @@
             "Command": "store",
             "Target": "120",
             "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Waiting for download button",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "DLBTN_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "DLBTN_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "DOWNLOAD_BUTTON_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${DLBTN_POLL} >= 200",
+            "Value": "DOWNLOAD_BUTTON_WAIT_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//button[@data-test-id='download-generated-image-button'])[last()]",
+            "Value": "DLBTN_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${DLBTN_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "DLBTN_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "DOWNLOAD_BUTTON_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${DLBTN_POLL}) + 1",
+            "Value": "DLBTN_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "DOWNLOAD_BUTTON_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "DOWNLOAD_BUTTON_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${DLBTN_FOUND} == 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Download button wait failed after full polling window, retrying segment",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SEG_RETRY}) + 1",
+            "Value": "SEG_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SEGMENT_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
             "Description": ""
         },
         {
@@ -942,6 +1134,66 @@
             "Command": "store",
             "Target": "false",
             "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Image downloaded confirmation not found, clicking download again before checking in-progress state",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//button[@data-test-id='download-generated-image-button'])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Retry download click before in-progress check could not be sent",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
             "Description": ""
         },
         {
