@@ -195,6 +195,12 @@
       "Description": ""
     },
     {
+      "Command": "bringBrowserToForeground",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
       "Command": "store",
       "Target": "true",
       "Value": "!errorignore",
@@ -460,6 +466,24 @@
     },
     {
       "Command": "if",
+      "Target": "${PREWAIT_GRID0_TEXT}.lastIndexOf(\"This content may violate\") > -1",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "SEGMENT_GUARDRAIL_SKIPPED",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "if",
       "Target": "${PREWAIT_GRID0_TEXT}.lastIndexOf(\"NEW\") > -1",
       "Value": "",
       "Description": ""
@@ -570,6 +594,24 @@
       "Command": "echo",
       "Target": "GRID0 debug | text=${GRID0_TEXT}",
       "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "if",
+      "Target": "${GRID0_TEXT}.lastIndexOf(\"This content may violate\") > -1",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "SEGMENT_GUARDRAIL_SKIPPED",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
+      "Value": "",
       "Description": ""
     },
     {
@@ -959,6 +1001,24 @@
     {
       "Command": "gotoLabel",
       "Target": "LOOP_START",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "SEGMENT_GUARDRAIL_SKIPPED",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Grid 0 shows a guardrail violation message, skipping segment: ${segment_name}",
+      "Value": "orange",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "SEGMENT_DONE",
       "Value": "",
       "Description": ""
     },

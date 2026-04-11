@@ -891,9 +891,9 @@
             "Description": ""
         },
         {
-            "Command": "XRunAndWait",
-            "Target": "/bin/bash",
-            "Value": "-c \"/usr/bin/osascript -e 'tell application \\\"Google Chrome\\\" to activate' || /usr/bin/osascript -e 'tell application \\\"Safari\\\" to activate'\"",
+            "Command": "bringBrowserToForeground",
+            "Target": "",
+            "Value": "",
             "Description": ""
         },
         {
