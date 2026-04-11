@@ -772,7 +772,7 @@
         },
         {
             "Command": "gotoIf",
-            "Target": "${FINAL_IMAGE_POLL} >= 200",
+            "Target": "${FINAL_IMAGE_POLL} >= 100",
             "Value": "FINAL_IMAGE_WAIT_DONE",
             "Description": ""
         },
@@ -816,6 +816,12 @@
             "Command": "executeScript_Sandbox",
             "Target": "return Number(${FINAL_IMAGE_POLL}) + 1",
             "Value": "FINAL_IMAGE_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "FINAL_IMAGE_POLL=${FINAL_IMAGE_POLL}",
+            "Value": "blue",
             "Description": ""
         },
         {
@@ -879,308 +885,44 @@
             "Description": ""
         },
         {
-            "Command": "store",
-            "Target": "0",
-            "Value": "DL_RETRY",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "0",
-            "Value": "DL_STATUS_POLL",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "120",
-            "Value": "!TIMEOUT_WAIT",
-            "Description": ""
-        },
-        {
             "Command": "echo",
-            "Target": "Waiting for download button",
+            "Target": "Bringing browser to front before OS-level save",
             "Value": "purple",
             "Description": ""
         },
         {
-            "Command": "store",
-            "Target": "300",
-            "Value": "!TIMEOUT_WAIT",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "0",
-            "Value": "DLBTN_FOUND",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "0",
-            "Value": "DLBTN_POLL",
-            "Description": ""
-        },
-        {
-            "Command": "label",
-            "Target": "DOWNLOAD_BUTTON_WAIT_LOOP",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "gotoIf",
-            "Target": "${DLBTN_POLL} >= 200",
-            "Value": "DOWNLOAD_BUTTON_WAIT_DONE",
-            "Description": ""
-        },
-        {
-            "Command": "storeXpathCount",
-            "Target": "xpath=(//button[@data-test-id='download-generated-image-button'])[last()]",
-            "Value": "DLBTN_COUNT",
-            "Description": ""
-        },
-        {
-            "Command": "if_v2",
-            "Target": "${DLBTN_COUNT} > 0",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "1",
-            "Value": "DLBTN_FOUND",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "DOWNLOAD_BUTTON_WAIT_DONE",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "end",
-            "Target": "",
-            "Value": "",
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/usr/bin/osascript -e 'tell application \\\"Google Chrome\\\" to activate' || /usr/bin/osascript -e 'tell application \\\"Safari\\\" to activate'\"",
             "Description": ""
         },
         {
             "Command": "pause",
-            "Target": "1500",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${DLBTN_POLL}) + 1",
-            "Value": "DLBTN_POLL",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "DOWNLOAD_BUTTON_WAIT_LOOP",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "label",
-            "Target": "DOWNLOAD_BUTTON_WAIT_DONE",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "if_v2",
-            "Target": "${DLBTN_FOUND} == 0",
+            "Target": "1000",
             "Value": "",
             "Description": ""
         },
         {
             "Command": "echo",
-            "Target": "Download button wait failed after full polling window, retrying segment",
-            "Value": "red",
+            "Target": "Running OS-level save flow",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/opt/homebrew/bin/cliclick rc:904,694 && sleep 1 && /opt/homebrew/bin/cliclick c:957,725\"",
             "Description": ""
         },
         {
             "Command": "pause",
-            "Target": "5000",
+            "Target": "1000",
             "Value": "",
             "Description": ""
         },
         {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${SEG_RETRY}) + 1",
-            "Value": "SEG_RETRY",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "SEGMENT_RETRY_LOOP",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "end",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "label",
-            "Target": "DOWNLOAD_RETRY_LOOP",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "---- DOWNLOAD RETRY LOOP: DL_RETRY=${DL_RETRY} ----",
-            "Value": "purple",
-            "Description": ""
-        },
-        {
-            "Command": "gotoIf",
-            "Target": "${DL_RETRY} >= 3",
-            "Value": "DOWNLOAD_FAILED",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Clicking download generated image button",
-            "Value": "blue",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "0",
-            "Value": "DL_STATUS_POLL",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "true",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "click",
-            "Target": "xpath=(//button[@data-test-id='download-generated-image-button'])[last()]",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "false",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "if_v2",
-            "Target": "${!statusOK} == false",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Download button not found, preparing retry",
-            "Value": "red",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "DOWNLOAD_PREPARE_RETRY",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "end",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Download click sent, allowing overlays to appear",
-            "Value": "purple",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "1500",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "label",
-            "Target": "DOWNLOAD_STATUS_LOOP",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "gotoIf",
-            "Target": "${DL_STATUS_POLL} >= 20",
-            "Value": "DOWNLOAD_STATUS_TIMEOUT",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "true",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "verifyElementPresent",
-            "Target": "xpath=//div[contains(@class,'cdk-overlay-pane')]//*[contains(normalize-space(.),'Image downloaded')]",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "false",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "if_v2",
-            "Target": "${!statusOK} == false",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Image downloaded confirmation not found, clicking download again before checking in-progress state",
-            "Value": "purple",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "true",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "click",
-            "Target": "xpath=(//button[@data-test-id='download-generated-image-button'])[last()]",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "false",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "if_v2",
-            "Target": "${!statusOK} == false",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Retry download click before in-progress check could not be sent",
-            "Value": "red",
-            "Description": ""
-        },
-        {
-            "Command": "end",
-            "Target": "",
+            "Command": "XType",
+            "Target": "${KEY_CMD+KEY_A}",
             "Value": "",
             "Description": ""
         },
@@ -1191,8 +933,32 @@
             "Description": ""
         },
         {
-            "Command": "end",
-            "Target": "",
+            "Command": "XType",
+            "Target": "1.png",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ENTER}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ENTER}",
             "Value": "",
             "Description": ""
         },
@@ -1204,7 +970,7 @@
         },
         {
             "Command": "echo",
-            "Target": "Image downloaded successfully",
+            "Target": "OS-level save completed",
             "Value": "green",
             "Description": ""
         },
@@ -1221,146 +987,8 @@
             "Description": ""
         },
         {
-            "Command": "store",
-            "Target": "true",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "verifyElementPresent",
-            "Target": "xpath=//*[contains(normalize-space(.),'Downloading full size')]",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "false",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "if_v2",
-            "Target": "${!statusOK} == true",
-            "Value": "",
-            "Description": ""
-        },
-        {
             "Command": "echo",
-            "Target": "Download is still in progress",
-            "Value": "blue",
-            "Description": ""
-        },
-        {
-            "Command": "end",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "1500",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${DL_STATUS_POLL}) + 1",
-            "Value": "DL_STATUS_POLL",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "DOWNLOAD_STATUS_LOOP",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "label",
-            "Target": "DOWNLOAD_STATUS_TIMEOUT",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Image downloaded confirmation timed out, preparing retry",
-            "Value": "red",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "DOWNLOAD_PREPARE_RETRY",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "label",
-            "Target": "DOWNLOAD_PREPARE_RETRY",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${DL_RETRY}) + 1",
-            "Value": "DL_RETRY",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Preparing download retry ${DL_RETRY}/3",
-            "Value": "purple",
-            "Description": ""
-        },
-        {
-            "Command": "gotoIf",
-            "Target": "${DL_RETRY} >= 3",
-            "Value": "DOWNLOAD_FAILED",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "3000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "refresh",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "waitForPageToLoad",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "5000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Page refreshed and stabilized, trying download again",
-            "Value": "purple",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "DOWNLOAD_RETRY_LOOP",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "label",
-            "Target": "DOWNLOAD_FAILED",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Download failed after 3 retries, trying fallback save from rendered image",
+            "Target": "OS-level save failed, trying rendered image fallback",
             "Value": "red",
             "Description": ""
         },
