@@ -1,6 +1,6 @@
 {
   "Name": "SoraVideo",
-  "CreationDate": "2026-4-6",
+  "CreationDate": "2026-4-11",
   "Commands": [
     {
       "Command": "store",
@@ -195,6 +195,12 @@
       "Description": ""
     },
     {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
       "Command": "open",
       "Target": "https://sora.chatgpt.com/drafts",
       "Value": "",
@@ -204,6 +210,12 @@
       "Command": "waitForPageToLoad",
       "Target": "",
       "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
       "Description": ""
     },
     {
@@ -394,13 +406,13 @@
     },
     {
       "Command": "gotoIf",
-      "Target": "${PREWAIT_ROUND} >= 60",
+      "Target": "${PREWAIT_ROUND} >= 100",
       "Value": "PREWAIT_GRID0_DONE",
       "Description": ""
     },
     {
       "Command": "echo",
-      "Target": "Pre-wait grid0 poll round ${PREWAIT_ROUND}/60",
+      "Target": "Pre-wait grid0 poll round ${PREWAIT_ROUND}/100",
       "Value": "purple",
       "Description": ""
     },
