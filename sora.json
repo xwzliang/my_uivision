@@ -801,9 +801,39 @@
       "Description": ""
     },
     {
+      "Command": "pause",
+      "Target": "800",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "2",
+      "Value": "!TIMEOUT_WAIT",
+      "Description": ""
+    },
+    {
+      "Command": "verifyElementPresent",
+      "Target": "xpath=(//div[@role='menuitem'][.//div[normalize-space()='Download']])[1]",
+      "Value": "",
+      "Description": ""
+    },
+    {
       "Command": "store",
       "Target": "false",
       "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "300",
+      "Value": "!TIMEOUT_WAIT",
       "Description": ""
     },
     {
@@ -851,12 +881,6 @@
     {
       "Command": "end",
       "Target": "",
-      "Value": "",
-      "Description": ""
-    },
-    {
-      "Command": "pause",
-      "Target": "800",
       "Value": "",
       "Description": ""
     },
