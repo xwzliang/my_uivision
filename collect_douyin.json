@@ -160,6 +160,30 @@
         },
         {
             "Command": "if_v2",
+            "Target": "${SCROLL_ROUND} > 0 && ${CARD_COUNT} <= ${LAST_CARD_COUNT}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "No new video cards loaded after scroll, stop.",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
             "Target": "${CARD_COUNT} < 1",
             "Value": "",
             "Description": ""
