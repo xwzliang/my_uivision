@@ -46,7 +46,7 @@
         },
         {
             "Command": "store",
-            "Target": "5",
+            "Target": "1",
             "Value": "!csvReadLineNumber",
             "Description": ""
         },
@@ -933,9 +933,9 @@
             "Description": ""
         },
         {
-            "Command": "XType",
-            "Target": "${KEY_END}",
-            "Value": "",
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"for i in 1 2 3 4 5 6 7 8 9 10; do /opt/homebrew/bin/cliclick c:1918,893; sleep 0.2; done\"",
             "Description": ""
         },
         {
