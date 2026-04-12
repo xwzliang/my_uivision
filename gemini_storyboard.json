@@ -1,6 +1,6 @@
 {
     "Name": "GeminiStoryboard",
-    "CreationDate": "2026-4-11",
+    "CreationDate": "2026-4-12",
     "Commands": [
         {
             "Command": "store",
@@ -46,7 +46,7 @@
         },
         {
             "Command": "store",
-            "Target": "1",
+            "Target": "5",
             "Value": "!csvReadLineNumber",
             "Description": ""
         },
@@ -688,6 +688,12 @@
         },
         {
             "Command": "store",
+            "Target": "120",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
             "Target": "true",
             "Value": "!errorignore",
             "Description": ""
@@ -893,6 +899,42 @@
         {
             "Command": "bringBrowserToForeground",
             "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicking blank page to exit focus of text area",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/opt/homebrew/bin/cliclick c:469,824\"",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Scrolling to bottom of page before save",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_END}",
             "Value": "",
             "Description": ""
         },
