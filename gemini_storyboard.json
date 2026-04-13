@@ -1031,12 +1031,42 @@
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-c \"test -f \\\"$HOME/Downloads/1.png\\\"\"",
+            "Value": "-c \"if [ -f \\\"$HOME/Downloads/1.png\\\" ]; then printf 'OK\\n' > /tmp/uivision_download_check.csv; else printf 'MISSING\\n' > /tmp/uivision_download_check.csv; fi\"",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!csvReadLineNumber}",
+            "Value": "CSV_LINE_BACKUP",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/tmp/uivision_download_check.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "DOWNLOAD_CHECK_RESULT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${CSV_LINE_BACKUP}",
+            "Value": "!csvReadLineNumber",
             "Description": ""
         },
         {
             "Command": "if_v2",
-            "Target": "${!statusOK} == true",
+            "Target": "${DOWNLOAD_CHECK_RESULT} == 'OK'",
             "Value": "",
             "Description": ""
         },
