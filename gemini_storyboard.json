@@ -1,6 +1,6 @@
 {
     "Name": "GeminiStoryboard",
-    "CreationDate": "2026-4-12",
+    "CreationDate": "2026-4-13",
     "Commands": [
         {
             "Command": "store",
@@ -24,6 +24,30 @@
             "Command": "echo",
             "Target": "=== MACRO START ===",
             "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "bringBrowserToForeground",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Maximizing chrome window",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_CTRL+KEY_CMD+KEY_F}",
+            "Value": "",
             "Description": ""
         },
         {
@@ -1295,6 +1319,24 @@
         {
             "Command": "label",
             "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Bringing chrome window back to original size",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_CTRL+KEY_CMD+KEY_F}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
             "Value": "",
             "Description": ""
         },
