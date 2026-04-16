@@ -184,7 +184,7 @@
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var p='${RESOLVED_OUTPUT_IMAGE_PATH}'; if(!p){return 'image-output';} var parts=p.split('/').filter(function(x){ return x; }); return parts.length ? parts[parts.length-1] : 'image-output';",
+            "Target": "var p='${RESOLVED_OUTPUT_IMAGE_PATH}'; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'image-output';} var parts=p.split('/').filter(function(x){ return x; }); var name=parts.length ? parts[parts.length-1] : 'image-output'; name=(name||'').replace(/^\\\"+/, '').replace(/\\\"+$/, ''); return name || 'image-output';",
             "Value": "JOB_NAME",
             "Description": ""
         },
@@ -927,8 +927,20 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "0",
+            "Value": "SAVE_ATTEMPT",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SAVE_ATTEMPT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "echo",
-            "Target": "Removing old Downloads/1.png before save",
+            "Target": "Removing old Downloads/1.png before save attempt ${SAVE_ATTEMPT}",
             "Value": "purple",
             "Description": ""
         },
@@ -940,8 +952,20 @@
         },
         {
             "Command": "if_v2",
+            "Target": "${SAVE_ATTEMPT} == 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
             "Target": "${ATTACH_IMAGE_PATH} != ''",
             "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Save attempt ${SAVE_ATTEMPT}: trying coordinates for rows with input image",
+            "Value": "blue",
             "Description": ""
         },
         {
@@ -963,9 +987,69 @@
             "Description": ""
         },
         {
+            "Command": "echo",
+            "Target": "Save attempt ${SAVE_ATTEMPT}: trying coordinates for rows without input image",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
             "Value": "-c \"/opt/homebrew/bin/cliclick rc:1019,517 && sleep 1 && /opt/homebrew/bin/cliclick c:1092,549\"",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SAVE_CLICK_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${ATTACH_IMAGE_PATH} != ''",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Save attempt ${SAVE_ATTEMPT}: trying alternate coordinates for rows without input image",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/opt/homebrew/bin/cliclick rc:1019,517 && sleep 1 && /opt/homebrew/bin/cliclick c:1092,549\"",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SAVE_CLICK_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Save attempt ${SAVE_ATTEMPT}: trying alternate coordinates for rows with input image",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/opt/homebrew/bin/cliclick rc:904,694 && sleep 1 && /opt/homebrew/bin/cliclick c:957,725\"",
             "Description": ""
         },
         {
@@ -1101,6 +1185,48 @@
             "Description": ""
         },
         {
+            "Command": "if_v2",
+            "Target": "${SAVE_ATTEMPT} < 1",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "OS-level save attempt ${SAVE_ATTEMPT} failed, refreshing before alternate save coordinates",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "refresh",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SAVE_ATTEMPT}) + 1",
+            "Value": "SAVE_ATTEMPT",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SAVE_ATTEMPT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "echo",
             "Target": "OS-level save failed, trying rendered image fallback",
             "Value": "red",
@@ -1138,7 +1264,7 @@
         },
         {
             "Command": "echo",
-            "Target": "Fallback save failed because rendered image src was not found",
+            "Target": "Fallback save failed because rendered image src was not found, retrying row",
             "Value": "red",
             "Description": ""
         },
@@ -1149,8 +1275,14 @@
             "Description": ""
         },
         {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ROW_RETRY}) + 1",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
             "Command": "gotoLabel",
-            "Target": "ROW_DONE",
+            "Target": "ROW_RETRY_LOOP",
             "Value": "",
             "Description": ""
         },
@@ -1186,7 +1318,7 @@
         },
         {
             "Command": "echo",
-            "Target": "Fallback rendered image save failed, moving to next row",
+            "Target": "Fallback rendered image save failed, retrying row",
             "Value": "red",
             "Description": ""
         },
@@ -1197,8 +1329,14 @@
             "Description": ""
         },
         {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ROW_RETRY}) + 1",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
             "Command": "gotoLabel",
-            "Target": "ROW_DONE",
+            "Target": "ROW_RETRY_LOOP",
             "Value": "",
             "Description": ""
         },
