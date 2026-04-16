@@ -178,7 +178,7 @@
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var base='${BASE}'; var s='${OUTPUT_IMAGE_PATH}'; if(/^\\//.test(s)){return s;} s=s.replace(/^\\.\\//,''); return base.replace(/\\/$/, '') + '/' + s;",
+            "Target": "var s='${OUTPUT_IMAGE_PATH}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
             "Value": "RESOLVED_OUTPUT_IMAGE_PATH",
             "Description": ""
         },
@@ -939,9 +939,39 @@
             "Description": ""
         },
         {
+            "Command": "if_v2",
+            "Target": "${ATTACH_IMAGE_PATH} != ''",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
             "Value": "-c \"/opt/homebrew/bin/cliclick rc:904,694 && sleep 1 && /opt/homebrew/bin/cliclick c:957,725\"",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SAVE_CLICK_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/opt/homebrew/bin/cliclick rc:1019,517 && sleep 1 && /opt/homebrew/bin/cliclick c:1092,549\"",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SAVE_CLICK_DONE",
+            "Value": "",
             "Description": ""
         },
         {
