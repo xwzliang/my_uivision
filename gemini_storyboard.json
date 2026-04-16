@@ -261,8 +261,20 @@
             "Description": ""
         },
         {
-            "Command": "open",
-            "Target": "https://gemini.google.com/gem/7371988deddc",
+            "Command": "echo",
+            "Target": "Opening a fresh Gemini tab for this segment",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=OPEN",
+            "Value": "https://gemini.google.com/gem/7371988deddc",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
             "Value": "",
             "Description": ""
         },
@@ -300,6 +312,24 @@
             "Command": "echo",
             "Target": "Open attempt ${OPEN_RETRY} did not reach prompt textbox, waiting 10 seconds before reopen",
             "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
             "Description": ""
         },
         {
@@ -747,6 +777,24 @@
             "Description": ""
         },
         {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before segment retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "pause",
             "Target": "5000",
             "Value": "",
@@ -948,6 +996,24 @@
             "Command": "echo",
             "Target": "Final generated image wait failed after full polling window, retrying segment",
             "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before segment retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
             "Description": ""
         },
         {
@@ -1359,6 +1425,24 @@
             "Description": ""
         },
         {
+            "Command": "echo",
+            "Target": "Closing Gemini tab for finished segment",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "gotoLabel",
             "Target": "LOOP_START",
             "Value": "",
@@ -1374,6 +1458,24 @@
             "Command": "echo",
             "Target": "Opening Gemini page failed after 5 attempts, retrying segment",
             "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before segment retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
             "Description": ""
         },
         {
