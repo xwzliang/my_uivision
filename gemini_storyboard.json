@@ -279,6 +279,18 @@
             "Description": ""
         },
         {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "waitForElementPresent",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "store",
             "Target": "false",
             "Value": "!errorignore",
@@ -292,7 +304,7 @@
         },
         {
             "Command": "echo",
-            "Target": "Open attempt ${OPEN_RETRY} timed out, waiting 10 seconds before reopen",
+            "Target": "Open attempt ${OPEN_RETRY} did not reach prompt textbox, waiting 10 seconds before reopen",
             "Value": "red",
             "Description": ""
         },
