@@ -94,7 +94,7 @@
         },
         {
             "Command": "csvRead",
-            "Target": "${BASE}/segments.csv",
+            "Target": "${BASE}/segments_prompts/segments.csv",
             "Value": "",
             "Description": ""
         },
@@ -237,6 +237,24 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "0",
+            "Value": "OPEN_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "OPEN_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${OPEN_RETRY} >= 5",
+            "Value": "OPEN_FAILED",
+            "Description": ""
+        },
+        {
             "Command": "bringBrowserToForeground",
             "Target": "",
             "Value": "",
@@ -249,7 +267,55 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
             "Command": "waitForPageToLoad",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Open attempt ${OPEN_RETRY} timed out, waiting 10 seconds before reopen",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "10000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${OPEN_RETRY}) + 1",
+            "Value": "OPEN_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "OPEN_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
             "Target": "",
             "Value": "",
             "Description": ""
@@ -1258,14 +1324,14 @@
         },
         {
             "Command": "echo",
-            "Target": "Moving Downloads/1.png to ${BASE}/${segment_dir}/output/storyboard.png",
+            "Target": "Moving Downloads/1.png to ${BASE}/segments_prompts/${segment_dir}/output/storyboard.png",
             "Value": "blue",
             "Description": ""
         },
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && segdir='${BASE}/${segment_dir}' && outdir=\\\"$segdir/output\\\" && mkdir -p \\\"$outdir\\\" && mv -f \\\"$HOME/Downloads/1.png\\\" \\\"$outdir/storyboard.png\\\"\"",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && segdir='${BASE}/segments_prompts/${segment_dir}' && outdir=\\\"$segdir/output\\\" && mkdir -p \\\"$outdir\\\" && mv -f \\\"$HOME/Downloads/1.png\\\" \\\"$outdir/storyboard.png\\\"\"",
             "Description": ""
         },
         {
@@ -1295,6 +1361,36 @@
         {
             "Command": "gotoLabel",
             "Target": "LOOP_START",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "OPEN_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opening Gemini page failed after 5 attempts, retrying segment",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "10000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SEG_RETRY}) + 1",
+            "Value": "SEG_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SEGMENT_RETRY_LOOP",
             "Value": "",
             "Description": ""
         },

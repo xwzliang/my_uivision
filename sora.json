@@ -70,7 +70,7 @@
     },
     {
       "Command": "csvRead",
-      "Target": "${BASE}/video_prompts.csv",
+      "Target": "${BASE}/segments_prompts/video_prompts.csv",
       "Value": "",
       "Description": ""
     },
@@ -207,6 +207,24 @@
       "Description": ""
     },
     {
+      "Command": "store",
+      "Target": "0",
+      "Value": "OPEN_RETRY",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "OPEN_RETRY_LOOP",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${OPEN_RETRY} >= 5",
+      "Value": "OPEN_FAILED",
+      "Description": ""
+    },
+    {
       "Command": "open",
       "Target": "https://sora.chatgpt.com/drafts",
       "Value": "",
@@ -222,6 +240,42 @@
       "Command": "store",
       "Target": "false",
       "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "if_v2",
+      "Target": "${!statusOK} == false",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Open attempt ${OPEN_RETRY} timed out, waiting 10 seconds before reopen",
+      "Value": "red",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "10000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Number(${OPEN_RETRY}) + 1",
+      "Value": "OPEN_RETRY",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "OPEN_RETRY_LOOP",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
+      "Value": "",
       "Description": ""
     },
     {
@@ -929,7 +983,7 @@
     {
       "Command": "XRunAndWait",
       "Target": "/bin/bash",
-      "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && segdir='${BASE}/${segment_dir}' && outdir=\\\"$segdir/output\\\" && mkdir -p \\\"$outdir\\\" && marker=/tmp/uiv_sora_downloads_before.txt && start_s=$(date +%s) && deadline=$(( start_s + 20 )) && found='' && while [ $(date +%s) -lt $deadline ]; do found=''; for f in \\\"$HOME\\\"/Downloads/*.mp4; do [ -e \\\"$f\\\" ] || continue; if ! grep -Fqx \\\"$f\\\" \\\"$marker\\\" 2>/dev/null; then found=\\\"$f\\\"; break; fi; m=$(stat -f %m \\\"$f\\\" 2>/dev/null || echo 0); if [ \\\"$m\\\" -ge $start_s ]; then found=\\\"$f\\\"; break; fi; done; if [ -n \\\"$found\\\" ]; then break; fi; sleep 1; done; [ -n \\\"$found\\\" ] || exit 1; mv -f \\\"$found\\\" \\\"$outdir/clip.mp4\\\"\"",
+      "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && segdir='${BASE}/segments_prompts/${segment_dir}' && outdir=\\\"$segdir/output\\\" && mkdir -p \\\"$outdir\\\" && marker=/tmp/uiv_sora_downloads_before.txt && start_s=$(date +%s) && deadline=$(( start_s + 20 )) && found='' && while [ $(date +%s) -lt $deadline ]; do found=''; for f in \\\"$HOME\\\"/Downloads/*.mp4; do [ -e \\\"$f\\\" ] || continue; if ! grep -Fqx \\\"$f\\\" \\\"$marker\\\" 2>/dev/null; then found=\\\"$f\\\"; break; fi; m=$(stat -f %m \\\"$f\\\" 2>/dev/null || echo 0); if [ \\\"$m\\\" -ge $start_s ]; then found=\\\"$f\\\"; break; fi; done; if [ -n \\\"$found\\\" ]; then break; fi; sleep 1; done; [ -n \\\"$found\\\" ] || exit 1; mv -f \\\"$found\\\" \\\"$outdir/clip.mp4\\\"\"",
       "Description": ""
     },
     {
@@ -976,7 +1030,7 @@
     },
     {
       "Command": "echo",
-      "Target": "Video downloaded and moved to ${BASE}/${segment_dir}/output/sora.mp4",
+      "Target": "Video downloaded and moved to ${BASE}/segments_prompts/${segment_dir}/output/sora.mp4",
       "Value": "green",
       "Description": ""
     },
@@ -1043,6 +1097,36 @@
     {
       "Command": "gotoLabel",
       "Target": "SEGMENT_DONE",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "OPEN_FAILED",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Opening Sora page failed after 5 attempts, retrying segment",
+      "Value": "red",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "10000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Number(${SEG_RETRY}) + 1",
+      "Value": "SEG_RETRY",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "SEGMENT_RETRY_LOOP",
       "Value": "",
       "Description": ""
     },
