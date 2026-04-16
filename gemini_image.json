@@ -279,14 +279,8 @@
             "Description": ""
         },
         {
-            "Command": "waitForPageToLoad",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
             "Command": "pause",
-            "Target": "1500",
+            "Target": "3000",
             "Value": "",
             "Description": ""
         },
@@ -342,12 +336,6 @@
             "Command": "echo",
             "Target": "Opened Gemini page",
             "Value": "green",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "5000",
-            "Value": "",
             "Description": ""
         },
         {
