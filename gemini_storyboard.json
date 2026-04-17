@@ -1,6 +1,6 @@
 {
     "Name": "GeminiStoryboard",
-    "CreationDate": "2026-4-13",
+    "CreationDate": "2026-4-17",
     "Commands": [
         {
             "Command": "store",
@@ -291,6 +291,78 @@
             "Description": ""
         },
         {
+            "Command": "echo",
+            "Target": "DEBUG open snapshot before textbox wait",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "DEBUG_XPATH_TEXTBOX_EXACT",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//*[@role='textbox' and @contenteditable='true']",
+            "Value": "DEBUG_XPATH_TEXTBOX_ANY",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//rich-textarea",
+            "Value": "DEBUG_XPATH_RICHTEXTAREA",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//iframe",
+            "Value": "DEBUG_XPATH_IFRAME",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//*[@role='dialog']",
+            "Value": "DEBUG_XPATH_DIALOG",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG xpath counts before wait: exact=${DEBUG_XPATH_TEXTBOX_EXACT}, any=${DEBUG_XPATH_TEXTBOX_ANY}, rich=${DEBUG_XPATH_RICHTEXTAREA}, iframe=${DEBUG_XPATH_IFRAME}, dialog=${DEBUG_XPATH_DIALOG}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${DEBUG_XPATH_TEXTBOX_EXACT} > 0",
+            "Value": "OPEN_TEXTBOX_READY",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "DEBUG_XPATH_TEXTBOX_EXACT_RECHECK",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG xpath recheck after 2s: exact=${DEBUG_XPATH_TEXTBOX_EXACT_RECHECK}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${DEBUG_XPATH_TEXTBOX_EXACT_RECHECK} > 0",
+            "Value": "OPEN_TEXTBOX_READY",
+            "Description": ""
+        },
+        {
             "Command": "waitForElementPresent",
             "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
             "Value": "",
@@ -306,6 +378,108 @@
             "Command": "if_v2",
             "Target": "${!statusOK} == false",
             "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG textbox wait failed; collecting diagnostics",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "DEBUG_FAIL_XPATH_TEXTBOX_EXACT",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//*[@role='textbox' and @contenteditable='true']",
+            "Value": "DEBUG_FAIL_XPATH_TEXTBOX_ANY",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//rich-textarea",
+            "Value": "DEBUG_FAIL_XPATH_RICHTEXTAREA",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//iframe",
+            "Value": "DEBUG_FAIL_XPATH_IFRAME",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//*[@role='dialog']",
+            "Value": "DEBUG_FAIL_XPATH_DIALOG",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG xpath counts after failed wait: exact=${DEBUG_FAIL_XPATH_TEXTBOX_EXACT}, any=${DEBUG_FAIL_XPATH_TEXTBOX_ANY}, rich=${DEBUG_FAIL_XPATH_RICHTEXTAREA}, iframe=${DEBUG_FAIL_XPATH_IFRAME}, dialog=${DEBUG_FAIL_XPATH_DIALOG}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "verifyElementPresent",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG verify exact after failed wait: status=${!statusOK}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "verifyElementPresent",
+            "Target": "xpath=//*[@role='textbox' and @contenteditable='true']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG verify any after failed wait: status=${!statusOK}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${DEBUG_FAIL_XPATH_TEXTBOX_EXACT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeAttribute",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]@contenteditable",
+            "Value": "DEBUG_FAIL_TEXTBOX_CONTENTEDITABLE",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG textbox contenteditable after failed wait: ${DEBUG_FAIL_TEXTBOX_CONTENTEDITABLE}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
             "Description": ""
         },
         {
@@ -354,6 +528,18 @@
             "Command": "end",
             "Target": "",
             "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "OPEN_TEXTBOX_READY",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Textbox already visible by xpath count, skipping waitForElementPresent",
+            "Value": "green",
             "Description": ""
         },
         {
@@ -508,7 +694,7 @@
         },
         {
             "Command": "click",
-            "Target": "xpath=(//*[contains(@aria-label,'Open input area menu') or contains(@aria-label,'Upload') or contains(@aria-label,'Add files') or contains(@aria-label,'Plus') or contains(@aria-label,'Insert')])[1]",
+            "Target": "xpath=(//*[contains(@aria-label,'Open upload file menu') or contains(@aria-label,'Upload') or contains(@aria-label,'Add files') or contains(@aria-label,'Plus') or contains(@aria-label,'Insert')])[1]",
             "Value": "",
             "Description": ""
         },

@@ -472,7 +472,7 @@
         },
         {
             "Command": "click",
-            "Target": "xpath=(//*[contains(@aria-label,'Open input area menu') or contains(@aria-label,'Upload') or contains(@aria-label,'Add files') or contains(@aria-label,'Plus') or contains(@aria-label,'Insert')])[1]",
+            "Target": "xpath=(//*[contains(@aria-label,'Open upload file menu') or contains(@aria-label,'Upload') or contains(@aria-label,'Add files') or contains(@aria-label,'Plus') or contains(@aria-label,'Insert')])[1]",
             "Value": "",
             "Description": ""
         },
