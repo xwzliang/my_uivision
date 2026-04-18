@@ -20,7 +20,7 @@ APPLE_SCRIPT="${APPLE_SCRIPT:-$SCRIPT_DIR/launch_uivision_macro.scpt}"
 LOG_TIMEOUT="${LOG_TIMEOUT:-1200}"
 
 usage() {
-  echo "Usage: $0 [image|storyboard] [start_row]" >&2
+  echo "Usage: $0 [image|storyboard|sora] [start_row]" >&2
   exit 2
 }
 
@@ -36,6 +36,12 @@ case "$MODE" in
     SUCCESS_MARKER="SEGMENT_PROCESS_COMPLETED"
     FAILURE_MARKER="SEGMENT_PROCESS_FAILED"
     SOURCE_RELATIVE_CSV="segments_prompts/segments.csv"
+    ;;
+  sora)
+    MACRO_NAME="SoraVideoSingleRow"
+    SUCCESS_MARKER="SORA_PROCESS_COMPLETED"
+    FAILURE_MARKER="SORA_PROCESS_FAILED"
+    SOURCE_RELATIVE_CSV="segments_prompts/video_prompts.csv"
     ;;
   *)
     usage
