@@ -18,6 +18,7 @@ UIV_HTML="${UIV_HTML:-/Users/broliang/uivision/ui.vision.html}"
 LOG_FILE="${LOG_FILE:-/Users/broliang/uivision/uivision.log}"
 APPLE_SCRIPT="${APPLE_SCRIPT:-$SCRIPT_DIR/launch_uivision_macro.scpt}"
 LOG_TIMEOUT="${LOG_TIMEOUT:-1200}"
+MAX_PASSES="${MAX_PASSES:-5}"
 
 usage() {
   echo "Usage: $0 [image|storyboard|sora] [start_row]" >&2
@@ -89,6 +90,11 @@ if [[ ! "$current_row" =~ ^[1-9][0-9]*$ ]]; then
   current_row="1"
 fi
 
+if [[ ! "$MAX_PASSES" =~ ^[1-9][0-9]*$ ]]; then
+  echo "Invalid MAX_PASSES '$MAX_PASSES'; defaulting to 5" >&2
+  MAX_PASSES="5"
+fi
+
 wait_for_log() {
   local elapsed=0
 
@@ -96,18 +102,18 @@ wait_for_log() {
     elapsed=$((elapsed + 1))
     if (( elapsed > LOG_TIMEOUT )); then
       echo "UI.Vision log stayed empty for more than ${LOG_TIMEOUT}s" >&2
-      exit 1
+      return 1
     fi
     sleep 1
   done
+
+  return 0
 }
 
-advance_to_next_row() {
-  current_row=$((current_row + 1))
-  printf '%s\n' "$current_row" > "$ROW_CONTROL_CSV"
-}
+run_one_row() {
+  local row="$1"
 
-while true; do
+  current_row="$row"
   printf '%s\n' "$current_row" > "$ROW_CONTROL_CSV"
   : > "$LOG_FILE"
 
@@ -119,7 +125,10 @@ while true; do
   osascript -e \
     "tell application \"Google Chrome\" to open location \
 \"$target_url\""
-  wait_for_log
+  if ! wait_for_log; then
+    echo "Row $current_row produced no UI.Vision log output; marking for retry." >&2
+    return 1
+  fi
 
   if grep -q "ROW_CONTROL_READ_FAILED" "$LOG_FILE"; then
     echo "Macro could not read row control CSV: $ROW_CONTROL_CSV" >&2
@@ -128,31 +137,103 @@ while true; do
 
   if grep -q "REQUESTED_ROW_NOT_FOUND row=${current_row}" "$LOG_FILE"; then
     echo "Reached the end of $source_csv at row $current_row"
-    current_row="1"
-    printf '%s\n' "$current_row" > "$ROW_CONTROL_CSV"
-    break
+    return 2
   fi
 
   if grep -q "${FAILURE_MARKER} row=${current_row}" "$LOG_FILE"; then
-    echo "Macro reported a failed run on row $current_row; skipping to next row." >&2
-    advance_to_next_row
-    continue
+    echo "Macro reported a failed run on row $current_row; marking for retry." >&2
+    return 1
   fi
 
   if ! grep -q 'Macro completed' "$LOG_FILE"; then
-    echo "Macro did not complete successfully for row $current_row; skipping to next row. See $LOG_FILE" >&2
-    advance_to_next_row
-    continue
+    echo "Macro did not complete successfully for row $current_row; marking for retry. See $LOG_FILE" >&2
+    return 1
   fi
 
   if ! grep -q "${SUCCESS_MARKER} row=${current_row}" "$LOG_FILE"; then
-    echo "Macro finished without the expected success marker for row $current_row; skipping to next row. See $LOG_FILE" >&2
-    advance_to_next_row
-    continue
+    echo "Macro finished without the expected success marker for row $current_row; marking for retry. See $LOG_FILE" >&2
+    return 1
   fi
 
   echo "Finished row $current_row"
-  advance_to_next_row
+  return 0
+}
+
+declare -a skipped_rows=()
+declare -a next_skipped_rows=()
+pass_number=1
+initial_start_row="$current_row"
+
+while (( pass_number <= MAX_PASSES )); do
+  if (( pass_number == 1 )); then
+    echo "Starting pass $pass_number/$MAX_PASSES from row $initial_start_row"
+    row="$initial_start_row"
+    skipped_rows=()
+
+    while true; do
+      if run_one_row "$row"; then
+        status=0
+      else
+        status=$?
+      fi
+
+      if (( status == 0 )); then
+        row=$((row + 1))
+        continue
+      fi
+
+      if (( status == 2 )); then
+        break
+      fi
+
+      skipped_rows+=("$row")
+      row=$((row + 1))
+    done
+
+    if (( ${#skipped_rows[@]} == 0 )); then
+      break
+    fi
+  else
+    if (( ${#skipped_rows[@]} == 0 )); then
+      break
+    fi
+
+    echo "Starting retry pass $pass_number/$MAX_PASSES for skipped rows: ${skipped_rows[*]}"
+    next_skipped_rows=()
+
+    for row in "${skipped_rows[@]}"; do
+      if run_one_row "$row"; then
+        status=0
+      else
+        status=$?
+      fi
+
+      if (( status == 0 )); then
+        continue
+      fi
+      if (( status == 2 )); then
+        echo "Row $row is now beyond the end of $source_csv; treating it as finished"
+        continue
+      fi
+
+      next_skipped_rows+=("$row")
+    done
+
+    skipped_rows=("${next_skipped_rows[@]}")
+
+    if (( ${#skipped_rows[@]} == 0 )); then
+      break
+    fi
+  fi
+
+  pass_number=$((pass_number + 1))
 done
 
-echo "Loop finished. Next row remains recorded in $ROW_CONTROL_CSV as $current_row"
+current_row="1"
+printf '%s\n' "$current_row" > "$ROW_CONTROL_CSV"
+
+if (( ${#skipped_rows[@]} > 0 )); then
+  echo "Loop finished after $MAX_PASSES passes with unresolved skipped rows: ${skipped_rows[*]}" >&2
+else
+  echo "Loop finished. All targeted rows completed. Next row remains recorded in $ROW_CONTROL_CSV as $current_row"
+fi
