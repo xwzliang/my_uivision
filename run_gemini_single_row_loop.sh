@@ -200,6 +200,23 @@ build_log_file_path() {
     "$LOG_DIR" "$LOG_STEM" "$MODE" "$row" "$pass" "$LOG_EXT"
 }
 
+stop_uivision_instances() {
+  echo "Stopping running UI.Vision tabs before continuing" >&2
+  osascript \
+    -e 'tell application "Google Chrome"' \
+    -e 'repeat with w in windows' \
+    -e 'set tab_list to every tab of w' \
+    -e 'repeat with t in tab_list' \
+    -e 'try' \
+    -e 'set tab_url to URL of t' \
+    -e 'if tab_url contains "ui.vision.html" then close t' \
+    -e 'end try' \
+    -e 'end repeat' \
+    -e 'end repeat' \
+    -e 'end tell' >/dev/null 2>&1 || true
+  sleep 2
+}
+
 wait_for_log() {
   local elapsed=0
 
@@ -235,6 +252,7 @@ run_one_row() {
 \"$target_url\""
   if ! wait_for_log; then
     echo "Row $current_row produced no UI.Vision log output; marking for retry." >&2
+    stop_uivision_instances
     return 1
   fi
 

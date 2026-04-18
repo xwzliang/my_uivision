@@ -10,7 +10,7 @@
     },
     {
       "Command": "store",
-      "Target": "300",
+      "Target": "60",
       "Value": "!TIMEOUT_WAIT",
       "Description": ""
     },
@@ -18,6 +18,12 @@
       "Command": "store",
       "Target": "120",
       "Value": "!TIMEOUT_PAGELOAD",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "900",
+      "Value": "MAX_RUNTIME_SECONDS",
       "Description": ""
     },
     {
@@ -183,6 +189,24 @@
       "Description": ""
     },
     {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Math.floor(Date.now()/1000);",
+      "Value": "RUN_STARTED_AT",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "MAX_RUNTIME_SECONDS=${MAX_RUNTIME_SECONDS}",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "RUN_STARTED_AT=${RUN_STARTED_AT}",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
       "Command": "store",
       "Target": "${!COL1}",
       "Value": "segment_name",
@@ -256,6 +280,36 @@
     },
     {
       "Command": "gotoIf",
+      "Target": "${MAX_RUNTIME_SECONDS} <= 0",
+      "Value": "SEGMENT_RUNTIME_CHECK_DONE",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Math.floor(Date.now()/1000) - Number(${RUN_STARTED_AT});",
+      "Value": "RUNTIME_ELAPSED_SECONDS",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "RUNTIME_ELAPSED_SECONDS=${RUNTIME_ELAPSED_SECONDS}",
+      "Value": "purple",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${RUNTIME_ELAPSED_SECONDS} >= ${MAX_RUNTIME_SECONDS}",
+      "Value": "MACRO_TIMEOUT",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "SEGMENT_RUNTIME_CHECK_DONE",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
       "Target": "${SEG_RETRY} >= 3",
       "Value": "SEGMENT_FAILED",
       "Description": ""
@@ -294,6 +348,30 @@
       "Command": "gotoIf",
       "Target": "${OPEN_RETRY} >= 5",
       "Value": "OPEN_FAILED",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${MAX_RUNTIME_SECONDS} <= 0",
+      "Value": "OPEN_RUNTIME_CHECK_DONE",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Math.floor(Date.now()/1000) - Number(${RUN_STARTED_AT});",
+      "Value": "RUNTIME_ELAPSED_SECONDS",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${RUNTIME_ELAPSED_SECONDS} >= ${MAX_RUNTIME_SECONDS}",
+      "Value": "MACRO_TIMEOUT",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "OPEN_RUNTIME_CHECK_DONE",
+      "Value": "",
       "Description": ""
     },
     {
@@ -543,6 +621,30 @@
       "Description": ""
     },
     {
+      "Command": "gotoIf",
+      "Target": "${MAX_RUNTIME_SECONDS} <= 0",
+      "Value": "PREWAIT_RUNTIME_CHECK_DONE",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Math.floor(Date.now()/1000) - Number(${RUN_STARTED_AT});",
+      "Value": "RUNTIME_ELAPSED_SECONDS",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${RUNTIME_ELAPSED_SECONDS} >= ${MAX_RUNTIME_SECONDS}",
+      "Value": "MACRO_TIMEOUT",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "PREWAIT_RUNTIME_CHECK_DONE",
+      "Value": "",
+      "Description": ""
+    },
+    {
       "Command": "echo",
       "Target": "Pre-wait grid0 poll round ${PREWAIT_ROUND}/100",
       "Value": "purple",
@@ -672,6 +774,30 @@
       "Command": "gotoIf",
       "Target": "${WAIT_ROUND} >= 180",
       "Value": "SEGMENT_WAIT_TIMEOUT",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${MAX_RUNTIME_SECONDS} <= 0",
+      "Value": "WAIT_RUNTIME_CHECK_DONE",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Math.floor(Date.now()/1000) - Number(${RUN_STARTED_AT});",
+      "Value": "RUNTIME_ELAPSED_SECONDS",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${RUNTIME_ELAPSED_SECONDS} >= ${MAX_RUNTIME_SECONDS}",
+      "Value": "MACRO_TIMEOUT",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "WAIT_RUNTIME_CHECK_DONE",
+      "Value": "",
       "Description": ""
     },
     {
@@ -906,6 +1032,30 @@
       "Command": "gotoIf",
       "Target": "${DL_RETRY} >= 3",
       "Value": "DOWNLOAD_FAILED",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${MAX_RUNTIME_SECONDS} <= 0",
+      "Value": "DOWNLOAD_RUNTIME_CHECK_DONE",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript_Sandbox",
+      "Target": "return Math.floor(Date.now()/1000) - Number(${RUN_STARTED_AT});",
+      "Value": "RUNTIME_ELAPSED_SECONDS",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf",
+      "Target": "${RUNTIME_ELAPSED_SECONDS} >= ${MAX_RUNTIME_SECONDS}",
+      "Value": "MACRO_TIMEOUT",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "DOWNLOAD_RUNTIME_CHECK_DONE",
+      "Value": "",
       "Description": ""
     },
     {
@@ -1223,6 +1373,30 @@
     {
       "Command": "echo",
       "Target": "Segment failed after 3 tries, stopping selected row: ${segment_name}",
+      "Value": "red",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "SORA_PROCESS_FAILED row=${TARGET_ROW}",
+      "Value": "red",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "MACRO_END",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "MACRO_TIMEOUT",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Macro runtime limit exceeded after ${RUNTIME_ELAPSED_SECONDS}s (max ${MAX_RUNTIME_SECONDS}s)",
       "Value": "red",
       "Description": ""
     },
