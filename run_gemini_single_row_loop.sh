@@ -8,8 +8,9 @@ export LANG="en_US.UTF-8"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 MODE="${1:-image}"
-START_ROW="${2:-}"
-RUN_MODE="${3:-}"
+ROW_ARG="${2:-}"
+ARG3="${3:-}"
+ARG4="${4:-}"
 
 BASE_CSV="${BASE_CSV:-/Users/broliang/Pictures/short_drama/ui_vision.csv}"
 ROW_CONTROL_CSV="${ROW_CONTROL_CSV:-/Users/broliang/Pictures/short_drama/ui_vision_row_control.csv}"
@@ -24,7 +25,14 @@ RUN_ONE_ROW_ONLY="${RUN_ONE_ROW_ONLY:-0}"
 
 usage() {
   echo "Usage: $0 [image|storyboard|sora] [start_row] [all|single]" >&2
+  echo "       $0 [image|storyboard|sora] [start_row] [end_row] [all|single]" >&2
+  echo "       $0 [image|storyboard|sora] [row1,row2,row3] [all|single]" >&2
+  echo "       $0 [image|storyboard|sora] [start-end] [all|single]" >&2
   exit 2
+}
+
+is_positive_int() {
+  [[ "${1:-}" =~ ^[1-9][0-9]*$ ]]
 }
 
 case "$MODE" in
@@ -89,15 +97,70 @@ else
   LOG_EXT=""
 fi
 
-if [[ -n "$START_ROW" ]]; then
-  current_row="$START_ROW"
-elif [[ -f "$ROW_CONTROL_CSV" ]]; then
-  current_row="$(tr -d '\r\n' < "$ROW_CONTROL_CSV")"
-else
-  current_row="1"
+declare -a target_rows=()
+has_explicit_row_targets=0
+RUN_MODE=""
+
+if [[ -n "$ROW_ARG" ]]; then
+  if [[ "$ROW_ARG" == *,* ]]; then
+    IFS=',' read -r -a raw_rows <<< "$ROW_ARG"
+    for row_item in "${raw_rows[@]}"; do
+      row_item="${row_item//[[:space:]]/}"
+      if ! is_positive_int "$row_item"; then
+        usage
+      fi
+      target_rows+=("$row_item")
+    done
+    has_explicit_row_targets=1
+    RUN_MODE="$ARG3"
+  elif [[ "$ROW_ARG" =~ ^([1-9][0-9]*)-([1-9][0-9]*)$ ]]; then
+    range_start="${BASH_REMATCH[1]}"
+    range_end="${BASH_REMATCH[2]}"
+    if (( range_start > range_end )); then
+      echo "Invalid range: $ROW_ARG" >&2
+      exit 2
+    fi
+    for ((row=range_start; row<=range_end; row++)); do
+      target_rows+=("$row")
+    done
+    has_explicit_row_targets=1
+    RUN_MODE="$ARG3"
+  elif is_positive_int "$ROW_ARG"; then
+    if [[ -n "$ARG3" ]] && is_positive_int "$ARG3"; then
+      range_start="$ROW_ARG"
+      range_end="$ARG3"
+      if (( range_start > range_end )); then
+        echo "Invalid range: $ROW_ARG $ARG3" >&2
+        exit 2
+      fi
+      for ((row=range_start; row<=range_end; row++)); do
+        target_rows+=("$row")
+      done
+      has_explicit_row_targets=1
+      RUN_MODE="$ARG4"
+    else
+      current_row="$ROW_ARG"
+      RUN_MODE="$ARG3"
+    fi
+  else
+    usage
+  fi
 fi
 
-if [[ ! "$current_row" =~ ^[1-9][0-9]*$ ]]; then
+if (( has_explicit_row_targets == 1 )); then
+  if (( ${#target_rows[@]} == 0 )); then
+    usage
+  fi
+  current_row="${target_rows[0]}"
+elif [[ -z "${current_row:-}" ]]; then
+  if [[ -f "$ROW_CONTROL_CSV" ]]; then
+    current_row="$(tr -d '\r\n' < "$ROW_CONTROL_CSV")"
+  else
+    current_row="1"
+  fi
+fi
+
+if ! is_positive_int "$current_row"; then
   echo "Invalid start row '$current_row'; defaulting to 1" >&2
   current_row="1"
 fi
@@ -124,6 +187,10 @@ fi
 if [[ ! "$RUN_ONE_ROW_ONLY" =~ ^[01]$ ]]; then
   echo "Invalid RUN_ONE_ROW_ONLY '$RUN_ONE_ROW_ONLY'; defaulting to 0" >&2
   RUN_ONE_ROW_ONLY=0
+fi
+
+if (( has_explicit_row_targets == 1 )) && (( RUN_ONE_ROW_ONLY == 1 )); then
+  target_rows=("${target_rows[0]}")
 fi
 
 build_log_file_path() {
@@ -207,40 +274,68 @@ initial_start_row="$current_row"
 
 while (( pass_number <= MAX_PASSES )); do
   if (( pass_number == 1 )); then
-    if (( RUN_ONE_ROW_ONLY == 1 )); then
-      echo "Starting single-row pass $pass_number/$MAX_PASSES for row $initial_start_row"
-      row="$initial_start_row"
-    else
-      echo "Starting pass $pass_number/$MAX_PASSES from row $initial_start_row"
-      row="$initial_start_row"
-    fi
     skipped_rows=()
 
-    while true; do
-      if run_one_row "$row" "$pass_number"; then
-        status=0
+    if (( has_explicit_row_targets == 1 )); then
+      if (( ${#target_rows[@]} == 1 )); then
+        echo "Starting targeted pass $pass_number/$MAX_PASSES for row ${target_rows[0]}"
       else
-        status=$?
+        echo "Starting targeted pass $pass_number/$MAX_PASSES for rows: ${target_rows[*]}"
       fi
 
-      if (( status == 0 )); then
+      for row in "${target_rows[@]}"; do
+        if run_one_row "$row" "$pass_number"; then
+          status=0
+        else
+          status=$?
+        fi
+
+        if (( status == 0 )); then
+          continue
+        fi
+
+        if (( status == 2 )); then
+          echo "Row $row is beyond the end of $source_csv; treating it as finished"
+          continue
+        fi
+
+        skipped_rows+=("$row")
+      done
+    else
+      if (( RUN_ONE_ROW_ONLY == 1 )); then
+        echo "Starting single-row pass $pass_number/$MAX_PASSES for row $initial_start_row"
+        row="$initial_start_row"
+      else
+        echo "Starting pass $pass_number/$MAX_PASSES from row $initial_start_row"
+        row="$initial_start_row"
+      fi
+
+      while true; do
+        if run_one_row "$row" "$pass_number"; then
+          status=0
+        else
+          status=$?
+        fi
+
+        if (( status == 0 )); then
+          if (( RUN_ONE_ROW_ONLY == 1 )); then
+            break
+          fi
+          row=$((row + 1))
+          continue
+        fi
+
+        if (( status == 2 )); then
+          break
+        fi
+
+        skipped_rows+=("$row")
         if (( RUN_ONE_ROW_ONLY == 1 )); then
           break
         fi
         row=$((row + 1))
-        continue
-      fi
-
-      if (( status == 2 )); then
-        break
-      fi
-
-      skipped_rows+=("$row")
-      if (( RUN_ONE_ROW_ONLY == 1 )); then
-        break
-      fi
-      row=$((row + 1))
-    done
+      done
+    fi
 
     if (( ${#skipped_rows[@]} == 0 )); then
       break
