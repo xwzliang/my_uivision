@@ -117,6 +117,8 @@ while true; do
 
   if grep -q "REQUESTED_ROW_NOT_FOUND row=${current_row}" "$LOG_FILE"; then
     echo "Reached the end of $source_csv at row $current_row"
+    current_row="1"
+    printf '%s\n' "$current_row" > "$ROW_CONTROL_CSV"
     break
   fi
 
