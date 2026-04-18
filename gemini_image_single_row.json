@@ -1,0 +1,1794 @@
+{
+    "Name": "GeminiImageSingleRow",
+    "CreationDate": "2026-4-18",
+    "Commands": [
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "120",
+            "Value": "!TIMEOUT_PAGELOAD",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== MACRO START ===",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "bringBrowserToForeground",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Maximizing chrome window",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_CTRL+KEY_CMD+KEY_F}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/Users/broliang/Pictures/short_drama/ui_vision.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "BASE",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "BASE=${BASE}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/Users/broliang/Pictures/short_drama/ui_vision_row_control.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!csvReadStatus} != 'OK'",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ROW_CONTROL_READ_FAILED",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "TARGET_ROW_RAW",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s=('${TARGET_ROW_RAW}'||'').trim(); return /^[1-9][0-9]*$/.test(s) ? s : '1';",
+            "Value": "TARGET_ROW",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "TARGET_ROW=${TARGET_ROW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${TARGET_ROW}",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "LOOP_START",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== READING NEXT IMAGE PROMPT ROW ===",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "${BASE}/image_prompts.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!csvReadStatus} != 'OK'",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "REQUESTED_ROW_NOT_FOUND row=${TARGET_ROW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Processing selected image row ${TARGET_ROW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "prompt_text",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL2}",
+            "Value": "attach_image_path_raw",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL3}",
+            "Value": "output_image_path_raw",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${prompt_text}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Value": "PROMPT",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${attach_image_path_raw}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Value": "ATTACH_IMAGE_PATH",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${output_image_path_raw}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Value": "OUTPUT_IMAGE_PATH",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${ATTACH_IMAGE_PATH}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Value": "RESOLVED_ATTACH_IMAGE_PATH",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${OUTPUT_IMAGE_PATH}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Value": "RESOLVED_OUTPUT_IMAGE_PATH",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var p='${RESOLVED_OUTPUT_IMAGE_PATH}'; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'image-output';} var parts=p.split('/').filter(function(x){ return x; }); var name=parts.length ? parts[parts.length-1] : 'image-output'; name=(name||'').replace(/^\\\"+/, '').replace(/\\\"+$/, ''); return name || 'image-output';",
+            "Value": "JOB_NAME",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "PROMPT=${PROMPT}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ATTACH_IMAGE_PATH=${ATTACH_IMAGE_PATH}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "RESOLVED_ATTACH_IMAGE_PATH=${RESOLVED_ATTACH_IMAGE_PATH}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "RESOLVED_OUTPUT_IMAGE_PATH=${RESOLVED_OUTPUT_IMAGE_PATH}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "==== IMAGE TRY ${ROW_RETRY}/3 : ${JOB_NAME} ====",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${ROW_RETRY} >= 3",
+            "Value": "ROW_FAILED",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "OPEN_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "OPEN_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${OPEN_RETRY} >= 5",
+            "Value": "OPEN_FAILED",
+            "Description": ""
+        },
+        {
+            "Command": "bringBrowserToForeground",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opening a fresh Gemini tab for this image row",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=OPEN",
+            "Value": "https://gemini.google.com/gem/f1bebc7ede46",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "waitForElementPresent",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Open attempt ${OPEN_RETRY} did not reach prompt textbox, waiting 10 seconds before reopen",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "10000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${OPEN_RETRY}) + 1",
+            "Value": "OPEN_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "OPEN_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opened Gemini page",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicking model switcher",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//button[contains(.,'Fast') or contains(.,'Thinking') or contains(.,'Pro') or contains(@aria-label,'model') or contains(@aria-label,'Model')])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicked model switcher",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Selecting Pro",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "css=button[data-test-id='bard-mode-option-pro']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Selected Pro",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1800",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicking prompt textbox",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "400",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Pasting prompt text",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "editContent",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "${PROMPT}",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Prompt pasted",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${ATTACH_IMAGE_PATH} != ''",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opening input area menu for optional image attach",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//*[contains(@aria-label,'Open upload file menu') or contains(@aria-label,'Upload') or contains(@aria-label,'Add files') or contains(@aria-label,'Plus') or contains(@aria-label,'Insert')])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opened input area menu",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicking local uploader button for ${RESOLVED_ATTACH_IMAGE_PATH}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XClick",
+            "Target": "xpath=//button[@data-test-id='local-images-files-uploader-button']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicked local uploader button",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1800",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Typing file path into last file input: ${RESOLVED_ATTACH_IMAGE_PATH}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "type",
+            "Target": "xpath=(//input[@type='file'])[last()]",
+            "Value": "${RESOLVED_ATTACH_IMAGE_PATH}",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Typed file path into file input",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Sending ESC to close picker",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ESC}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ESC sent",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Optional image attach finished",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "No attach image path provided for this row",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Final wait for send button before send step",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "waitForElementPresent",
+            "Target": "xpath=//button[contains(@class,'send-button') and @aria-disabled='false']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Final send button ready",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//button[contains(@class,'send-button') and @aria-disabled='false'])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicked send button",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Waiting for thinking spinner",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "SPINNER_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "SPINNER_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SPINNER_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${SPINNER_POLL} >= 40",
+            "Value": "SPINNER_WAIT_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//div[contains(@class,'bard-avatar') and contains(@class,'thinking')])[last()]",
+            "Value": "SPINNER_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${SPINNER_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "SPINNER_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SPINNER_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SPINNER_POLL}) + 1",
+            "Value": "SPINNER_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SPINNER_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SPINNER_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${SPINNER_FOUND} == 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Thinking spinner did not appear within 60 seconds, retrying row",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before row retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ROW_RETRY}) + 1",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Thinking spinner appeared",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Waiting for placeholder generated image",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "120",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "waitForElementPresent",
+            "Target": "xpath=(//div[contains(@class,'attachment-container') and contains(@class,'generated-images')]//generated-image//div[contains(@class,'loader') and contains(@class,'animate')])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Placeholder image wait failed, continuing to final image wait",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "PLACEHOLDER_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Placeholder generated image appeared",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "PLACEHOLDER_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Waiting for final loaded image",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "FINAL_IMAGE_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "FINAL_IMAGE_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "FINAL_IMAGE_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${FINAL_IMAGE_POLL} >= 100",
+            "Value": "FINAL_IMAGE_WAIT_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//div[contains(@class,'attachment-container') and contains(@class,'generated-images')]//img[contains(@class,'image') and contains(@class,'loaded')])[last()]",
+            "Value": "FINAL_IMAGE_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${FINAL_IMAGE_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "FINAL_IMAGE_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "FINAL_IMAGE_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${FINAL_IMAGE_POLL}) + 1",
+            "Value": "FINAL_IMAGE_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "FINAL_IMAGE_POLL=${FINAL_IMAGE_POLL}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "FINAL_IMAGE_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "FINAL_IMAGE_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${FINAL_IMAGE_FOUND} == 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Final generated image wait failed after full polling window, retrying row",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before row retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ROW_RETRY}) + 1",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Final generated image loaded",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Bringing browser to front before OS-level save",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "bringBrowserToForeground",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicking blank page to exit focus of text area",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/opt/homebrew/bin/cliclick c:469,824\"",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Scrolling to bottom of page before save",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"for i in 1 2 3 4 5 6 7 8 9 10; do /opt/homebrew/bin/cliclick c:1918,893; sleep 0.2; done\"",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Running OS-level save flow",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "SAVE_ATTEMPT",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SAVE_ATTEMPT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Removing old Downloads/1.png before save attempt ${SAVE_ATTEMPT}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"rm -f \\\"$HOME/Downloads/1.png\\\"\"",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${SAVE_ATTEMPT} == 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${ATTACH_IMAGE_PATH} != ''",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Save attempt ${SAVE_ATTEMPT}: trying coordinates for rows with input image",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/opt/homebrew/bin/cliclick rc:904,694 && sleep 1 && /opt/homebrew/bin/cliclick c:957,725\"",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SAVE_CLICK_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Save attempt ${SAVE_ATTEMPT}: trying coordinates for rows without input image",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/opt/homebrew/bin/cliclick rc:1019,517 && sleep 1 && /opt/homebrew/bin/cliclick c:1092,549\"",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SAVE_CLICK_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${ATTACH_IMAGE_PATH} != ''",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Save attempt ${SAVE_ATTEMPT}: trying alternate coordinates for rows without input image",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/opt/homebrew/bin/cliclick rc:1019,517 && sleep 1 && /opt/homebrew/bin/cliclick c:1092,549\"",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SAVE_CLICK_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Save attempt ${SAVE_ATTEMPT}: trying alternate coordinates for rows with input image",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/opt/homebrew/bin/cliclick rc:904,694 && sleep 1 && /opt/homebrew/bin/cliclick c:957,725\"",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SAVE_CLICK_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_CMD+KEY_A}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "1.png",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ENTER}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ENTER}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"if [ -f \\\"$HOME/Downloads/1.png\\\" ]; then printf 'OK\\n' > /tmp/uivision_download_check.csv; else printf 'MISSING\\n' > /tmp/uivision_download_check.csv; fi\"",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!csvReadLineNumber}",
+            "Value": "CSV_LINE_BACKUP",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/tmp/uivision_download_check.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "DOWNLOAD_CHECK_RESULT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${CSV_LINE_BACKUP}",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "DOWNLOAD_NEEDS_MOVE",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${DOWNLOAD_CHECK_RESULT} == 'OK'",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "DOWNLOAD_NEEDS_MOVE",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "OS-level save completed",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "DOWNLOAD_SUCCESS",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${SAVE_ATTEMPT} < 1",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "OS-level save attempt ${SAVE_ATTEMPT} failed, refreshing before alternate save coordinates",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "refresh",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SAVE_ATTEMPT}) + 1",
+            "Value": "SAVE_ATTEMPT",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SAVE_ATTEMPT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "OS-level save failed, trying rendered image fallback",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "storeAttribute",
+            "Target": "xpath=(//div[contains(@class,'attachment-container') and contains(@class,'generated-images')]//img[contains(@class,'image') and contains(@class,'loaded')])[last()]@src",
+            "Value": "RENDERED_IMAGE_SRC",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Fallback save failed because rendered image src was not found, retrying row",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before row retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ROW_RETRY}) + 1",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Fallback rendered image src captured",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Saving rendered image fallback directly to ${RESOLVED_OUTPUT_IMAGE_PATH}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && url='${RENDERED_IMAGE_SRC}' && out='${RESOLVED_OUTPUT_IMAGE_PATH}' && outdir=\\\"$(dirname \\\"$out\\\")\\\" && mkdir -p \\\"$outdir\\\" && rm -f \\\"$out\\\" && curl -L --fail --silent --show-error \\\"$url\\\" -o \\\"$out\\\"\"",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Fallback rendered image save failed, retrying row",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before row retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ROW_RETRY}) + 1",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Fallback rendered image save succeeded",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "DOWNLOAD_SUCCESS",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "DOWNLOAD_SUCCESS",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${DOWNLOAD_NEEDS_MOVE} == 1",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Moving Downloads/1.png to ${RESOLVED_OUTPUT_IMAGE_PATH}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && out='${RESOLVED_OUTPUT_IMAGE_PATH}' && outdir=\\\"$(dirname \\\"$out\\\")\\\" && mkdir -p \\\"$outdir\\\" && mv -f \\\"$HOME/Downloads/1.png\\\" \\\"$out\\\"\"",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Move step finished",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Image already saved to final output path",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "ROW_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== IMAGE FINISHED: ${JOB_NAME} ===",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ROW_PROCESS_COMPLETED row=${TARGET_ROW}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing Gemini tab for finished image row",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "OPEN_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opening Gemini page failed after 5 attempts, retrying row",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before row retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "10000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ROW_RETRY}) + 1",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "ROW_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Row failed after 3 tries, stopping selected row: ${JOB_NAME}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ROW_PROCESS_FAILED row=${TARGET_ROW}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Bringing chrome window back to original size",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_CTRL+KEY_CMD+KEY_F}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== MACRO END ===",
+            "Value": "blue",
+            "Description": ""
+        }
+    ]
+}

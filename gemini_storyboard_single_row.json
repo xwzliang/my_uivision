@@ -1,0 +1,1806 @@
+{
+    "Name": "GeminiStoryboardSingleRow",
+    "CreationDate": "2026-4-18",
+    "Commands": [
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "120",
+            "Value": "!TIMEOUT_PAGELOAD",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== MACRO START ===",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "bringBrowserToForeground",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Maximizing chrome window",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_CTRL+KEY_CMD+KEY_F}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/Users/broliang/Pictures/short_drama/ui_vision.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "BASE",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "BASE=${BASE}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/Users/broliang/Pictures/short_drama/ui_vision_row_control.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!csvReadStatus} != 'OK'",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ROW_CONTROL_READ_FAILED",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "TARGET_ROW_RAW",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s=('${TARGET_ROW_RAW}'||'').trim(); return /^[1-9][0-9]*$/.test(s) ? s : '1';",
+            "Value": "TARGET_ROW",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "TARGET_ROW=${TARGET_ROW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${TARGET_ROW}",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "LOOP_START",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== READING NEXT SEGMENT ROW ===",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "${BASE}/segments_prompts/segments.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!csvReadStatus} != 'OK'",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "REQUESTED_ROW_NOT_FOUND row=${TARGET_ROW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Processing selected segment row ${TARGET_ROW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "segment_name",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL2}",
+            "Value": "segment_dir",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL3}",
+            "Value": "prompt_text",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL4}",
+            "Value": "png_paths_raw",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${prompt_text}",
+            "Value": "PROMPT",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "segment_name=${segment_name}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "segment_dir=${segment_dir}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "png_paths_raw=${png_paths_raw}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${png_paths_raw}'; s=s.trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); return s;",
+            "Value": "png_paths",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "png_paths=${png_paths}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${png_paths}'; if (!s) { return '0'; } var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return String(arr.length);",
+            "Value": "PNGCOUNT",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "PNGCOUNT=${PNGCOUNT}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "SEG_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SEGMENT_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "==== SEGMENT TRY ${SEG_RETRY}/3 : ${segment_name} ====",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${SEG_RETRY} >= 3",
+            "Value": "SEGMENT_FAILED",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "OPEN_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "OPEN_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${OPEN_RETRY} >= 5",
+            "Value": "OPEN_FAILED",
+            "Description": ""
+        },
+        {
+            "Command": "bringBrowserToForeground",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opening a fresh Gemini tab for this segment",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=OPEN",
+            "Value": "https://gemini.google.com/gem/7371988deddc",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG open snapshot before textbox wait",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "DEBUG_XPATH_TEXTBOX_EXACT",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//*[@role='textbox' and @contenteditable='true']",
+            "Value": "DEBUG_XPATH_TEXTBOX_ANY",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//rich-textarea",
+            "Value": "DEBUG_XPATH_RICHTEXTAREA",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//iframe",
+            "Value": "DEBUG_XPATH_IFRAME",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//*[@role='dialog']",
+            "Value": "DEBUG_XPATH_DIALOG",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG xpath counts before wait: exact=${DEBUG_XPATH_TEXTBOX_EXACT}, any=${DEBUG_XPATH_TEXTBOX_ANY}, rich=${DEBUG_XPATH_RICHTEXTAREA}, iframe=${DEBUG_XPATH_IFRAME}, dialog=${DEBUG_XPATH_DIALOG}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${DEBUG_XPATH_TEXTBOX_EXACT} > 0",
+            "Value": "OPEN_TEXTBOX_READY",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "DEBUG_XPATH_TEXTBOX_EXACT_RECHECK",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG xpath recheck after 2s: exact=${DEBUG_XPATH_TEXTBOX_EXACT_RECHECK}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${DEBUG_XPATH_TEXTBOX_EXACT_RECHECK} > 0",
+            "Value": "OPEN_TEXTBOX_READY",
+            "Description": ""
+        },
+        {
+            "Command": "waitForElementPresent",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG textbox wait failed; collecting diagnostics",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "DEBUG_FAIL_XPATH_TEXTBOX_EXACT",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//*[@role='textbox' and @contenteditable='true']",
+            "Value": "DEBUG_FAIL_XPATH_TEXTBOX_ANY",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//rich-textarea",
+            "Value": "DEBUG_FAIL_XPATH_RICHTEXTAREA",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//iframe",
+            "Value": "DEBUG_FAIL_XPATH_IFRAME",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//*[@role='dialog']",
+            "Value": "DEBUG_FAIL_XPATH_DIALOG",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG xpath counts after failed wait: exact=${DEBUG_FAIL_XPATH_TEXTBOX_EXACT}, any=${DEBUG_FAIL_XPATH_TEXTBOX_ANY}, rich=${DEBUG_FAIL_XPATH_RICHTEXTAREA}, iframe=${DEBUG_FAIL_XPATH_IFRAME}, dialog=${DEBUG_FAIL_XPATH_DIALOG}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "verifyElementPresent",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG verify exact after failed wait: status=${!statusOK}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "verifyElementPresent",
+            "Target": "xpath=//*[@role='textbox' and @contenteditable='true']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG verify any after failed wait: status=${!statusOK}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${DEBUG_FAIL_XPATH_TEXTBOX_EXACT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeAttribute",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]@contenteditable",
+            "Value": "DEBUG_FAIL_TEXTBOX_CONTENTEDITABLE",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DEBUG textbox contenteditable after failed wait: ${DEBUG_FAIL_TEXTBOX_CONTENTEDITABLE}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Open attempt ${OPEN_RETRY} did not reach prompt textbox, waiting 10 seconds before reopen",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "10000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${OPEN_RETRY}) + 1",
+            "Value": "OPEN_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "OPEN_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "OPEN_TEXTBOX_READY",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Textbox already visible by xpath count, skipping waitForElementPresent",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opened Gemini page",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicking model switcher",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//button[contains(.,'Fast') or contains(.,'Thinking') or contains(.,'Pro') or contains(@aria-label,'model') or contains(@aria-label,'Model')])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicked model switcher",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Selecting Pro",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "css=button[data-test-id='bard-mode-option-pro']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Selected Pro",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1800",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicking prompt textbox",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "400",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Pasting prompt text",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "editContent",
+            "Target": "xpath=(//rich-textarea//*[@role='textbox' and @contenteditable='true'] | //*[@role='textbox' and @contenteditable='true'])[last()]",
+            "Value": "${PROMPT}",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Prompt pasted",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "I",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "PNG_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "---- PNG LOOP START: I=${I}, PNGCOUNT=${PNGCOUNT} ----",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${I} >= ${PNGCOUNT}",
+            "Value": "PNG_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${png_paths}'; var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return arr[${I}] || '';",
+            "Value": "PNGFILE_RAW",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var p='${PNGFILE_RAW}'; p=p.trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); p=p.trim(); return p;",
+            "Value": "PNGFILE",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "PNGFILE_RAW=${PNGFILE_RAW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "PNGFILE=${PNGFILE}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opening input area menu for image ${I}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//*[contains(@aria-label,'Open upload file menu') or contains(@aria-label,'Upload') or contains(@aria-label,'Add files') or contains(@aria-label,'Plus') or contains(@aria-label,'Insert')])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opened input area menu",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicking local uploader button for ${PNGFILE}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XClick",
+            "Target": "xpath=//button[@data-test-id='local-images-files-uploader-button']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicked local uploader button",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1800",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Typing file path into last file input: ${PNGFILE}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "type",
+            "Target": "xpath=(//input[@type='file'])[last()]",
+            "Value": "${PNGFILE}",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Typed file path into file input",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Sending ESC to close picker",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ESC}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ESC sent",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Finished upload cycle for image index ${I}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${I}) + 1",
+            "Value": "I",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Incremented I to ${I}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "PNG_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "PNG_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "All image uploads attempted for ${segment_name}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Final wait for send button before send step",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "waitForElementPresent",
+            "Target": "xpath=//button[contains(@class,'send-button') and @aria-disabled='false']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Final send button ready",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//button[contains(@class,'send-button') and @aria-disabled='false'])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicked send button",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Waiting for thinking spinner",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "SPINNER_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "SPINNER_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SPINNER_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${SPINNER_POLL} >= 40",
+            "Value": "SPINNER_WAIT_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//div[contains(@class,'bard-avatar') and contains(@class,'thinking')])[last()]",
+            "Value": "SPINNER_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${SPINNER_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "SPINNER_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SPINNER_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SPINNER_POLL}) + 1",
+            "Value": "SPINNER_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SPINNER_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SPINNER_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${SPINNER_FOUND} == 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Thinking spinner did not appear within 60 seconds, retrying segment",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before segment retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SEG_RETRY}) + 1",
+            "Value": "SEG_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SEGMENT_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Thinking spinner appeared",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Waiting for placeholder generated image",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "120",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "waitForElementPresent",
+            "Target": "xpath=(//div[contains(@class,'attachment-container') and contains(@class,'generated-images')]//generated-image//div[contains(@class,'loader') and contains(@class,'animate')])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Placeholder image wait failed, continuing to final image wait",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "PLACEHOLDER_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Placeholder generated image appeared",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "PLACEHOLDER_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Waiting for final loaded image",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "FINAL_IMAGE_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "FINAL_IMAGE_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "FINAL_IMAGE_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${FINAL_IMAGE_POLL} >= 100",
+            "Value": "FINAL_IMAGE_WAIT_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//div[contains(@class,'attachment-container') and contains(@class,'generated-images')]//img[contains(@class,'image') and contains(@class,'loaded')])[last()]",
+            "Value": "FINAL_IMAGE_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${FINAL_IMAGE_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "FINAL_IMAGE_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "FINAL_IMAGE_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${FINAL_IMAGE_POLL}) + 1",
+            "Value": "FINAL_IMAGE_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "FINAL_IMAGE_POLL=${FINAL_IMAGE_POLL}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "FINAL_IMAGE_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "FINAL_IMAGE_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${FINAL_IMAGE_FOUND} == 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Final generated image wait failed after full polling window, retrying segment",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before segment retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SEG_RETRY}) + 1",
+            "Value": "SEG_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SEGMENT_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Final generated image loaded",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Bringing browser to front before OS-level save",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "bringBrowserToForeground",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicking blank page to exit focus of text area",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/opt/homebrew/bin/cliclick c:469,824\"",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Scrolling to bottom of page before save",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"for i in 1 2 3 4 5 6 7 8 9 10; do /opt/homebrew/bin/cliclick c:1918,893; sleep 0.2; done\"",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Running OS-level save flow",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Removing old Downloads/1.png before save",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"rm -f \\\"$HOME/Downloads/1.png\\\"\"",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/opt/homebrew/bin/cliclick rc:904,694 && sleep 1 && /opt/homebrew/bin/cliclick c:957,725\"",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_CMD+KEY_A}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "1.png",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ENTER}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ENTER}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"if [ -f \\\"$HOME/Downloads/1.png\\\" ]; then printf 'OK\\n' > /tmp/uivision_download_check.csv; else printf 'MISSING\\n' > /tmp/uivision_download_check.csv; fi\"",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!csvReadLineNumber}",
+            "Value": "CSV_LINE_BACKUP",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/tmp/uivision_download_check.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "DOWNLOAD_CHECK_RESULT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${CSV_LINE_BACKUP}",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${DOWNLOAD_CHECK_RESULT} == 'OK'",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "OS-level save completed",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "DOWNLOAD_SUCCESS",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "OS-level save failed, trying rendered image fallback",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "storeAttribute",
+            "Target": "xpath=(//div[contains(@class,'attachment-container') and contains(@class,'generated-images')]//img[contains(@class,'image') and contains(@class,'loaded')])[last()]@src",
+            "Value": "RENDERED_IMAGE_SRC",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Fallback save failed because rendered image src was not found",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SEGMENT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Fallback rendered image src captured",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${RENDERED_IMAGE_SRC}'; s=(s||'').trim(); if(!s){return 'jpg';} var m=s.match(/\\.([a-zA-Z0-9]+)(?:[?#].*)?$/); if(!m){return 'jpg';} var ext=m[1].toLowerCase(); if(ext==='jpeg' || ext==='jpg' || ext==='png' || ext==='webp'){ return ext; } return 'jpg';",
+            "Value": "RENDERED_IMAGE_EXT",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${segment_dir}'; s=(s||'storyboard').replace(/[^a-zA-Z0-9._-]+/g,'_'); if(!s){s='storyboard';} return s;",
+            "Value": "RENDERED_IMAGE_BASENAME",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Saving rendered image fallback to Downloads as ${RENDERED_IMAGE_BASENAME}.${RENDERED_IMAGE_EXT}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && url='${RENDERED_IMAGE_SRC}' && ext='${RENDERED_IMAGE_EXT}' && base='${RENDERED_IMAGE_BASENAME}' && out=\\\"$HOME/Downloads/${RENDERED_IMAGE_BASENAME}.${RENDERED_IMAGE_EXT}\\\" && rm -f \\\"$out\\\" && curl -L --fail --silent --show-error \\\"$url\\\" -o \\\"$out\\\"\"",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Fallback rendered image save failed, moving to next segment",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SEGMENT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Fallback rendered image save succeeded",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "DOWNLOAD_SUCCESS",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "DOWNLOAD_SUCCESS",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Moving Downloads/1.png to ${BASE}/segments_prompts/${segment_dir}/output/storyboard.png",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && segdir='${BASE}/segments_prompts/${segment_dir}' && outdir=\\\"$segdir/output\\\" && mkdir -p \\\"$outdir\\\" && mv -f \\\"$HOME/Downloads/1.png\\\" \\\"$outdir/storyboard.png\\\"\"",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Move step finished",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SEGMENT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== SEGMENT FINISHED: ${segment_name} ===",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "SEGMENT_PROCESS_COMPLETED row=${TARGET_ROW}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing Gemini tab for finished segment",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "OPEN_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opening Gemini page failed after 5 attempts, retrying segment",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current Gemini tab before segment retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "10000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SEG_RETRY}) + 1",
+            "Value": "SEG_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SEGMENT_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SEGMENT_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Segment failed after 3 tries, stopping selected row: ${segment_name}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "SEGMENT_PROCESS_FAILED row=${TARGET_ROW}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Bringing chrome window back to original size",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_CTRL+KEY_CMD+KEY_F}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== MACRO END ===",
+            "Value": "blue",
+            "Description": ""
+        }
+    ]
+}
