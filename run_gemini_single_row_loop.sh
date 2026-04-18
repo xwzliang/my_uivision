@@ -9,6 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 MODE="${1:-image}"
 START_ROW="${2:-}"
+RUN_MODE="${3:-}"
 
 BASE_CSV="${BASE_CSV:-/Users/broliang/Pictures/short_drama/ui_vision.csv}"
 ROW_CONTROL_CSV="${ROW_CONTROL_CSV:-/Users/broliang/Pictures/short_drama/ui_vision_row_control.csv}"
@@ -19,9 +20,10 @@ LOG_FILE="${LOG_FILE:-/Users/broliang/uivision/uivision.log}"
 APPLE_SCRIPT="${APPLE_SCRIPT:-$SCRIPT_DIR/launch_uivision_macro.scpt}"
 LOG_TIMEOUT="${LOG_TIMEOUT:-1200}"
 MAX_PASSES="${MAX_PASSES:-5}"
+RUN_ONE_ROW_ONLY="${RUN_ONE_ROW_ONLY:-0}"
 
 usage() {
-  echo "Usage: $0 [image|storyboard|sora] [start_row]" >&2
+  echo "Usage: $0 [image|storyboard|sora] [start_row] [all|single]" >&2
   exit 2
 }
 
@@ -77,6 +79,16 @@ fi
 mkdir -p "$(dirname "$ROW_CONTROL_CSV")"
 mkdir -p "$(dirname "$LOG_FILE")"
 
+LOG_DIR="$(dirname "$LOG_FILE")"
+LOG_BASENAME="$(basename "$LOG_FILE")"
+if [[ "$LOG_BASENAME" == *.* ]]; then
+  LOG_STEM="${LOG_BASENAME%.*}"
+  LOG_EXT=".${LOG_BASENAME##*.}"
+else
+  LOG_STEM="$LOG_BASENAME"
+  LOG_EXT=""
+fi
+
 if [[ -n "$START_ROW" ]]; then
   current_row="$START_ROW"
 elif [[ -f "$ROW_CONTROL_CSV" ]]; then
@@ -95,10 +107,36 @@ if [[ ! "$MAX_PASSES" =~ ^[1-9][0-9]*$ ]]; then
   MAX_PASSES="5"
 fi
 
+if [[ -n "$RUN_MODE" ]]; then
+  case "$RUN_MODE" in
+    single|once|one|true|1)
+      RUN_ONE_ROW_ONLY=1
+      ;;
+    all|false|0)
+      RUN_ONE_ROW_ONLY=0
+      ;;
+    *)
+      usage
+      ;;
+  esac
+fi
+
+if [[ ! "$RUN_ONE_ROW_ONLY" =~ ^[01]$ ]]; then
+  echo "Invalid RUN_ONE_ROW_ONLY '$RUN_ONE_ROW_ONLY'; defaulting to 0" >&2
+  RUN_ONE_ROW_ONLY=0
+fi
+
+build_log_file_path() {
+  local row="$1"
+  local pass="$2"
+  printf '%s/%s_%s_row_%s_pass_%s%s' \
+    "$LOG_DIR" "$LOG_STEM" "$MODE" "$row" "$pass" "$LOG_EXT"
+}
+
 wait_for_log() {
   local elapsed=0
 
-  while [[ ! -s "$LOG_FILE" ]]; do
+  while [[ ! -s "$CURRENT_LOG_FILE" ]]; do
     elapsed=$((elapsed + 1))
     if (( elapsed > LOG_TIMEOUT )); then
       echo "UI.Vision log stayed empty for more than ${LOG_TIMEOUT}s" >&2
@@ -112,14 +150,17 @@ wait_for_log() {
 
 run_one_row() {
   local row="$1"
+  local pass="$2"
 
   current_row="$row"
+  CURRENT_LOG_FILE="$(build_log_file_path "$row" "$pass")"
   printf '%s\n' "$current_row" > "$ROW_CONTROL_CSV"
-  : > "$LOG_FILE"
+  : > "$CURRENT_LOG_FILE"
 
-  target_url="file://$UIV_HTML?direct=1&macro=$MACRO_NAME&closeRPA=1&savelog=$LOG_FILE"
+  target_url="file://$UIV_HTML?direct=1&macro=$MACRO_NAME&closeRPA=1&savelog=$CURRENT_LOG_FILE"
 
   echo "Launching $MACRO_NAME for row $current_row"
+  echo "Log file: $CURRENT_LOG_FILE"
   osascript "$APPLE_SCRIPT"
   sleep 1
   osascript -e \
@@ -130,28 +171,28 @@ run_one_row() {
     return 1
   fi
 
-  if grep -q "ROW_CONTROL_READ_FAILED" "$LOG_FILE"; then
+  if grep -q "ROW_CONTROL_READ_FAILED" "$CURRENT_LOG_FILE"; then
     echo "Macro could not read row control CSV: $ROW_CONTROL_CSV" >&2
     exit 1
   fi
 
-  if grep -q "REQUESTED_ROW_NOT_FOUND row=${current_row}" "$LOG_FILE"; then
+  if grep -q "REQUESTED_ROW_NOT_FOUND row=${current_row}" "$CURRENT_LOG_FILE"; then
     echo "Reached the end of $source_csv at row $current_row"
     return 2
   fi
 
-  if grep -q "${FAILURE_MARKER} row=${current_row}" "$LOG_FILE"; then
+  if grep -q "${FAILURE_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
     echo "Macro reported a failed run on row $current_row; marking for retry." >&2
     return 1
   fi
 
-  if ! grep -q 'Macro completed' "$LOG_FILE"; then
-    echo "Macro did not complete successfully for row $current_row; marking for retry. See $LOG_FILE" >&2
+  if ! grep -q 'Macro completed' "$CURRENT_LOG_FILE"; then
+    echo "Macro did not complete successfully for row $current_row; marking for retry. See $CURRENT_LOG_FILE" >&2
     return 1
   fi
 
-  if ! grep -q "${SUCCESS_MARKER} row=${current_row}" "$LOG_FILE"; then
-    echo "Macro finished without the expected success marker for row $current_row; marking for retry. See $LOG_FILE" >&2
+  if ! grep -q "${SUCCESS_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
+    echo "Macro finished without the expected success marker for row $current_row; marking for retry. See $CURRENT_LOG_FILE" >&2
     return 1
   fi
 
@@ -166,18 +207,26 @@ initial_start_row="$current_row"
 
 while (( pass_number <= MAX_PASSES )); do
   if (( pass_number == 1 )); then
-    echo "Starting pass $pass_number/$MAX_PASSES from row $initial_start_row"
-    row="$initial_start_row"
+    if (( RUN_ONE_ROW_ONLY == 1 )); then
+      echo "Starting single-row pass $pass_number/$MAX_PASSES for row $initial_start_row"
+      row="$initial_start_row"
+    else
+      echo "Starting pass $pass_number/$MAX_PASSES from row $initial_start_row"
+      row="$initial_start_row"
+    fi
     skipped_rows=()
 
     while true; do
-      if run_one_row "$row"; then
+      if run_one_row "$row" "$pass_number"; then
         status=0
       else
         status=$?
       fi
 
       if (( status == 0 )); then
+        if (( RUN_ONE_ROW_ONLY == 1 )); then
+          break
+        fi
         row=$((row + 1))
         continue
       fi
@@ -187,6 +236,9 @@ while (( pass_number <= MAX_PASSES )); do
       fi
 
       skipped_rows+=("$row")
+      if (( RUN_ONE_ROW_ONLY == 1 )); then
+        break
+      fi
       row=$((row + 1))
     done
 
@@ -202,7 +254,7 @@ while (( pass_number <= MAX_PASSES )); do
     next_skipped_rows=()
 
     for row in "${skipped_rows[@]}"; do
-      if run_one_row "$row"; then
+      if run_one_row "$row" "$pass_number"; then
         status=0
       else
         status=$?

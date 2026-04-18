@@ -921,14 +921,14 @@
       "Description": ""
     },
     {
-      "Command": "XClick",
-      "Target": "xpath=(//button[@aria-haspopup='menu' and not(@aria-label='Settings') and .//*[name()='path' and @d='M3 12a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0']])[1]",
+      "Command": "pause",
+      "Target": "5000",
       "Value": "",
       "Description": ""
     },
     {
-      "Command": "pause",
-      "Target": "6000",
+      "Command": "XClick",
+      "Target": "xpath=(//button[@aria-haspopup='menu' and not(@aria-label='Settings') and .//*[name()='path' and @d='M3 12a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0']])[1]",
       "Value": "",
       "Description": ""
     },
