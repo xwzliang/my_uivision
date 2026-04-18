@@ -17,7 +17,7 @@ ROW_CONTROL_CSV="${ROW_CONTROL_CSV:-/Users/broliang/Pictures/short_drama/ui_visi
 UIV_HTML="${UIV_HTML:-/Users/broliang/uivision/ui.vision.html}"
 LOG_FILE="${LOG_FILE:-/Users/broliang/uivision/uivision.log}"
 APPLE_SCRIPT="${APPLE_SCRIPT:-$SCRIPT_DIR/launch_uivision_macro.scpt}"
-LOG_TIMEOUT="${LOG_TIMEOUT:-300}"
+LOG_TIMEOUT="${LOG_TIMEOUT:-1200}"
 
 usage() {
   echo "Usage: $0 [image|storyboard] [start_row]" >&2
@@ -96,6 +96,11 @@ wait_for_log() {
   done
 }
 
+advance_to_next_row() {
+  current_row=$((current_row + 1))
+  printf '%s\n' "$current_row" > "$ROW_CONTROL_CSV"
+}
+
 while true; do
   printf '%s\n' "$current_row" > "$ROW_CONTROL_CSV"
   : > "$LOG_FILE"
@@ -123,23 +128,25 @@ while true; do
   fi
 
   if grep -q "${FAILURE_MARKER} row=${current_row}" "$LOG_FILE"; then
-    echo "Macro reported a failed run on row $current_row; stopping." >&2
-    exit 1
+    echo "Macro reported a failed run on row $current_row; skipping to next row." >&2
+    advance_to_next_row
+    continue
   fi
 
   if ! grep -q 'Macro completed' "$LOG_FILE"; then
-    echo "Macro did not complete successfully for row $current_row. See $LOG_FILE" >&2
-    exit 1
+    echo "Macro did not complete successfully for row $current_row; skipping to next row. See $LOG_FILE" >&2
+    advance_to_next_row
+    continue
   fi
 
   if ! grep -q "${SUCCESS_MARKER} row=${current_row}" "$LOG_FILE"; then
-    echo "Macro finished without the expected success marker for row $current_row. See $LOG_FILE" >&2
-    exit 1
+    echo "Macro finished without the expected success marker for row $current_row; skipping to next row. See $LOG_FILE" >&2
+    advance_to_next_row
+    continue
   fi
 
   echo "Finished row $current_row"
-  current_row=$((current_row + 1))
-  printf '%s\n' "$current_row" > "$ROW_CONTROL_CSV"
+  advance_to_next_row
 done
 
 echo "Loop finished. Next row remains recorded in $ROW_CONTROL_CSV as $current_row"
