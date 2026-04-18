@@ -70,6 +70,12 @@
         },
         {
             "Command": "store",
+            "Target": "1",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "store",
             "Target": "true",
             "Value": "!errorignore",
             "Description": ""
@@ -117,8 +123,14 @@
             "Description": ""
         },
         {
-            "Command": "executeScript_Sandbox",
-            "Target": "var s=('${TARGET_ROW_RAW}'||'').trim(); return /^[1-9][0-9]*$/.test(s) ? s : '1';",
+            "Command": "echo",
+            "Target": "TARGET_ROW_RAW=${TARGET_ROW_RAW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${TARGET_ROW_RAW}",
             "Value": "TARGET_ROW",
             "Description": ""
         },
