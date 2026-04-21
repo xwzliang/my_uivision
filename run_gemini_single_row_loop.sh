@@ -24,10 +24,10 @@ MAX_PASSES="${MAX_PASSES:-5}"
 RUN_ONE_ROW_ONLY="${RUN_ONE_ROW_ONLY:-0}"
 
 usage() {
-  echo "Usage: $0 [image|storyboard|sora] [start_row] [all|single]" >&2
-  echo "       $0 [image|storyboard|sora] [start_row] [end_row] [all|single]" >&2
-  echo "       $0 [image|storyboard|sora] [row1,row2,row3] [all|single]" >&2
-  echo "       $0 [image|storyboard|sora] [start-end] [all|single]" >&2
+  echo "Usage: $0 [image|storyboard|sora|chat|camera] [start_row] [all|single]" >&2
+  echo "       $0 [image|storyboard|sora|chat|camera] [start_row] [end_row] [all|single]" >&2
+  echo "       $0 [image|storyboard|sora|chat|camera] [row1,row2,row3] [all|single]" >&2
+  echo "       $0 [image|storyboard|sora|chat|camera] [start-end] [all|single]" >&2
   exit 2
 }
 
@@ -53,6 +53,18 @@ case "$MODE" in
     SUCCESS_MARKER="SORA_PROCESS_COMPLETED"
     FAILURE_MARKER="SORA_PROCESS_FAILED"
     SOURCE_RELATIVE_CSV="segments_prompts/video_prompts.csv"
+    ;;
+  chat)
+    MACRO_NAME="GeminiChatSingleRow"
+    SUCCESS_MARKER="CHAT_PROCESS_COMPLETED"
+    FAILURE_MARKER="CHAT_PROCESS_FAILED"
+    SOURCE_RELATIVE_CSV="chat_prompts.csv"
+    ;;
+  camera)
+    MACRO_NAME="GeminiCameraSingleRow"
+    SUCCESS_MARKER="CAMERA_PROCESS_COMPLETED"
+    FAILURE_MARKER="CAMERA_PROCESS_FAILED"
+    SOURCE_RELATIVE_CSV="camera_prompts.csv"
     ;;
   *)
     usage
