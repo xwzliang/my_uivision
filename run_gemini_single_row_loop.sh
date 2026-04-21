@@ -341,6 +341,8 @@ run_one_row() {
     fi
   fi
 
+  stop_uivision_instances
+
   CURRENT_LOG_FILE="$(build_log_file_path "$row" "$pass")"
   printf '%s\n' "$current_row" > "$ROW_CONTROL_CSV"
   : > "$CURRENT_LOG_FILE"
@@ -367,25 +369,30 @@ run_one_row() {
 
   if grep -q "REQUESTED_ROW_NOT_FOUND row=${current_row}" "$CURRENT_LOG_FILE"; then
     echo "Reached the end of $source_csv at row $current_row"
+    stop_uivision_instances
     return 2
   fi
 
   if grep -q "${FAILURE_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
     echo "Macro reported a failed run on row $current_row; marking for retry." >&2
+    stop_uivision_instances
     return 1
   fi
 
   if ! grep -q 'Macro completed' "$CURRENT_LOG_FILE"; then
     echo "Macro did not complete successfully for row $current_row; marking for retry. See $CURRENT_LOG_FILE" >&2
+    stop_uivision_instances
     return 1
   fi
 
   if ! grep -q "${SUCCESS_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
     echo "Macro finished without the expected success marker for row $current_row; marking for retry. See $CURRENT_LOG_FILE" >&2
+    stop_uivision_instances
     return 1
   fi
 
   echo "Finished row $current_row"
+  stop_uivision_instances
   return 0
 }
 
