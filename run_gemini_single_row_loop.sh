@@ -11,6 +11,7 @@ MODE="${1:-image}"
 ROW_ARG="${2:-}"
 ARG3="${3:-}"
 ARG4="${4:-}"
+ARG5="${5:-}"
 
 BASE_CSV="${BASE_CSV:-/Users/broliang/Pictures/short_drama/ui_vision.csv}"
 ROW_CONTROL_CSV="${ROW_CONTROL_CSV:-/Users/broliang/Pictures/short_drama/ui_vision_row_control.csv}"
@@ -22,12 +23,13 @@ APPLE_SCRIPT="${APPLE_SCRIPT:-$SCRIPT_DIR/launch_uivision_macro.scpt}"
 LOG_TIMEOUT="${LOG_TIMEOUT:-1200}"
 MAX_PASSES="${MAX_PASSES:-5}"
 RUN_ONE_ROW_ONLY="${RUN_ONE_ROW_ONLY:-0}"
+OVERWRITE_OUTPUT="${OVERWRITE_OUTPUT:-0}"
 
 usage() {
-  echo "Usage: $0 [image|storyboard|sora|chat|camera] [start_row] [all|single]" >&2
-  echo "       $0 [image|storyboard|sora|chat|camera] [start_row] [end_row] [all|single]" >&2
-  echo "       $0 [image|storyboard|sora|chat|camera] [row1,row2,row3] [all|single]" >&2
-  echo "       $0 [image|storyboard|sora|chat|camera] [start-end] [all|single]" >&2
+  echo "Usage: $0 [image|storyboard|sora|chat|camera] [start_row] [all|single] [overwrite]" >&2
+  echo "       $0 [image|storyboard|sora|chat|camera] [start_row] [end_row] [all|single] [overwrite]" >&2
+  echo "       $0 [image|storyboard|sora|chat|camera] [row1,row2,row3] [all|single] [overwrite]" >&2
+  echo "       $0 [image|storyboard|sora|chat|camera] [start-end] [all|single] [overwrite]" >&2
   exit 2
 }
 
@@ -110,8 +112,8 @@ else
 fi
 
 declare -a target_rows=()
+declare -a OPTION_ARGS=()
 has_explicit_row_targets=0
-RUN_MODE=""
 
 if [[ -n "$ROW_ARG" ]]; then
   if [[ "$ROW_ARG" == *,* ]]; then
@@ -124,7 +126,7 @@ if [[ -n "$ROW_ARG" ]]; then
       target_rows+=("$row_item")
     done
     has_explicit_row_targets=1
-    RUN_MODE="$ARG3"
+    OPTION_ARGS=("$ARG3" "$ARG4" "$ARG5")
   elif [[ "$ROW_ARG" =~ ^([1-9][0-9]*)-([1-9][0-9]*)$ ]]; then
     range_start="${BASH_REMATCH[1]}"
     range_end="${BASH_REMATCH[2]}"
@@ -136,7 +138,7 @@ if [[ -n "$ROW_ARG" ]]; then
       target_rows+=("$row")
     done
     has_explicit_row_targets=1
-    RUN_MODE="$ARG3"
+    OPTION_ARGS=("$ARG3" "$ARG4" "$ARG5")
   elif is_positive_int "$ROW_ARG"; then
     if [[ -n "$ARG3" ]] && is_positive_int "$ARG3"; then
       range_start="$ROW_ARG"
@@ -149,11 +151,13 @@ if [[ -n "$ROW_ARG" ]]; then
         target_rows+=("$row")
       done
       has_explicit_row_targets=1
-      RUN_MODE="$ARG4"
+      OPTION_ARGS=("$ARG4" "$ARG5")
     else
       current_row="$ROW_ARG"
-      RUN_MODE="$ARG3"
+      OPTION_ARGS=("$ARG3" "$ARG4" "$ARG5")
     fi
+  elif [[ "$ROW_ARG" =~ ^(single|once|one|all|true|false|overwrite|no-overwrite|overwrite=true|overwrite=false|overwrite=1|overwrite=0)$ ]]; then
+    OPTION_ARGS=("$ROW_ARG" "$ARG3" "$ARG4" "$ARG5")
   else
     usage
   fi
@@ -182,23 +186,35 @@ if [[ ! "$MAX_PASSES" =~ ^[1-9][0-9]*$ ]]; then
   MAX_PASSES="5"
 fi
 
-if [[ -n "$RUN_MODE" ]]; then
-  case "$RUN_MODE" in
+for option_arg in "${OPTION_ARGS[@]}"; do
+  [[ -z "$option_arg" ]] && continue
+  case "$option_arg" in
     single|once|one|true|1)
       RUN_ONE_ROW_ONLY=1
       ;;
     all|false|0)
       RUN_ONE_ROW_ONLY=0
       ;;
+    overwrite|overwrite=true|overwrite=1)
+      OVERWRITE_OUTPUT=1
+      ;;
+    no-overwrite|overwrite=false|overwrite=0)
+      OVERWRITE_OUTPUT=0
+      ;;
     *)
       usage
       ;;
   esac
-fi
+done
 
 if [[ ! "$RUN_ONE_ROW_ONLY" =~ ^[01]$ ]]; then
   echo "Invalid RUN_ONE_ROW_ONLY '$RUN_ONE_ROW_ONLY'; defaulting to 0" >&2
   RUN_ONE_ROW_ONLY=0
+fi
+
+if [[ ! "$OVERWRITE_OUTPUT" =~ ^[01]$ ]]; then
+  echo "Invalid OVERWRITE_OUTPUT '$OVERWRITE_OUTPUT'; defaulting to 0" >&2
+  OVERWRITE_OUTPUT=0
 fi
 
 if (( has_explicit_row_targets == 1 )) && (( RUN_ONE_ROW_ONLY == 1 )); then
@@ -244,11 +260,87 @@ wait_for_log() {
   return 0
 }
 
+get_output_paths_for_row() {
+  local row="$1"
+
+  python3 - "$source_csv" "$row" "$MODE" "$base_dir" <<'PY' || true
+import csv
+import os
+import sys
+
+source_csv, row_arg, mode, base_dir = sys.argv[1:]
+row_number = int(row_arg)
+
+def clean(value: str) -> str:
+    return (value or "").strip().strip('"').strip()
+
+try:
+    with open(source_csv, newline="", encoding="utf-8") as handle:
+        reader = csv.reader(handle)
+        for current_index, row in enumerate(reader, start=1):
+            if current_index != row_number:
+                continue
+            cols = [clean(col) for col in row]
+            outputs = []
+            if mode in {"image", "chat", "camera"}:
+                if len(cols) >= 3 and cols[2]:
+                    outputs.append(cols[2])
+            elif mode == "storyboard":
+                if len(cols) >= 2 and cols[1]:
+                    outputs.append(os.path.join(base_dir, "segments_prompts", cols[1], "output", "storyboard.png"))
+            elif mode == "sora":
+                if len(cols) >= 2 and cols[1]:
+                    outputs.append(os.path.join(base_dir, "segments_prompts", cols[1], "output", "clip.mp4"))
+                    outputs.append(os.path.join(base_dir, "segments_prompts", cols[1], "output", "sora.mp4"))
+            for output in outputs:
+                print(output)
+            break
+except FileNotFoundError:
+    pass
+PY
+}
+
+find_existing_output_for_row() {
+  local row="$1"
+  local output_path
+
+  while IFS= read -r output_path; do
+    [[ -z "$output_path" ]] && continue
+    if [[ "$MODE" == "chat" || "$MODE" == "camera" ]]; then
+      if [[ -s "$output_path" ]]; then
+        printf '%s\n' "$output_path"
+        return 0
+      fi
+      continue
+    fi
+    if [[ -e "$output_path" ]]; then
+      printf '%s\n' "$output_path"
+      return 0
+    fi
+  done < <(get_output_paths_for_row "$row")
+
+  return 1
+}
+
+wait_before_next_row() {
+  echo "Waiting 5 seconds before starting the next row"
+  sleep 5
+}
+
 run_one_row() {
   local row="$1"
   local pass="$2"
+  local existing_output_path
 
   current_row="$row"
+
+  if (( OVERWRITE_OUTPUT == 0 )); then
+    if existing_output_path="$(find_existing_output_for_row "$row")"; then
+      echo "Skipping row $current_row because output already exists and overwrite is disabled: $existing_output_path"
+      return 3
+    fi
+  fi
+
   CURRENT_LOG_FILE="$(build_log_file_path "$row" "$pass")"
   printf '%s\n' "$current_row" > "$ROW_CONTROL_CSV"
   : > "$CURRENT_LOG_FILE"
@@ -313,7 +405,8 @@ while (( pass_number <= MAX_PASSES )); do
         echo "Starting targeted pass $pass_number/$MAX_PASSES for rows: ${target_rows[*]}"
       fi
 
-      for row in "${target_rows[@]}"; do
+      for ((target_index=0; target_index<${#target_rows[@]}; target_index++)); do
+        row="${target_rows[target_index]}"
         if run_one_row "$row" "$pass_number"; then
           status=0
         else
@@ -321,6 +414,13 @@ while (( pass_number <= MAX_PASSES )); do
         fi
 
         if (( status == 0 )); then
+          if (( target_index + 1 < ${#target_rows[@]} )); then
+            wait_before_next_row
+          fi
+          continue
+        fi
+
+        if (( status == 3 )); then
           continue
         fi
 
@@ -351,6 +451,15 @@ while (( pass_number <= MAX_PASSES )); do
           if (( RUN_ONE_ROW_ONLY == 1 )); then
             break
           fi
+          wait_before_next_row
+          row=$((row + 1))
+          continue
+        fi
+
+        if (( status == 3 )); then
+          if (( RUN_ONE_ROW_ONLY == 1 )); then
+            break
+          fi
           row=$((row + 1))
           continue
         fi
@@ -378,7 +487,8 @@ while (( pass_number <= MAX_PASSES )); do
     echo "Starting retry pass $pass_number/$MAX_PASSES for skipped rows: ${skipped_rows[*]}"
     next_skipped_rows=()
 
-    for row in "${skipped_rows[@]}"; do
+    for ((skipped_index=0; skipped_index<${#skipped_rows[@]}; skipped_index++)); do
+      row="${skipped_rows[skipped_index]}"
       if run_one_row "$row" "$pass_number"; then
         status=0
       else
@@ -386,6 +496,12 @@ while (( pass_number <= MAX_PASSES )); do
       fi
 
       if (( status == 0 )); then
+        if (( skipped_index + 1 < ${#skipped_rows[@]} )); then
+          wait_before_next_row
+        fi
+        continue
+      fi
+      if (( status == 3 )); then
         continue
       fi
       if (( status == 2 )); then
