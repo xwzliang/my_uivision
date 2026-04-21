@@ -250,6 +250,12 @@
         },
         {
             "Command": "executeScript_Sandbox",
+            "Target": "var s='${RESOLVED_ATTACH_IMAGE_PATH}'; if (!s) { return '0'; } var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return String(arr.length);",
+            "Value": "ATTACH_IMAGE_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
             "Target": "var s='${OUTPUT_IMAGE_PATH}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
             "Value": "RESOLVED_OUTPUT_IMAGE_PATH",
             "Description": ""
@@ -276,6 +282,12 @@
             "Command": "echo",
             "Target": "RESOLVED_ATTACH_IMAGE_PATH=${RESOLVED_ATTACH_IMAGE_PATH}",
             "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ATTACH_IMAGE_COUNT=${ATTACH_IMAGE_COUNT}",
+            "Value": "green",
             "Description": ""
         },
         {
@@ -537,8 +549,56 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "0",
+            "Value": "ATTACH_I",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "ATTACH_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "echo",
-            "Target": "Opening input area menu for optional image attach",
+            "Target": "---- ATTACH LOOP START: ATTACH_I=${ATTACH_I}, ATTACH_IMAGE_COUNT=${ATTACH_IMAGE_COUNT} ----",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${ATTACH_I} >= ${ATTACH_IMAGE_COUNT}",
+            "Value": "ATTACH_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${RESOLVED_ATTACH_IMAGE_PATH}'; var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return arr[${ATTACH_I}] || '';",
+            "Value": "ATTACH_IMAGE_FILE_RAW",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var p='${ATTACH_IMAGE_FILE_RAW}'; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); p=p.trim(); return p;",
+            "Value": "ATTACH_IMAGE_FILE",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ATTACH_IMAGE_FILE_RAW=${ATTACH_IMAGE_FILE_RAW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ATTACH_IMAGE_FILE=${ATTACH_IMAGE_FILE}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opening input area menu for image ${ATTACH_I}",
             "Value": "blue",
             "Description": ""
         },
@@ -562,7 +622,7 @@
         },
         {
             "Command": "echo",
-            "Target": "Clicking local uploader button for ${RESOLVED_ATTACH_IMAGE_PATH}",
+            "Target": "Clicking local uploader button for ${ATTACH_IMAGE_FILE}",
             "Value": "blue",
             "Description": ""
         },
@@ -586,14 +646,14 @@
         },
         {
             "Command": "echo",
-            "Target": "Typing file path into last file input: ${RESOLVED_ATTACH_IMAGE_PATH}",
+            "Target": "Typing file path into last file input: ${ATTACH_IMAGE_FILE}",
             "Value": "blue",
             "Description": ""
         },
         {
             "Command": "type",
             "Target": "xpath=(//input[@type='file'])[last()]",
-            "Value": "${RESOLVED_ATTACH_IMAGE_PATH}",
+            "Value": "${ATTACH_IMAGE_FILE}",
             "Description": ""
         },
         {
@@ -629,6 +689,36 @@
         {
             "Command": "pause",
             "Target": "2500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Finished upload cycle for image index ${ATTACH_I}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ATTACH_I}) + 1",
+            "Value": "ATTACH_I",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Incremented ATTACH_I to ${ATTACH_I}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ATTACH_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "ATTACH_DONE",
             "Value": "",
             "Description": ""
         },
