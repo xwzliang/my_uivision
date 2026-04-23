@@ -21,6 +21,8 @@ UIV_HTML="${UIV_HTML:-/Users/broliang/uivision/ui.vision.html}"
 LOG_FILE="${LOG_FILE:-/Users/broliang/uivision/uivision.log}"
 APPLE_SCRIPT="${APPLE_SCRIPT:-$SCRIPT_DIR/launch_uivision_macro.scpt}"
 LOG_TIMEOUT="${LOG_TIMEOUT:-1200}"
+ROW_TIME_LIMIT="${ROW_TIME_LIMIT:-1200}"
+FAIL_SETTLE_TIME="${FAIL_SETTLE_TIME:-8}"
 MAX_PASSES="${MAX_PASSES:-5}"
 RUN_ONE_ROW_ONLY="${RUN_ONE_ROW_ONLY:-0}"
 OVERWRITE_OUTPUT="${OVERWRITE_OUTPUT:-0}"
@@ -186,6 +188,16 @@ if [[ ! "$MAX_PASSES" =~ ^[1-9][0-9]*$ ]]; then
   MAX_PASSES="5"
 fi
 
+if [[ ! "$ROW_TIME_LIMIT" =~ ^[1-9][0-9]*$ ]]; then
+  echo "Invalid ROW_TIME_LIMIT '$ROW_TIME_LIMIT'; defaulting to 1200" >&2
+  ROW_TIME_LIMIT="1200"
+fi
+
+if [[ ! "$FAIL_SETTLE_TIME" =~ ^[1-9][0-9]*$ ]]; then
+  echo "Invalid FAIL_SETTLE_TIME '$FAIL_SETTLE_TIME'; defaulting to 8" >&2
+  FAIL_SETTLE_TIME="8"
+fi
+
 for option_arg in "${OPTION_ARGS[@]}"; do
   [[ -z "$option_arg" ]] && continue
   case "$option_arg" in
@@ -229,35 +241,105 @@ build_log_file_path() {
 }
 
 stop_uivision_instances() {
+  local remaining_tabs
+  local attempt
+
   echo "Stopping running UI.Vision tabs before continuing" >&2
-  osascript \
-    -e 'tell application "Google Chrome"' \
-    -e 'repeat with w in windows' \
-    -e 'set tab_list to every tab of w' \
-    -e 'repeat with t in tab_list' \
-    -e 'try' \
-    -e 'set tab_url to URL of t' \
-    -e 'if tab_url contains "ui.vision.html" then close t' \
-    -e 'end try' \
-    -e 'end repeat' \
-    -e 'end repeat' \
-    -e 'end tell' >/dev/null 2>&1 || true
-  sleep 2
-}
+  for attempt in 1 2 3 4 5; do
+    osascript \
+      -e 'tell application "Google Chrome"' \
+      -e 'repeat with w in windows' \
+      -e 'set tab_list to every tab of w' \
+      -e 'repeat with t in tab_list' \
+      -e 'try' \
+      -e 'set tab_url to URL of t' \
+      -e 'if tab_url contains "ui.vision.html" then close t' \
+      -e 'end try' \
+      -e 'end repeat' \
+      -e 'end repeat' \
+      -e 'end tell' >/dev/null 2>&1 || true
 
-wait_for_log() {
-  local elapsed=0
+    remaining_tabs="$(osascript \
+      -e 'tell application "Google Chrome"' \
+      -e 'set tab_count to 0' \
+      -e 'repeat with w in windows' \
+      -e 'repeat with t in tabs of w' \
+      -e 'try' \
+      -e 'set tab_url to URL of t' \
+      -e 'if tab_url contains "ui.vision.html" then set tab_count to tab_count + 1' \
+      -e 'end try' \
+      -e 'end repeat' \
+      -e 'end repeat' \
+      -e 'return tab_count' \
+      -e 'end tell' 2>/dev/null || printf '0')"
 
-  while [[ ! -s "$CURRENT_LOG_FILE" ]]; do
-    elapsed=$((elapsed + 1))
-    if (( elapsed > LOG_TIMEOUT )); then
-      echo "UI.Vision log stayed empty for more than ${LOG_TIMEOUT}s" >&2
-      return 1
+    if [[ "$remaining_tabs" == "0" ]]; then
+      break
     fi
+
     sleep 1
   done
 
-  return 0
+  sleep 1
+}
+
+wait_for_row_result() {
+  local started_at
+  local now
+  local elapsed=0
+  local last_reported_minute=-1
+  local last_log_size=-1
+  local current_log_size=0
+  local last_log_activity_at
+  local log_idle_seconds=0
+
+  started_at="$(date +%s)"
+  last_log_activity_at="$started_at"
+
+  while true; do
+    now="$(date +%s)"
+    elapsed=$(( now - started_at ))
+
+    if (( elapsed > ROW_TIME_LIMIT )); then
+      echo "Row $current_row exceeded the time limit of ${ROW_TIME_LIMIT}s; marking for retry." >&2
+      return 1
+    fi
+
+    if [[ ! -s "$CURRENT_LOG_FILE" ]]; then
+      if (( elapsed > LOG_TIMEOUT )); then
+        echo "UI.Vision log stayed empty for more than ${LOG_TIMEOUT}s" >&2
+        return 1
+      fi
+    else
+      current_log_size="$(wc -c < "$CURRENT_LOG_FILE" | tr -d ' ')"
+      if [[ "$current_log_size" != "$last_log_size" ]]; then
+        last_log_size="$current_log_size"
+        last_log_activity_at="$now"
+      fi
+      log_idle_seconds=$(( now - last_log_activity_at ))
+
+      if grep -q "ROW_CONTROL_READ_FAILED" "$CURRENT_LOG_FILE" \
+        || grep -q "REQUESTED_ROW_NOT_FOUND row=${current_row}" "$CURRENT_LOG_FILE" \
+        || grep -q "${FAILURE_MARKER} row=${current_row}" "$CURRENT_LOG_FILE" \
+        || grep -q 'Macro completed' "$CURRENT_LOG_FILE" \
+        || grep -q "${SUCCESS_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
+        return 0
+      fi
+
+      if grep -q 'Macro failed' "$CURRENT_LOG_FILE" \
+        && (( log_idle_seconds >= FAIL_SETTLE_TIME )); then
+        echo "Detected a stopped UI.Vision macro for row $current_row after ${log_idle_seconds}s of log inactivity; marking for retry." >&2
+        return 2
+      fi
+    fi
+
+    if (( elapsed / 60 > last_reported_minute )); then
+      last_reported_minute=$((elapsed / 60))
+      echo "Row $current_row running for ${elapsed}s (time limit ${ROW_TIME_LIMIT}s)"
+    fi
+
+    sleep 1
+  done
 }
 
 get_output_paths_for_row() {
@@ -351,13 +433,21 @@ run_one_row() {
 
   echo "Launching $MACRO_NAME for row $current_row"
   echo "Log file: $CURRENT_LOG_FILE"
+  echo "Row time limit: ${ROW_TIME_LIMIT}s"
   osascript "$APPLE_SCRIPT"
   sleep 1
   osascript -e \
     "tell application \"Google Chrome\" to open location \
 \"$target_url\""
-  if ! wait_for_log; then
-    echo "Row $current_row produced no UI.Vision log output; marking for retry." >&2
+  wait_for_row_result
+  wait_status=$?
+  if (( wait_status == 1 )); then
+    echo "Row $current_row did not finish within the allowed watchdog limits; marking for retry." >&2
+    stop_uivision_instances
+    return 1
+  fi
+  if (( wait_status == 2 )); then
+    echo "Row $current_row hit a UI.Vision command error; marking for retry." >&2
     stop_uivision_instances
     return 1
   fi

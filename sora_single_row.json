@@ -561,8 +561,38 @@
       "Description": ""
     },
     {
-      "Command": "click",
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "XClick",
       "Target": "xpath=(//button[.//span[normalize-space()='Create video'] and not(@disabled) and @data-disabled='false'])[1]",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "if_v2",
+      "Target": "${!statusOK} == false",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "echo",
+      "Target": "Create video button disappeared during click, continuing to generation check",
+      "Value": "purple",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
       "Value": "",
       "Description": ""
     },
@@ -897,6 +927,24 @@
       "Description": ""
     },
     {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "selectWindow",
+      "Target": "TAB=CLOSE",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
       "Command": "executeScript_Sandbox",
       "Target": "return Number(${SEG_RETRY}) + 1",
       "Value": "SEG_RETRY",
@@ -966,6 +1014,24 @@
       "Command": "echo",
       "Target": "Timed out waiting for result, retrying segment",
       "Value": "red",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "selectWindow",
+      "Target": "TAB=CLOSE",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
       "Description": ""
     },
     {
@@ -1299,6 +1365,24 @@
       "Description": ""
     },
     {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "selectWindow",
+      "Target": "TAB=CLOSE",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
       "Command": "echo",
       "Target": "SORA_PROCESS_COMPLETED row=${TARGET_ROW}",
       "Value": "green",
@@ -1344,6 +1428,24 @@
       "Command": "echo",
       "Target": "Opening Sora page failed after 5 attempts, retrying segment",
       "Value": "red",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorignore",
+      "Description": ""
+    },
+    {
+      "Command": "selectWindow",
+      "Target": "TAB=CLOSE",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorignore",
       "Description": ""
     },
     {
