@@ -489,6 +489,24 @@ find_existing_output_for_row() {
   return 1
 }
 
+ensure_output_created_for_row() {
+  local row="$1"
+  local output_path
+
+  if output_path="$(find_existing_output_for_row "$row")"; then
+    echo "Verified output for row $row: $output_path"
+    return 0
+  fi
+
+  echo "Expected output for row $row was not created after macro completion; marking for retry." >&2
+  while IFS= read -r output_path; do
+    [[ -z "$output_path" ]] && continue
+    echo "Missing expected output path: $output_path" >&2
+  done < <(get_output_paths_for_row "$row")
+
+  return 1
+}
+
 wait_before_next_row() {
   echo "Waiting 5 seconds before starting the next row"
   sleep 5
@@ -563,6 +581,11 @@ run_one_row() {
 
   if ! grep -q "${SUCCESS_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
     echo "Macro finished without the expected success marker for row $current_row; marking for retry. See $CURRENT_LOG_FILE" >&2
+    stop_uivision_instances
+    return 1
+  fi
+
+  if ! ensure_output_created_for_row "$current_row"; then
     stop_uivision_instances
     return 1
   fi
