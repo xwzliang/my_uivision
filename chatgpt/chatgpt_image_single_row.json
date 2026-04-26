@@ -909,6 +909,24 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "0",
+            "Value": "SAVE_VIEW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SAVE_VIEW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${SAVE_VIEW_RETRY} >= 3",
+            "Value": "SAVE_VIEW_FAILED",
+            "Description": ""
+        },
+        {
             "Command": "echo",
             "Target": "Opening generated image viewer",
             "Value": "purple",
@@ -933,9 +951,189 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "60",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
             "Command": "waitForElementPresent",
             "Target": "xpath=//button[@aria-label='Save']",
             "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Save button did not appear within 60 seconds",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//button[@aria-label='Close fullscreen view']",
+            "Value": "FULLSCREEN_CLOSE_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${FULLSCREEN_CLOSE_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing fullscreen view before retrying image open",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//button[@aria-label='Close fullscreen view'])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Fullscreen close button not found, refreshing page before retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "refresh",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "waitForElementPresent",
+            "Target": "xpath=(//img[@alt='Generated image' and contains(@src,'/backend-api/estuary/content')])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Generated image was not present after refresh, retrying row",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current ChatGPT tab before row retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ROW_RETRY}) + 1",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SAVE_VIEW_RETRY}) + 1",
+            "Value": "SAVE_VIEW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SAVE_VIEW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
             "Description": ""
         },
         {
@@ -1235,6 +1433,54 @@
         {
             "Command": "gotoLabel",
             "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SAVE_VIEW_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Save view could not be opened after 3 attempts, retrying row",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current ChatGPT tab before row retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ROW_RETRY}) + 1",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_RETRY_LOOP",
             "Value": "",
             "Description": ""
         },
