@@ -1,0 +1,1332 @@
+{
+    "Name": "ChatGPTImageSingleRow",
+    "CreationDate": "2026-4-26",
+    "Commands": [
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "120",
+            "Value": "!TIMEOUT_PAGELOAD",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== MACRO START ===",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "bringBrowserToForeground",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Maximizing chrome window",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_CTRL+KEY_CMD+KEY_F}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/Users/broliang/Pictures/short_drama/ui_vision.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "BASE",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "BASE=${BASE}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/Users/broliang/Pictures/short_drama/ui_vision_row_control.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!csvReadStatus} != 'OK'",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ROW_CONTROL_READ_FAILED",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "TARGET_ROW_RAW",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "TARGET_ROW_RAW=${TARGET_ROW_RAW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${TARGET_ROW_RAW}",
+            "Value": "TARGET_ROW",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "TARGET_ROW=${TARGET_ROW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${TARGET_ROW}",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "LOOP_START",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== READING NEXT IMAGE PROMPT ROW ===",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "${BASE}/image_prompts.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!csvReadStatus} != 'OK'",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "REQUESTED_ROW_NOT_FOUND row=${TARGET_ROW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Processing selected image row ${TARGET_ROW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "prompt_text",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL2}",
+            "Value": "attach_image_path_raw",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL3}",
+            "Value": "output_image_path_raw",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${prompt_text}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Value": "PROMPT",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${attach_image_path_raw}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Value": "ATTACH_IMAGE_PATH",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${output_image_path_raw}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Value": "OUTPUT_IMAGE_PATH",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${ATTACH_IMAGE_PATH}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Value": "RESOLVED_ATTACH_IMAGE_PATH",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${RESOLVED_ATTACH_IMAGE_PATH}'; if (!s) { return '0'; } var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return String(arr.length);",
+            "Value": "ATTACH_IMAGE_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${OUTPUT_IMAGE_PATH}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Value": "RESOLVED_OUTPUT_IMAGE_PATH",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var p='${RESOLVED_OUTPUT_IMAGE_PATH}'; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'image-output';} var parts=p.split('/').filter(function(x){ return x; }); var name=parts.length ? parts[parts.length-1] : 'image-output'; name=(name||'').replace(/^\\\"+/, '').replace(/\\\"+$/, ''); return name || 'image-output';",
+            "Value": "JOB_NAME",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "PROMPT=${PROMPT}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ATTACH_IMAGE_PATH=${ATTACH_IMAGE_PATH}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "RESOLVED_ATTACH_IMAGE_PATH=${RESOLVED_ATTACH_IMAGE_PATH}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ATTACH_IMAGE_COUNT=${ATTACH_IMAGE_COUNT}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "RESOLVED_OUTPUT_IMAGE_PATH=${RESOLVED_OUTPUT_IMAGE_PATH}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "==== IMAGE TRY ${ROW_RETRY}/3 : ${JOB_NAME} ====",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${ROW_RETRY} >= 3",
+            "Value": "ROW_FAILED",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "OPEN_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "OPEN_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${OPEN_RETRY} >= 5",
+            "Value": "OPEN_FAILED",
+            "Description": ""
+        },
+        {
+            "Command": "bringBrowserToForeground",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opening a fresh ChatGPT tab for this image row",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=OPEN",
+            "Value": "https://chatgpt.com/g/g-69ee28e311c08191b315b49129acb939-sheng-cheng-tu-pian",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "waitForElementPresent",
+            "Target": "xpath=//*[@id='prompt-textarea' and @contenteditable='true' and @role='textbox']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${!statusOK} == false",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Open attempt ${OPEN_RETRY} did not reach prompt textbox, waiting 10 seconds before reopen",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current ChatGPT tab before retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "10000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${OPEN_RETRY}) + 1",
+            "Value": "OPEN_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "OPEN_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opened ChatGPT page",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicking prompt textbox",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=//*[@id='prompt-textarea' and @contenteditable='true' and @role='textbox']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "400",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Pasting prompt text",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "editContent",
+            "Target": "xpath=//*[@id='prompt-textarea' and @contenteditable='true' and @role='textbox']",
+            "Value": "${PROMPT}",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Prompt pasted",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${ATTACH_IMAGE_PATH} != ''",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "ATTACH_I",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "ATTACH_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "---- ATTACH LOOP START: ATTACH_I=${ATTACH_I}, ATTACH_IMAGE_COUNT=${ATTACH_IMAGE_COUNT} ----",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${ATTACH_I} >= ${ATTACH_IMAGE_COUNT}",
+            "Value": "ATTACH_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s='${RESOLVED_ATTACH_IMAGE_PATH}'; var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return arr[${ATTACH_I}] || '';",
+            "Value": "ATTACH_IMAGE_FILE_RAW",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var p='${ATTACH_IMAGE_FILE_RAW}'; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); p=p.trim(); return p;",
+            "Value": "ATTACH_IMAGE_FILE",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ATTACH_IMAGE_FILE_RAW=${ATTACH_IMAGE_FILE_RAW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ATTACH_IMAGE_FILE=${ATTACH_IMAGE_FILE}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opening ChatGPT attach menu for image ${ATTACH_I}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "css=button#composer-plus-btn",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opened attach menu",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Typing file path into ChatGPT file input: ${ATTACH_IMAGE_FILE}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "type",
+            "Target": "xpath=(//input[@type='file'])[last()]",
+            "Value": "${ATTACH_IMAGE_FILE}",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Typed file path into file input",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Sending ESC to close attach menu",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ESC}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ESC sent",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Finished upload cycle for image index ${ATTACH_I}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ATTACH_I}) + 1",
+            "Value": "ATTACH_I",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Incremented ATTACH_I to ${ATTACH_I}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ATTACH_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "ATTACH_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Optional image attach finished",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "No attach image path provided for this row",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Final wait for send button before send step",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "waitForElementPresent",
+            "Target": "xpath=//button[@id='composer-submit-button' and not(@disabled)]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Final send button ready",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//button[@id='composer-submit-button' and not(@disabled)])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicked send button",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Waiting for ChatGPT image generation to begin",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "4000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Waiting for final loaded image",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "FINAL_IMAGE_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "FINAL_IMAGE_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "FINAL_IMAGE_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${FINAL_IMAGE_POLL} >= 100",
+            "Value": "FINAL_IMAGE_WAIT_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//img[@alt='Generated image' and contains(@src,'/backend-api/estuary/content')])[last()]",
+            "Value": "FINAL_IMAGE_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${FINAL_IMAGE_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "FINAL_IMAGE_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "FINAL_IMAGE_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${FINAL_IMAGE_POLL}) + 1",
+            "Value": "FINAL_IMAGE_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "FINAL_IMAGE_POLL=${FINAL_IMAGE_POLL}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "FINAL_IMAGE_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "FINAL_IMAGE_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${FINAL_IMAGE_FOUND} == 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Final generated image wait failed after full polling window, retrying row",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current ChatGPT tab before row retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ROW_RETRY}) + 1",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Final generated image loaded",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Bringing browser to front before ChatGPT save",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "bringBrowserToForeground",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opening generated image viewer",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//img[@alt='Generated image']/ancestor::div[@role='button'][1])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Waiting for Save button",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "waitForElementPresent",
+            "Target": "xpath=//button[@aria-label='Save']",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Save button ready",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Math.floor(Date.now()/1000);",
+            "Value": "DOWNLOAD_STARTED_AT",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicking Save download button",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "click",
+            "Target": "xpath=(//button[@aria-label='Save'])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicked Save download button",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "DOWNLOAD_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "",
+            "Value": "DOWNLOADED_FILE",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "DOWNLOAD_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "DOWNLOAD_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${DOWNLOAD_POLL} >= 60",
+            "Value": "DOWNLOAD_WAIT_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"best=0; found=''; for f in \\\"$HOME\\\"/Downloads/*; do [ -f \\\"$f\\\" ] || continue; case \\\"$f\\\" in *.png|*.jpg|*.jpeg|*.webp) ;; *) continue ;; esac; m=$(stat -f %m \\\"$f\\\" 2>/dev/null || echo 0); if [ \\\"$m\\\" -ge \\\"${DOWNLOAD_STARTED_AT}\\\" ] && [ \\\"$m\\\" -ge \\\"$best\\\" ]; then best=\\\"$m\\\"; found=\\\"$f\\\"; fi; done; printf '%s\\n' \\\"$found\\\" > /tmp/uivision_downloaded_file.csv\"",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!csvReadLineNumber}",
+            "Value": "CSV_LINE_BACKUP",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/tmp/uivision_downloaded_file.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "DOWNLOADED_FILE",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${CSV_LINE_BACKUP}",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${DOWNLOADED_FILE} != ''",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "DOWNLOAD_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "DOWNLOAD_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${DOWNLOAD_POLL}) + 1",
+            "Value": "DOWNLOAD_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "DOWNLOAD_POLL=${DOWNLOAD_POLL}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "DOWNLOAD_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "DOWNLOAD_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${DOWNLOAD_FOUND} == 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Download file was not detected after polling window, retrying row",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current ChatGPT tab before row retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ROW_RETRY}) + 1",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Download file detected: ${DOWNLOADED_FILE}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Moving downloaded file to ${RESOLVED_OUTPUT_IMAGE_PATH}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && src='${DOWNLOADED_FILE}' && out='${RESOLVED_OUTPUT_IMAGE_PATH}' && outdir=\\\"$(dirname \\\"$out\\\")\\\" && mkdir -p \\\"$outdir\\\" && mv -f \\\"$src\\\" \\\"$out\\\"\"",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Move step finished",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "ROW_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== IMAGE FINISHED: ${JOB_NAME} ===",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ROW_PROCESS_COMPLETED row=${TARGET_ROW}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing ChatGPT tab for finished image row",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "OPEN_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opening ChatGPT page failed after 5 attempts, retrying row",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current ChatGPT tab before row retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "10000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ROW_RETRY}) + 1",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "ROW_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Row failed after 3 tries, stopping selected row: ${JOB_NAME}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ROW_PROCESS_FAILED row=${TARGET_ROW}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Bringing chrome window back to original size",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_CTRL+KEY_CMD+KEY_F}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "=== MACRO END ===",
+            "Value": "blue",
+            "Description": ""
+        }
+    ]
+}
