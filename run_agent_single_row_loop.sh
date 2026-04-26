@@ -7,11 +7,7 @@ export LANG="en_US.UTF-8"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-MODE="${1:-image}"
-ROW_ARG="${2:-}"
-ARG3="${3:-}"
-ARG4="${4:-}"
-ARG5="${5:-}"
+PROVIDER="${PROVIDER:-gemini}"
 
 BASE_CSV="${BASE_CSV:-/Users/broliang/Pictures/short_drama/ui_vision.csv}"
 ROW_CONTROL_CSV="${ROW_CONTROL_CSV:-/Users/broliang/Pictures/short_drama/ui_vision_row_control.csv}"
@@ -20,18 +16,18 @@ ROW_CONTROL_CSV="${ROW_CONTROL_CSV:-/Users/broliang/Pictures/short_drama/ui_visi
 UIV_HTML="${UIV_HTML:-/Users/broliang/uivision/ui.vision.html}"
 LOG_FILE="${LOG_FILE:-/Users/broliang/uivision/uivision.log}"
 APPLE_SCRIPT="${APPLE_SCRIPT:-$SCRIPT_DIR/launch_uivision_macro.scpt}"
-LOG_TIMEOUT="${LOG_TIMEOUT:-1200}"
-ROW_TIME_LIMIT="${ROW_TIME_LIMIT:-1200}"
+LOG_TIMEOUT="${LOG_TIMEOUT:-2400}"
+ROW_TIME_LIMIT="${ROW_TIME_LIMIT:-2400}"
 FAIL_SETTLE_TIME="${FAIL_SETTLE_TIME:-8}"
 MAX_PASSES="${MAX_PASSES:-5}"
 RUN_ONE_ROW_ONLY="${RUN_ONE_ROW_ONLY:-0}"
 OVERWRITE_OUTPUT="${OVERWRITE_OUTPUT:-0}"
 
 usage() {
-  echo "Usage: $0 [image|storyboard|sora|chat|camera] [start_row] [all|single] [overwrite]" >&2
-  echo "       $0 [image|storyboard|sora|chat|camera] [start_row] [end_row] [all|single] [overwrite]" >&2
-  echo "       $0 [image|storyboard|sora|chat|camera] [row1,row2,row3] [all|single] [overwrite]" >&2
-  echo "       $0 [image|storyboard|sora|chat|camera] [start-end] [all|single] [overwrite]" >&2
+  echo "Usage: $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [image|storyboard|sora|chat|camera] [start_row] [all|single] [overwrite]" >&2
+  echo "       $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [image|storyboard|sora|chat|camera] [start_row] [end_row] [all|single] [overwrite]" >&2
+  echo "       $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [image|storyboard|sora|chat|camera] [row1,row2,row3] [all|single] [overwrite]" >&2
+  echo "       $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [image|storyboard|sora|chat|camera] [start-end] [all|single] [overwrite]" >&2
   exit 2
 }
 
@@ -39,9 +35,75 @@ is_positive_int() {
   [[ "${1:-}" =~ ^[1-9][0-9]*$ ]]
 }
 
+read_macro_name_from_json() {
+  local macro_file="$1"
+
+  python3 - "$macro_file" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    data = json.load(handle)
+
+name = (data.get("Name") or "").strip()
+if not name:
+    raise SystemExit(1)
+
+print(name)
+PY
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -p|--provider|--agent)
+      shift
+      [[ $# -gt 0 ]] || usage
+      PROVIDER="$1"
+      shift
+      ;;
+    -o|--overwrite)
+      OVERWRITE_OUTPUT=1
+      shift
+      ;;
+    --no-overwrite)
+      OVERWRITE_OUTPUT=0
+      shift
+      ;;
+    -h|--help)
+      usage
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      usage
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
+PROVIDER="$(printf '%s' "$PROVIDER" | tr '[:upper:]' '[:lower:]')"
+
+MODE="$(printf '%s' "${1:-image}" | tr '[:upper:]' '[:lower:]')"
+ROW_ARG="${2:-}"
+ARG3="${3:-}"
+ARG4="${4:-}"
+ARG5="${5:-}"
+
+case "$PROVIDER" in
+  gemini|chatgpt)
+    ;;
+  *)
+    echo "Unsupported provider: $PROVIDER" >&2
+    usage
+    ;;
+esac
+
 case "$MODE" in
   image)
-    MACRO_NAME="GeminiImageSingleRow"
     SUCCESS_MARKER="ROW_PROCESS_COMPLETED"
     FAILURE_MARKER="ROW_PROCESS_FAILED"
     SOURCE_RELATIVE_CSV="image_prompts.csv"
@@ -54,26 +116,49 @@ case "$MODE" in
     ;;
   sora)
     MACRO_NAME="SoraVideoSingleRow"
+    MACRO_FILE="$SCRIPT_DIR/sora_single_row.json"
+    LOG_MODE_TAG="sora"
     SUCCESS_MARKER="SORA_PROCESS_COMPLETED"
     FAILURE_MARKER="SORA_PROCESS_FAILED"
     SOURCE_RELATIVE_CSV="segments_prompts/video_prompts.csv"
     ;;
-  chat)
-    MACRO_NAME="GeminiChatSingleRow"
-    SUCCESS_MARKER="CHAT_PROCESS_COMPLETED"
-    FAILURE_MARKER="CHAT_PROCESS_FAILED"
-    SOURCE_RELATIVE_CSV="chat_prompts.csv"
-    ;;
-  camera)
-    MACRO_NAME="GeminiCameraSingleRow"
-    SUCCESS_MARKER="CAMERA_PROCESS_COMPLETED"
-    FAILURE_MARKER="CAMERA_PROCESS_FAILED"
-    SOURCE_RELATIVE_CSV="camera_prompts.csv"
-    ;;
   *)
-    usage
+    case "$MODE" in
+      chat)
+        SUCCESS_MARKER="CHAT_PROCESS_COMPLETED"
+        FAILURE_MARKER="CHAT_PROCESS_FAILED"
+        SOURCE_RELATIVE_CSV="chat_prompts.csv"
+        ;;
+      camera)
+        SUCCESS_MARKER="CAMERA_PROCESS_COMPLETED"
+        FAILURE_MARKER="CAMERA_PROCESS_FAILED"
+        SOURCE_RELATIVE_CSV="camera_prompts.csv"
+        ;;
+      *)
+        usage
+        ;;
+    esac
     ;;
 esac
+
+if [[ "$MODE" != "sora" ]]; then
+  MACRO_FILE="$SCRIPT_DIR/$PROVIDER/${PROVIDER}_${MODE}_single_row.json"
+  LOG_MODE_TAG="${PROVIDER}_${MODE}"
+  if [[ ! -f "$MACRO_FILE" ]]; then
+    echo "Missing macro for provider '$PROVIDER' and mode '$MODE': $MACRO_FILE" >&2
+    exit 1
+  fi
+
+  if ! MACRO_NAME="$(read_macro_name_from_json "$MACRO_FILE")"; then
+    echo "Could not read macro Name from $MACRO_FILE" >&2
+    exit 1
+  fi
+fi
+
+if [[ ! -f "$MACRO_FILE" ]]; then
+  echo "Missing macro file: $MACRO_FILE" >&2
+  exit 1
+fi
 
 if [[ ! -f "$BASE_CSV" ]]; then
   echo "Missing base CSV: $BASE_CSV" >&2
@@ -189,8 +274,8 @@ if [[ ! "$MAX_PASSES" =~ ^[1-9][0-9]*$ ]]; then
 fi
 
 if [[ ! "$ROW_TIME_LIMIT" =~ ^[1-9][0-9]*$ ]]; then
-  echo "Invalid ROW_TIME_LIMIT '$ROW_TIME_LIMIT'; defaulting to 1200" >&2
-  ROW_TIME_LIMIT="1200"
+  echo "Invalid ROW_TIME_LIMIT '$ROW_TIME_LIMIT'; defaulting to 2400" >&2
+  ROW_TIME_LIMIT="2400"
 fi
 
 if [[ ! "$FAIL_SETTLE_TIME" =~ ^[1-9][0-9]*$ ]]; then
@@ -237,7 +322,7 @@ build_log_file_path() {
   local row="$1"
   local pass="$2"
   printf '%s/%s_%s_row_%s_pass_%s%s' \
-    "$LOG_DIR" "$LOG_STEM" "$MODE" "$row" "$pass" "$LOG_EXT"
+    "$LOG_DIR" "$LOG_STEM" "$LOG_MODE_TAG" "$row" "$pass" "$LOG_EXT"
 }
 
 stop_uivision_instances() {
@@ -431,6 +516,7 @@ run_one_row() {
 
   target_url="file://$UIV_HTML?direct=1&macro=$MACRO_NAME&closeRPA=1&savelog=$CURRENT_LOG_FILE"
 
+  echo "Provider=$PROVIDER Mode=$MODE Overwrite=$OVERWRITE_OUTPUT Macro=$MACRO_NAME"
   echo "Launching $MACRO_NAME for row $current_row"
   echo "Log file: $CURRENT_LOG_FILE"
   echo "Row time limit: ${ROW_TIME_LIMIT}s"
