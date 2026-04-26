@@ -1048,7 +1048,7 @@
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${DOWNLOADED_FILE_B64}'; if(!s){return '';} try { return atob(s); } catch (e) { return ''; }",
+            "Target": "var s='${DOWNLOADED_FILE_B64}'; s=(s||'').trim(); return s;",
             "Value": "DOWNLOADED_FILE",
             "Description": ""
         },
@@ -1162,7 +1162,7 @@
         },
         {
             "Command": "echo",
-            "Target": "Download file detected: ${DOWNLOADED_FILE}",
+            "Target": "Download file detected",
             "Value": "green",
             "Description": ""
         },
@@ -1181,7 +1181,7 @@
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && src='${DOWNLOADED_FILE}' && out='${RESOLVED_OUTPUT_IMAGE_PATH}' && outdir=\\\"$(dirname \\\"$out\\\")\\\" && mkdir -p \\\"$outdir\\\" && mv -f \\\"$src\\\" \\\"$out\\\"\"",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && src=\\\"$(cat /tmp/uivision_downloaded_file_b64.csv | /usr/bin/base64 -D)\\\" && out='${RESOLVED_OUTPUT_IMAGE_PATH}' && outdir=\\\"$(dirname \\\"$out\\\")\\\" && [ -n \\\"$src\\\" ] && [ -f \\\"$src\\\" ] && mkdir -p \\\"$outdir\\\" && mv -f \\\"$src\\\" \\\"$out\\\"\"",
             "Description": ""
         },
         {
