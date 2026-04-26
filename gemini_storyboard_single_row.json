@@ -628,7 +628,7 @@
         },
         {
             "Command": "click",
-            "Target": "xpath=(//button[contains(.,'Fast') or contains(.,'Thinking') or contains(.,'Pro') or contains(@aria-label,'model') or contains(@aria-label,'Model')])[1]",
+            "Target": "css=button[data-test-id='bard-mode-menu-button']",
             "Value": "",
             "Description": ""
         },
