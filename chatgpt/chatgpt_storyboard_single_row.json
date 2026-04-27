@@ -652,6 +652,30 @@
         },
         {
             "Command": "echo",
+            "Target": "Waiting for send button to be enabled before uploading next image",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "waitForElementPresent",
+            "Target": "xpath=//button[@id='composer-submit-button' and not(@disabled)]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Send button enabled after upload",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
             "Target": "Sending ESC to close attach menu",
             "Value": "blue",
             "Description": ""
