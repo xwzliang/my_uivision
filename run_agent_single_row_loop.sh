@@ -22,6 +22,8 @@ FAIL_SETTLE_TIME="${FAIL_SETTLE_TIME:-8}"
 MAX_PASSES="${MAX_PASSES:-5}"
 RUN_ONE_ROW_ONLY="${RUN_ONE_ROW_ONLY:-0}"
 OVERWRITE_OUTPUT="${OVERWRITE_OUTPUT:-0}"
+AUTOSTART_STUCK_TIMEOUT="${AUTOSTART_STUCK_TIMEOUT:-300}"
+MAX_LAUNCH_ATTEMPTS="${MAX_LAUNCH_ATTEMPTS:-3}"
 
 usage() {
   echo "Usage: $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [image|storyboard|sora|chat|camera] [start_row] [all|single] [overwrite]" >&2
@@ -368,6 +370,30 @@ stop_uivision_instances() {
   sleep 1
 }
 
+restart_chrome() {
+  echo "Restarting Google Chrome to recover UI.Vision autorun state" >&2
+  osascript -e 'tell application "Google Chrome" to quit' >/dev/null 2>&1 || true
+  sleep 3
+  open -a "Google Chrome" >/dev/null 2>&1 || true
+  sleep 5
+}
+
+count_uivision_tabs() {
+  osascript \
+    -e 'tell application "Google Chrome"' \
+    -e 'set tab_count to 0' \
+    -e 'repeat with w in windows' \
+    -e 'repeat with t in tabs of w' \
+    -e 'try' \
+    -e 'set tab_url to URL of t' \
+    -e 'if tab_url contains "ui.vision.html" then set tab_count to tab_count + 1' \
+    -e 'end try' \
+    -e 'end repeat' \
+    -e 'end repeat' \
+    -e 'return tab_count' \
+    -e 'end tell' 2>/dev/null || printf '0'
+}
+
 wait_for_row_result() {
   local started_at
   local now
@@ -377,6 +403,7 @@ wait_for_row_result() {
   local current_log_size=0
   local last_log_activity_at
   local log_idle_seconds=0
+  local open_uivision_tabs=0
 
   started_at="$(date +%s)"
   last_log_activity_at="$started_at"
@@ -391,6 +418,11 @@ wait_for_row_result() {
     fi
 
     if [[ ! -s "$CURRENT_LOG_FILE" ]]; then
+      open_uivision_tabs="$(count_uivision_tabs)"
+      if (( elapsed >= AUTOSTART_STUCK_TIMEOUT )) && [[ "$open_uivision_tabs" != "0" ]]; then
+        echo "Detected UI.Vision autorun page stuck open for row $current_row with an empty log after ${elapsed}s; forcing relaunch." >&2
+        return 4
+      fi
       if (( elapsed > LOG_TIMEOUT )); then
         echo "UI.Vision log stayed empty for more than ${LOG_TIMEOUT}s" >&2
         return 1
@@ -409,6 +441,11 @@ wait_for_row_result() {
         || grep -q 'Macro completed' "$CURRENT_LOG_FILE" \
         || grep -q "${SUCCESS_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
         return 0
+      fi
+
+      if grep -q '\[error\] E225: DOM failed to be ready in 30sec\.' "$CURRENT_LOG_FILE"; then
+        echo "Detected UI.Vision DOM-ready failure for row $current_row; forcing relaunch." >&2
+        return 4
       fi
 
       if grep -q 'Macro failed' "$CURRENT_LOG_FILE" \
@@ -516,6 +553,8 @@ run_one_row() {
   local row="$1"
   local pass="$2"
   local existing_output_path
+  local launch_attempt=1
+  local wait_status
 
   current_row="$row"
 
@@ -530,21 +569,41 @@ run_one_row() {
 
   CURRENT_LOG_FILE="$(build_log_file_path "$row" "$pass")"
   printf '%s\n' "$current_row" > "$ROW_CONTROL_CSV"
-  : > "$CURRENT_LOG_FILE"
-
   target_url="file://$UIV_HTML?direct=1&macro=$MACRO_NAME&closeRPA=1&savelog=$CURRENT_LOG_FILE"
 
-  echo "Provider=$PROVIDER Mode=$MODE Overwrite=$OVERWRITE_OUTPUT Macro=$MACRO_NAME"
-  echo "Launching $MACRO_NAME for row $current_row"
-  echo "Log file: $CURRENT_LOG_FILE"
-  echo "Row time limit: ${ROW_TIME_LIMIT}s"
-  osascript "$APPLE_SCRIPT"
-  sleep 1
-  osascript -e \
-    "tell application \"Google Chrome\" to open location \
+  while (( launch_attempt <= MAX_LAUNCH_ATTEMPTS )); do
+    : > "$CURRENT_LOG_FILE"
+
+    echo "Provider=$PROVIDER Mode=$MODE Overwrite=$OVERWRITE_OUTPUT Macro=$MACRO_NAME"
+    echo "Launching $MACRO_NAME for row $current_row (launch attempt ${launch_attempt}/${MAX_LAUNCH_ATTEMPTS})"
+    echo "Log file: $CURRENT_LOG_FILE"
+    echo "Row time limit: ${ROW_TIME_LIMIT}s"
+    osascript "$APPLE_SCRIPT"
+    sleep 1
+    osascript -e \
+      "tell application \"Google Chrome\" to open location \
 \"$target_url\""
-  wait_for_row_result
-  wait_status=$?
+    wait_for_row_result
+    wait_status=$?
+
+    if (( wait_status == 4 )); then
+      echo "UI.Vision autorun page got stuck for row $current_row; restarting launch." >&2
+      stop_uivision_instances
+      launch_attempt=$((launch_attempt + 1))
+      sleep 2
+      continue
+    fi
+
+    break
+  done
+
+  if (( launch_attempt > MAX_LAUNCH_ATTEMPTS )); then
+    echo "Row $current_row exceeded ${MAX_LAUNCH_ATTEMPTS} UI.Vision launch attempts; marking for retry." >&2
+    stop_uivision_instances
+    restart_chrome
+    return 1
+  fi
+
   if (( wait_status == 1 )); then
     echo "Row $current_row did not finish within the allowed watchdog limits; marking for retry." >&2
     stop_uivision_instances
