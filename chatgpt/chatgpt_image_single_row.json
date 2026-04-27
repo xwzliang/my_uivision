@@ -826,7 +826,7 @@
         },
         {
             "Command": "gotoIf",
-            "Target": "${FINAL_IMAGE_POLL} >= 100",
+            "Target": "${FINAL_IMAGE_POLL} >= 150",
             "Value": "FINAL_IMAGE_WAIT_DONE",
             "Description": ""
         },
@@ -999,7 +999,7 @@
             "Description": ""
         },
         {
-            "Command": "click",
+            "Command": "XClick",
             "Target": "xpath=(//img[@alt='Generated image']/ancestor::div[@role='button'][1])[last()]",
             "Value": "",
             "Description": ""
@@ -1193,7 +1193,7 @@
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-c \"best=0; found=''; for f in \\\"$HOME\\\"/Downloads/*.png; do [ -f \\\"$f\\\" ] || continue; m=$(stat -f %m \\\"$f\\\" 2>/dev/null || echo 0); if [ \\\"$m\\\" -ge \\\"${DOWNLOAD_STARTED_AT}\\\" ] && [ \\\"$m\\\" -ge \\\"$best\\\" ]; then best=\\\"$m\\\"; found=\\\"$f\\\"; fi; done; printf '%s' \\\"$found\\\" | /usr/bin/base64 | tr -d '\\n' > /tmp/uivision_downloaded_file_b64.csv\"",
+            "Value": "-c \"best=0; found=''; for f in \\\"$HOME\\\"/Downloads/*.png; do [ -f \\\"$f\\\" ] || continue; m=$(stat -f %m \\\"$f\\\" 2>/dev/null || echo 0); if [ \\\"$m\\\" -ge \\\"${DOWNLOAD_STARTED_AT}\\\" ] && [ \\\"$m\\\" -ge \\\"$best\\\" ]; then best=\\\"$m\\\"; found=\\\"$f\\\"; fi; done; printf '%s' \\\"$found\\\" | /usr/bin/base64 | tr -d '\\n' > /tmp/uivision_downloaded_file_b64.csv && printf '\\n' >> /tmp/uivision_downloaded_file_b64.csv\"",
             "Description": ""
         },
         {
@@ -1361,7 +1361,7 @@
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && src=\\\"$(cat /tmp/uivision_downloaded_file_b64.csv | /usr/bin/base64 -D)\\\" && out='${RESOLVED_OUTPUT_IMAGE_PATH}' && outdir=\\\"$(dirname \\\"$out\\\")\\\" && [ -n \\\"$src\\\" ] && [ -f \\\"$src\\\" ] && mkdir -p \\\"$outdir\\\" && mv -f \\\"$src\\\" \\\"$out\\\"\"",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && src_b64=\\\"$(tr -d '\\\\r\\\\n' < /tmp/uivision_downloaded_file_b64.csv)\\\" && src=\\\"$(printf '%s' \\\"$src_b64\\\" | /usr/bin/base64 -D)\\\" && src=\\\"$(printf '%s' \\\"$src\\\" | tr -d '\\\\r')\\\" && out='${RESOLVED_OUTPUT_IMAGE_PATH}' && out=\\\"$(printf '%s' \\\"$out\\\" | tr -d '\\\\r')\\\" && outdir=\\\"$(dirname \\\"$out\\\")\\\" && mkdir -p \\\"$outdir\\\" && [ -n \\\"$src\\\" ] && [ -f \\\"$src\\\" ] && /bin/mv -f \\\"$src\\\" \\\"$out\\\"\"",
             "Description": ""
         },
         {

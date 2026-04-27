@@ -826,7 +826,7 @@
         },
         {
             "Command": "gotoIf",
-            "Target": "${FINAL_IMAGE_POLL} >= 100",
+            "Target": "${FINAL_IMAGE_POLL} >= 150",
             "Value": "FINAL_IMAGE_WAIT_DONE",
             "Description": ""
         },
@@ -999,7 +999,7 @@
             "Description": ""
         },
         {
-            "Command": "click",
+            "Command": "XClick",
             "Target": "xpath=(//img[contains(@alt,'Generated image')]/ancestor::div[@role='button'][1])[last()]",
             "Value": "",
             "Description": ""
@@ -1193,7 +1193,7 @@
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-c \"best=0; found=''; for f in \\\"$HOME\\\"/Downloads/*.png; do [ -f \\\"$f\\\" ] || continue; m=$(stat -f %m \\\"$f\\\" 2>/dev/null || echo 0); if [ \\\"$m\\\" -ge \\\"${DOWNLOAD_STARTED_AT}\\\" ] && [ \\\"$m\\\" -ge \\\"$best\\\" ]; then best=\\\"$m\\\"; found=\\\"$f\\\"; fi; done; printf '%s' \\\"$found\\\" | /usr/bin/base64 | tr -d '\\\\n' > /tmp/uivision_downloaded_file_b64.csv\"",
+            "Value": "-c \"best=0; found=''; for f in \\\"$HOME\\\"/Downloads/*.png; do [ -f \\\"$f\\\" ] || continue; m=$(stat -f %m \\\"$f\\\" 2>/dev/null || echo 0); if [ \\\"$m\\\" -ge \\\"${DOWNLOAD_STARTED_AT}\\\" ] && [ \\\"$m\\\" -ge \\\"$best\\\" ]; then best=\\\"$m\\\"; found=\\\"$f\\\"; fi; done; printf '%s' \\\"$found\\\" | /usr/bin/base64 | tr -d '\\n' > /tmp/uivision_downloaded_file_b64.csv && printf '\\n' >> /tmp/uivision_downloaded_file_b64.csv\"",
             "Description": ""
         },
         {
