@@ -22,7 +22,9 @@ FAIL_SETTLE_TIME="${FAIL_SETTLE_TIME:-8}"
 MAX_PASSES="${MAX_PASSES:-5}"
 RUN_ONE_ROW_ONLY="${RUN_ONE_ROW_ONLY:-0}"
 OVERWRITE_OUTPUT="${OVERWRITE_OUTPUT:-0}"
-AUTOSTART_STUCK_TIMEOUT="${AUTOSTART_STUCK_TIMEOUT:-300}"
+HEALTH_CONTEXT_CSV="${HEALTH_CONTEXT_CSV:-/tmp/uivision_health_context.csv}"
+AUTOSTART_STUCK_TIMEOUT="${AUTOSTART_STUCK_TIMEOUT:-45}"
+AUTOSTART_STUCK_TIMEOUT_CAP="${AUTOSTART_STUCK_TIMEOUT_CAP:-120}"
 MAX_LAUNCH_ATTEMPTS="${MAX_LAUNCH_ATTEMPTS:-3}"
 
 usage() {
@@ -283,6 +285,26 @@ fi
 if [[ ! "$FAIL_SETTLE_TIME" =~ ^[1-9][0-9]*$ ]]; then
   echo "Invalid FAIL_SETTLE_TIME '$FAIL_SETTLE_TIME'; defaulting to 8" >&2
   FAIL_SETTLE_TIME="8"
+fi
+
+if [[ ! "$AUTOSTART_STUCK_TIMEOUT" =~ ^[1-9][0-9]*$ ]]; then
+  echo "Invalid AUTOSTART_STUCK_TIMEOUT '$AUTOSTART_STUCK_TIMEOUT'; defaulting to 45" >&2
+  AUTOSTART_STUCK_TIMEOUT="45"
+fi
+
+if [[ ! "$AUTOSTART_STUCK_TIMEOUT_CAP" =~ ^[1-9][0-9]*$ ]]; then
+  echo "Invalid AUTOSTART_STUCK_TIMEOUT_CAP '$AUTOSTART_STUCK_TIMEOUT_CAP'; defaulting to 120" >&2
+  AUTOSTART_STUCK_TIMEOUT_CAP="120"
+fi
+
+if (( AUTOSTART_STUCK_TIMEOUT > AUTOSTART_STUCK_TIMEOUT_CAP )); then
+  echo "AUTOSTART_STUCK_TIMEOUT '$AUTOSTART_STUCK_TIMEOUT' is too high for reliable empty-log stuck-page detection; clamping to ${AUTOSTART_STUCK_TIMEOUT_CAP}s." >&2
+  AUTOSTART_STUCK_TIMEOUT="$AUTOSTART_STUCK_TIMEOUT_CAP"
+fi
+
+if [[ ! "$MAX_LAUNCH_ATTEMPTS" =~ ^[1-9][0-9]*$ ]]; then
+  echo "Invalid MAX_LAUNCH_ATTEMPTS '$MAX_LAUNCH_ATTEMPTS'; defaulting to 3" >&2
+  MAX_LAUNCH_ATTEMPTS="3"
 fi
 
 for option_arg in "${OPTION_ARGS[@]}"; do
@@ -569,6 +591,7 @@ run_one_row() {
 
   CURRENT_LOG_FILE="$(build_log_file_path "$row" "$pass")"
   printf '%s\n' "$current_row" > "$ROW_CONTROL_CSV"
+  printf '"%s","%s","%s"\n' "$CURRENT_LOG_FILE" "$current_row" "$MACRO_NAME" > "$HEALTH_CONTEXT_CSV"
   target_url="file://$UIV_HTML?direct=1&macro=$MACRO_NAME&closeRPA=1&savelog=$CURRENT_LOG_FILE"
 
   while (( launch_attempt <= MAX_LAUNCH_ATTEMPTS )); do

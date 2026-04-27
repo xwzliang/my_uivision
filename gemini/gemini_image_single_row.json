@@ -21,6 +21,48 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/tmp/uivision_health_context.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "HEALTH_LOG_FILE",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL2}",
+            "Value": "HEALTH_ROW",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL3}",
+            "Value": "HEALTH_MACRO",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"log='${HEALTH_LOG_FILE}' && row='${HEALTH_ROW}' && macro='${HEALTH_MACRO}' && if [ -n \\\"$log\\\" ]; then printf '[health] %s macro_start row=%s macro=%s\\n' \\\"$(date '+%Y-%m-%d %H:%M:%S')\\\" \\\"$row\\\" \\\"$macro\\\" >> \\\"$log\\\"; fi\"",
+            "Description": ""
+        },
+        {
             "Command": "echo",
             "Target": "=== MACRO START ===",
             "Value": "blue",
