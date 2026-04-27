@@ -1361,7 +1361,7 @@
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && src=\\\"$(cat /tmp/uivision_downloaded_file_b64.csv | /usr/bin/base64 -D)\\\" && out='${RESOLVED_STORYBOARD_OUTPUT_PATH}' && outdir=\\\"$(dirname \\\"$out\\\")\\\" && [ -n \\\"$src\\\" ] && [ -f \\\"$src\\\" ] && mkdir -p \\\"$outdir\\\" && mv -f \\\"$src\\\" \\\"$out\\\"\"",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && src_b64=\\\"$(tr -d '\\\\r\\\\n' < /tmp/uivision_downloaded_file_b64.csv)\\\" && src=\\\"$(printf '%s' \\\"$src_b64\\\" | /usr/bin/base64 -D)\\\" && src=\\\"$(printf '%s' \\\"$src\\\" | tr -d '\\\\r')\\\" && out='${RESOLVED_STORYBOARD_OUTPUT_PATH}' && out=\\\"$(printf '%s' \\\"$out\\\" | tr -d '\\\\r')\\\" && outdir=\\\"$(dirname \\\"$out\\\")\\\" && mkdir -p \\\"$outdir\\\" && [ -n \\\"$src\\\" ] && [ -f \\\"$src\\\" ] && /bin/mv -f \\\"$src\\\" \\\"$out\\\"\"",
             "Description": ""
         },
         {
