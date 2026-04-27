@@ -964,7 +964,7 @@
         },
         {
             "Command": "gotoIf",
-            "Target": "${SAVE_VIEW_RETRY} >= 3",
+            "Target": "${SAVE_VIEW_RETRY} >= 5",
             "Value": "SAVE_VIEW_FAILED",
             "Description": ""
         },
@@ -1066,92 +1066,8 @@
         },
         {
             "Command": "echo",
-            "Target": "Fullscreen close button not found, refreshing page before retry",
+            "Target": "Fullscreen close button not found, retrying image open without refresh",
             "Value": "blue",
-            "Description": ""
-        },
-        {
-            "Command": "refresh",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "3000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "true",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "waitForElementPresent",
-            "Target": "xpath=(//img[@alt='Generated image' and contains(@src,'/backend-api/estuary/content')])[last()]",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "false",
-            "Value": "!errorignore",
-            "Description": ""
-        },
-        {
-            "Command": "if_v2",
-            "Target": "${!statusOK} == false",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Generated image was not present after refresh, retrying row",
-            "Value": "red",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Closing current ChatGPT tab before row retry",
-            "Value": "blue",
-            "Description": ""
-        },
-        {
-            "Command": "selectWindow",
-            "Target": "TAB=CLOSE",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "1000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "5000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${ROW_RETRY}) + 1",
-            "Value": "ROW_RETRY",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "ROW_RETRY_LOOP",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "end",
-            "Target": "",
-            "Value": "",
             "Description": ""
         },
         {
@@ -1486,7 +1402,7 @@
         },
         {
             "Command": "echo",
-            "Target": "Save view could not be opened after 3 attempts, retrying row",
+            "Target": "Save view could not be opened after 5 attempts, retrying row",
             "Value": "red",
             "Description": ""
         },

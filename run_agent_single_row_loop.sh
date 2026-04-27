@@ -526,6 +526,28 @@ except FileNotFoundError:
 PY
 }
 
+source_row_exists() {
+  local row="$1"
+
+  python3 - "$source_csv" "$row" <<'PY'
+import csv
+import sys
+
+source_csv, row_arg = sys.argv[1:]
+target_row = int(row_arg)
+
+try:
+    with open(source_csv, newline="", encoding="utf-8") as handle:
+        for current_index, _row in enumerate(csv.reader(handle), start=1):
+            if current_index == target_row:
+                raise SystemExit(0)
+except FileNotFoundError:
+    pass
+
+raise SystemExit(1)
+PY
+}
+
 find_existing_output_for_row() {
   local row="$1"
   local output_path
@@ -579,6 +601,11 @@ run_one_row() {
   local wait_status
 
   current_row="$row"
+
+  if ! source_row_exists "$row"; then
+    echo "Row $current_row is beyond the end of $source_csv; stopping before launching the macro"
+    return 2
+  fi
 
   if (( OVERWRITE_OUTPUT == 0 )); then
     if existing_output_path="$(find_existing_output_for_row "$row")"; then
