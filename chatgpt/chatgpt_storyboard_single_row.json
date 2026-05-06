@@ -118,6 +118,12 @@
         },
         {
             "Command": "store",
+            "Target": "10",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
             "Target": "true",
             "Value": "!errorignore",
             "Description": ""
@@ -450,6 +456,12 @@
             "Command": "store",
             "Target": "false",
             "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
             "Description": ""
         },
         {
@@ -975,24 +987,6 @@
             "Description": ""
         },
         {
-            "Command": "store",
-            "Target": "0",
-            "Value": "SAVE_VIEW_RETRY",
-            "Description": ""
-        },
-        {
-            "Command": "label",
-            "Target": "SAVE_VIEW_RETRY_LOOP",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "gotoIf",
-            "Target": "${SAVE_VIEW_RETRY} >= 5",
-            "Value": "SAVE_VIEW_FAILED",
-            "Description": ""
-        },
-        {
             "Command": "echo",
             "Target": "Opening generated image viewer",
             "Value": "purple",
@@ -1011,18 +1005,6 @@
             "Description": ""
         },
         {
-            "Command": "echo",
-            "Target": "Waiting for Save button",
-            "Value": "purple",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "60",
-            "Value": "!TIMEOUT_WAIT",
-            "Description": ""
-        },
-        {
             "Command": "store",
             "Target": "true",
             "Value": "!errorignore",
@@ -1030,7 +1012,7 @@
         },
         {
             "Command": "waitForElementPresent",
-            "Target": "xpath=//button[@aria-label='Save']",
+            "Target": "xpath=//button[@aria-label='Close fullscreen view']",
             "Value": "",
             "Description": ""
         },
@@ -1048,253 +1030,7 @@
         },
         {
             "Command": "echo",
-            "Target": "Save button did not appear within 60 seconds",
-            "Value": "red",
-            "Description": ""
-        },
-        {
-            "Command": "storeXpathCount",
-            "Target": "xpath=//button[@aria-label='Close fullscreen view']",
-            "Value": "FULLSCREEN_CLOSE_COUNT",
-            "Description": ""
-        },
-        {
-            "Command": "if_v2",
-            "Target": "${FULLSCREEN_CLOSE_COUNT} > 0",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Closing fullscreen view before retrying image open",
-            "Value": "blue",
-            "Description": ""
-        },
-        {
-            "Command": "click",
-            "Target": "xpath=(//button[@aria-label='Close fullscreen view'])[1]",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "1200",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "end",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Fullscreen close button not found, retrying image open without refresh",
-            "Value": "blue",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${SAVE_VIEW_RETRY}) + 1",
-            "Value": "SAVE_VIEW_RETRY",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "SAVE_VIEW_RETRY_LOOP",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "end",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "300",
-            "Value": "!TIMEOUT_WAIT",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Save button ready",
-            "Value": "green",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Math.floor(Date.now()/1000);",
-            "Value": "DOWNLOAD_STARTED_AT",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Clicking Save download button",
-            "Value": "purple",
-            "Description": ""
-        },
-        {
-            "Command": "click",
-            "Target": "xpath=(//button[@aria-label='Save'])[1]",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Clicked Save download button",
-            "Value": "green",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "2000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "0",
-            "Value": "DOWNLOAD_FOUND",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "",
-            "Value": "DOWNLOADED_FILE",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "",
-            "Value": "DOWNLOADED_FILE_B64",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "0",
-            "Value": "DOWNLOAD_POLL",
-            "Description": ""
-        },
-        {
-            "Command": "label",
-            "Target": "DOWNLOAD_WAIT_LOOP",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "gotoIf",
-            "Target": "${DOWNLOAD_POLL} >= 60",
-            "Value": "DOWNLOAD_WAIT_DONE",
-            "Description": ""
-        },
-        {
-            "Command": "XRunAndWait",
-            "Target": "/bin/bash",
-            "Value": "-c \"best=0; found=''; for f in \\\"$HOME\\\"/Downloads/*.png; do [ -f \\\"$f\\\" ] || continue; m=$(stat -f %m \\\"$f\\\" 2>/dev/null || echo 0); if [ \\\"$m\\\" -ge \\\"${DOWNLOAD_STARTED_AT}\\\" ] && [ \\\"$m\\\" -ge \\\"$best\\\" ]; then best=\\\"$m\\\"; found=\\\"$f\\\"; fi; done; printf '%s' \\\"$found\\\" | /usr/bin/base64 | tr -d '\\n' > /tmp/uivision_downloaded_file_b64.csv && printf '\\n' >> /tmp/uivision_downloaded_file_b64.csv\"",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "${!csvReadLineNumber}",
-            "Value": "CSV_LINE_BACKUP",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "1",
-            "Value": "!csvReadLineNumber",
-            "Description": ""
-        },
-        {
-            "Command": "csvRead",
-            "Target": "/tmp/uivision_downloaded_file_b64.csv",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "${!COL1}",
-            "Value": "DOWNLOADED_FILE_B64",
-            "Description": ""
-        },
-        {
-            "Command": "store",
-            "Target": "${CSV_LINE_BACKUP}",
-            "Value": "!csvReadLineNumber",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "var s='${DOWNLOADED_FILE_B64}'; s=(s||'').trim(); return s;",
-            "Value": "DOWNLOADED_FILE",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "var s='${DOWNLOADED_FILE}'; s=(s||'').trim(); return s ? '1' : '0';",
-            "Value": "DOWNLOAD_FOUND",
-            "Description": ""
-        },
-        {
-            "Command": "if_v2",
-            "Target": "${DOWNLOAD_FOUND} == 1",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "DOWNLOAD_WAIT_DONE",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "end",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "2000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${DOWNLOAD_POLL}) + 1",
-            "Value": "DOWNLOAD_POLL",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "DOWNLOAD_POLL=${DOWNLOAD_POLL}",
-            "Value": "blue",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "DOWNLOAD_WAIT_LOOP",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "label",
-            "Target": "DOWNLOAD_WAIT_DONE",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "if_v2",
-            "Target": "${DOWNLOAD_FOUND} == 0",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Download file was not detected after polling window, retrying segment",
+            "Target": "Fullscreen view did not open after clicking generated image, retrying segment",
             "Value": "red",
             "Description": ""
         },
@@ -1341,9 +1077,93 @@
             "Description": ""
         },
         {
+            "Command": "gotoLabel",
+            "Target": "OS_LEVEL_SAVE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "OS_LEVEL_SAVE",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "echo",
-            "Target": "Download file detected",
-            "Value": "green",
+            "Target": "Running OS-level save flow",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Removing old Downloads/1.png before save",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"rm -f \\\"$HOME/Downloads/1.png\\\"\"",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"/opt/homebrew/bin/cliclick rc:904,694 && sleep 1 && /opt/homebrew/bin/cliclick c:957,725\"",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_CMD+KEY_A}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "1.png",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ENTER}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ENTER}",
+            "Value": "",
             "Description": ""
         },
         {
@@ -1353,20 +1173,128 @@
             "Description": ""
         },
         {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"if [ -f \\\"$HOME/Downloads/1.png\\\" ]; then printf 'OK\\n' > /tmp/uivision_download_check.csv; else printf 'MISSING\\n' > /tmp/uivision_download_check.csv; fi\"",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!csvReadLineNumber}",
+            "Value": "CSV_LINE_BACKUP",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/tmp/uivision_download_check.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "DOWNLOAD_CHECK_RESULT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${CSV_LINE_BACKUP}",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${DOWNLOAD_CHECK_RESULT} == 'OK'",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "echo",
-            "Target": "Moving downloaded file to ${RESOLVED_STORYBOARD_OUTPUT_PATH}",
+            "Target": "OS-level save completed",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "OS_LEVEL_MOVE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "OS-level save failed, retrying segment",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current ChatGPT tab before segment retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${SEG_RETRY}) + 1",
+            "Value": "SEG_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SEGMENT_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "OS_LEVEL_MOVE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Moving Downloads/1.png to ${RESOLVED_STORYBOARD_OUTPUT_PATH}",
             "Value": "blue",
             "Description": ""
         },
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && src_b64=\\\"$(tr -d '\\\\r\\\\n' < /tmp/uivision_downloaded_file_b64.csv)\\\" && src=\\\"$(printf '%s' \\\"$src_b64\\\" | /usr/bin/base64 -D)\\\" && src=\\\"$(printf '%s' \\\"$src\\\" | tr -d '\\\\r')\\\" && out='${RESOLVED_STORYBOARD_OUTPUT_PATH}' && out=\\\"$(printf '%s' \\\"$out\\\" | tr -d '\\\\r')\\\" && outdir=\\\"$(dirname \\\"$out\\\")\\\" && mkdir -p \\\"$outdir\\\" && [ -n \\\"$src\\\" ] && [ -f \\\"$src\\\" ] && /bin/mv -f \\\"$src\\\" \\\"$out\\\"\"",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && out='${RESOLVED_STORYBOARD_OUTPUT_PATH}' && outdir=\\\"$(dirname \\\"$out\\\")\\\" && mkdir -p \\\"$outdir\\\" && mv -f \\\"$HOME/Downloads/1.png\\\" \\\"$out\\\"\"",
             "Description": ""
         },
         {
             "Command": "echo",
-            "Target": "Move step finished",
+            "Target": "OS-level move step finished",
             "Value": "green",
             "Description": ""
         },

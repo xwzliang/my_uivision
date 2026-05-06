@@ -442,7 +442,7 @@ wait_for_row_result() {
     if [[ ! -s "$CURRENT_LOG_FILE" ]]; then
       open_uivision_tabs="$(count_uivision_tabs)"
       if (( elapsed >= AUTOSTART_STUCK_TIMEOUT )) && [[ "$open_uivision_tabs" != "0" ]]; then
-        echo "Detected UI.Vision autorun page stuck open for row $current_row with an empty log after ${elapsed}s; forcing relaunch." >&2
+        echo "Detected UI.Vision autorun page stuck open for row $current_row with an empty log after ${elapsed}s; restarting Chrome and retrying the same row." >&2
         return 4
       fi
       if (( elapsed > LOG_TIMEOUT )); then
@@ -467,7 +467,7 @@ wait_for_row_result() {
 
       if grep -q '\[error\] E225: DOM failed to be ready in 30sec\.' "$CURRENT_LOG_FILE"; then
         echo "Detected UI.Vision DOM-ready failure for row $current_row; forcing relaunch." >&2
-        return 4
+        return 5
       fi
 
       if grep -q 'Macro failed' "$CURRENT_LOG_FILE" \
@@ -599,6 +599,7 @@ run_one_row() {
   local existing_output_path
   local launch_attempt=1
   local wait_status
+  local autostart_recovery_count=0
 
   current_row="$row"
 
@@ -621,7 +622,7 @@ run_one_row() {
   printf '"%s","%s","%s"\n' "$CURRENT_LOG_FILE" "$current_row" "$MACRO_NAME" > "$HEALTH_CONTEXT_CSV"
   target_url="file://$UIV_HTML?direct=1&macro=$MACRO_NAME&closeRPA=1&savelog=$CURRENT_LOG_FILE"
 
-  while (( launch_attempt <= MAX_LAUNCH_ATTEMPTS )); do
+  while true; do
     : > "$CURRENT_LOG_FILE"
 
     echo "Provider=$PROVIDER Mode=$MODE Overwrite=$OVERWRITE_OUTPUT Macro=$MACRO_NAME"
@@ -637,7 +638,19 @@ run_one_row() {
     wait_status=$?
 
     if (( wait_status == 4 )); then
-      echo "UI.Vision autorun page got stuck for row $current_row; restarting launch." >&2
+      autostart_recovery_count=$((autostart_recovery_count + 1))
+      echo "UI.Vision autorun page got stuck for row $current_row; restarting Chrome before retry ${autostart_recovery_count} for the same row." >&2
+      stop_uivision_instances
+      restart_chrome
+      sleep 2
+      continue
+    fi
+
+    if (( wait_status == 5 )); then
+      if (( launch_attempt >= MAX_LAUNCH_ATTEMPTS )); then
+        break
+      fi
+      echo "UI.Vision hit a DOM-ready failure for row $current_row; retrying launch." >&2
       stop_uivision_instances
       launch_attempt=$((launch_attempt + 1))
       sleep 2
@@ -647,7 +660,7 @@ run_one_row() {
     break
   done
 
-  if (( launch_attempt > MAX_LAUNCH_ATTEMPTS )); then
+  if (( wait_status == 5 )) && (( launch_attempt >= MAX_LAUNCH_ATTEMPTS )); then
     echo "Row $current_row exceeded ${MAX_LAUNCH_ATTEMPTS} UI.Vision launch attempts; marking for retry." >&2
     stop_uivision_instances
     restart_chrome
