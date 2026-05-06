@@ -511,9 +511,12 @@ try:
             if mode in {"image", "chat", "camera"}:
                 if len(cols) >= 3 and cols[2]:
                     outputs.append(cols[2])
+                    if mode == "image":
+                        outputs.append(os.path.join(os.path.dirname(cols[2]), "violation.txt"))
             elif mode == "storyboard":
                 if len(cols) >= 2 and cols[1]:
                     outputs.append(os.path.join(base_dir, "segments_prompts", cols[1], "output", "storyboard.png"))
+                    outputs.append(os.path.join(base_dir, "segments_prompts", cols[1], "output", "violation.txt"))
             elif mode == "sora":
                 if len(cols) >= 2 and cols[1]:
                     outputs.append(os.path.join(base_dir, "segments_prompts", cols[1], "output", "clip.mp4"))
@@ -570,6 +573,21 @@ find_existing_output_for_row() {
   return 1
 }
 
+get_violation_output_path_for_row() {
+  local row="$1"
+  local output_path
+
+  while IFS= read -r output_path; do
+    [[ -z "$output_path" ]] && continue
+    if [[ "$(basename "$output_path")" == "violation.txt" ]]; then
+      printf '%s\n' "$output_path"
+      return 0
+    fi
+  done < <(get_output_paths_for_row "$row")
+
+  return 1
+}
+
 build_output_backup_path() {
   local output_path="$1"
   local timestamp
@@ -603,6 +621,72 @@ prepare_output_paths_for_overwrite() {
       echo "Removed original output path for row $row: $output_path"
     fi
   done < <(get_output_paths_for_row "$row")
+}
+
+materialize_guardrail_violation_output_for_row() {
+  local row="$1"
+  local log_file="$2"
+  local violation_output_path
+
+  if ! violation_output_path="$(get_violation_output_path_for_row "$row")"; then
+    return 1
+  fi
+
+  python3 - "$log_file" "$violation_output_path" "$row" <<'PY'
+import pathlib
+import sys
+
+log_file, output_path, row = sys.argv[1:]
+begin_marker = f"GUARDRAIL_RESPONSE_BEGIN row={row}"
+end_marker = f"GUARDRAIL_RESPONSE_END row={row}"
+
+current_lines = None
+captured_blocks = []
+
+try:
+    with open(log_file, encoding="utf-8", errors="replace") as handle:
+        for raw_line in handle:
+            line = raw_line.rstrip("\n")
+            if line.startswith("[echo] "):
+                payload = line[7:]
+            elif line.startswith("[echo]"):
+                payload = line[6:].lstrip()
+            else:
+                payload = line
+
+            if payload == begin_marker:
+                current_lines = []
+                continue
+
+            if payload == end_marker:
+                if current_lines is not None:
+                    captured_blocks.append("\n".join(current_lines).strip())
+                current_lines = None
+                continue
+
+            if current_lines is None:
+                continue
+
+            if line.startswith("[info] Executing:"):
+                continue
+
+            current_lines.append(payload)
+except FileNotFoundError:
+    raise SystemExit(1)
+
+content = ""
+for block in reversed(captured_blocks):
+    if block:
+        content = block
+        break
+
+if not content:
+    raise SystemExit(1)
+
+output = pathlib.Path(output_path)
+output.parent.mkdir(parents=True, exist_ok=True)
+output.write_text(content + "\n", encoding="utf-8")
+PY
 }
 
 ensure_output_created_for_row() {
@@ -742,6 +826,10 @@ run_one_row() {
     echo "Macro finished without the expected success marker for row $current_row; marking for retry. See $CURRENT_LOG_FILE" >&2
     stop_uivision_instances
     return 1
+  fi
+
+  if materialize_guardrail_violation_output_for_row "$current_row" "$CURRENT_LOG_FILE"; then
+    echo "Captured guardrail violation response for row $current_row"
   fi
 
   if ! ensure_output_created_for_row "$current_row"; then

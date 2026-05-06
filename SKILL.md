@@ -1,0 +1,1 @@
+DO NOT use executeScript_Sandbox or executeScript to access the DOM of a page. These functions are meant for executing code in a sandboxed environment and do not have access to the page's DOM.

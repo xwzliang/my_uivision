@@ -327,6 +327,12 @@
             "Description": ""
         },
         {
+            "Command": "executeScript_Sandbox",
+            "Target": "var p='${RESOLVED_STORYBOARD_OUTPUT_PATH}'; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'violation.txt';} var idx=p.lastIndexOf('/'); return (idx >= 0 ? p.slice(0, idx + 1) : '') + 'violation.txt';",
+            "Value": "VIOLATION_OUTPUT_PATH",
+            "Description": ""
+        },
+        {
             "Command": "echo",
             "Target": "png_paths=${png_paths}",
             "Value": "blue",
@@ -425,7 +431,7 @@
         {
             "Command": "selectWindow",
             "Target": "TAB=OPEN",
-            "Value": "https://chatgpt.com/g/g-69ee4eb5efb88191a41e9f355261183e-5fen-jing-gu-shi-ban-shou-wei-zheng",
+            "Value": "https://chatgpt.com/g/g-69fb3cfb226881918211585ab330d80b-5fen-jing-gu-shi-ban-9gong-ge",
             "Description": ""
         },
         {
@@ -863,6 +869,90 @@
         {
             "Command": "gotoLabel",
             "Target": "FINAL_IMAGE_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//*[@data-message-author-role='assistant'][contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'violate') and contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'guardrails')])[last()]",
+            "Value": "GUARDRAIL_RESPONSE_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${GUARDRAIL_RESPONSE_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "",
+            "Value": "GUARDRAIL_RESPONSE_TEXT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "storeText",
+            "Target": "xpath=(//*[@data-message-author-role='assistant'][contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'violate') and contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'guardrails')])[last()]",
+            "Value": "GUARDRAIL_RESPONSE_TEXT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Detected guardrails violation text response during final image poll",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "GUARDRAIL_RESPONSE_BEGIN row=${TARGET_ROW}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "${GUARDRAIL_RESPONSE_TEXT}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "GUARDRAIL_RESPONSE_END row=${TARGET_ROW}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SEGMENT_DONE",
             "Value": "",
             "Description": ""
         },

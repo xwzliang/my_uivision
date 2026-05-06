@@ -310,6 +310,12 @@
         },
         {
             "Command": "executeScript_Sandbox",
+            "Target": "var p='${RESOLVED_OUTPUT_IMAGE_PATH}'; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'violation.txt';} var idx=p.lastIndexOf('/'); return (idx >= 0 ? p.slice(0, idx + 1) : '') + 'violation.txt';",
+            "Value": "VIOLATION_OUTPUT_PATH",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
             "Target": "var p='${RESOLVED_OUTPUT_IMAGE_PATH}'; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'image-output';} var parts=p.split('/').filter(function(x){ return x; }); var name=parts.length ? parts[parts.length-1] : 'image-output'; name=(name||'').replace(/^\\\"+/, '').replace(/\\\"+$/, ''); return name || 'image-output';",
             "Value": "JOB_NAME",
             "Description": ""
@@ -863,6 +869,90 @@
         {
             "Command": "gotoLabel",
             "Target": "FINAL_IMAGE_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//*[@data-message-author-role='assistant'][contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'violate') and contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'guardrails')])[last()]",
+            "Value": "GUARDRAIL_RESPONSE_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${GUARDRAIL_RESPONSE_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "",
+            "Value": "GUARDRAIL_RESPONSE_TEXT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "storeText",
+            "Target": "xpath=(//*[@data-message-author-role='assistant'][contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'violate') and contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'guardrails')])[last()]",
+            "Value": "GUARDRAIL_RESPONSE_TEXT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Detected guardrails violation text response during final image poll",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "GUARDRAIL_RESPONSE_BEGIN row=${TARGET_ROW}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "${GUARDRAIL_RESPONSE_TEXT}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "GUARDRAIL_RESPONSE_END row=${TARGET_ROW}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_DONE",
             "Value": "",
             "Description": ""
         },
