@@ -570,6 +570,41 @@ find_existing_output_for_row() {
   return 1
 }
 
+build_output_backup_path() {
+  local output_path="$1"
+  local timestamp
+  local backup_path
+  local suffix=1
+
+  timestamp="$(date '+%Y%m%d_%H%M%S')"
+  backup_path="${output_path}.bak.${timestamp}"
+
+  while [[ -e "$backup_path" || -L "$backup_path" ]]; do
+    backup_path="${output_path}.bak.${timestamp}.${suffix}"
+    suffix=$((suffix + 1))
+  done
+
+  printf '%s\n' "$backup_path"
+}
+
+prepare_output_paths_for_overwrite() {
+  local row="$1"
+  local output_path
+  local backup_path
+
+  while IFS= read -r output_path; do
+    [[ -z "$output_path" ]] && continue
+    if [[ -e "$output_path" || -L "$output_path" ]]; then
+      backup_path="$(build_output_backup_path "$output_path")"
+      mkdir -p "$(dirname "$backup_path")"
+      cp -p "$output_path" "$backup_path"
+      echo "Backed up existing output for row $row: $output_path -> $backup_path"
+      rm -f "$output_path"
+      echo "Removed original output path for row $row: $output_path"
+    fi
+  done < <(get_output_paths_for_row "$row")
+}
+
 ensure_output_created_for_row() {
   local row="$1"
   local output_path
@@ -613,6 +648,8 @@ run_one_row() {
       echo "Skipping row $current_row because output already exists and overwrite is disabled: $existing_output_path"
       return 3
     fi
+  else
+    prepare_output_paths_for_overwrite "$row"
   fi
 
   stop_uivision_instances

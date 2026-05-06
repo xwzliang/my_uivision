@@ -844,7 +844,7 @@
         },
         {
             "Command": "storeXpathCount",
-            "Target": "xpath=(//img[@alt='Generated image' and contains(@src,'/backend-api/estuary/content')])[last()]",
+            "Target": "xpath=(//img[contains(@alt,'Generated image') and contains(@src,'/backend-api/estuary/content')])[last()]",
             "Value": "FINAL_IMAGE_COUNT",
             "Description": ""
         },
@@ -964,7 +964,7 @@
         },
         {
             "Command": "pause",
-            "Target": "2000",
+            "Target": "15000",
             "Value": "",
             "Description": ""
         },
@@ -987,6 +987,18 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "0",
+            "Value": "OPEN_IMAGE_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "OPEN_IMAGE_VIEWER_RETRY",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "echo",
             "Target": "Opening generated image viewer",
             "Value": "purple",
@@ -994,7 +1006,7 @@
         },
         {
             "Command": "XClick",
-            "Target": "xpath=(//img[@alt='Generated image']/ancestor::div[@role='button'][1])[last()]",
+            "Target": "xpath=((//img[contains(@alt,'Generated image')]/ancestor::div[@role='button'][1]) | (//img[contains(@alt,'Generated image')]))[last()]",
             "Value": "",
             "Description": ""
         },
@@ -1006,7 +1018,7 @@
         },
         {
             "Command": "store",
-            "Target": "10",
+            "Target": "20",
             "Value": "!TIMEOUT_WAIT",
             "Description": ""
         },
@@ -1042,8 +1054,44 @@
         },
         {
             "Command": "echo",
-            "Target": "Fullscreen view did not open after clicking generated image, retrying row",
+            "Target": "Fullscreen view did not open after clicking generated image",
             "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${OPEN_IMAGE_RETRY} < 3",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${OPEN_IMAGE_RETRY}) + 1",
+            "Value": "OPEN_IMAGE_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Retrying generated image viewer open attempt ${OPEN_IMAGE_RETRY} of 3",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "OPEN_IMAGE_VIEWER_RETRY",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
             "Description": ""
         },
         {

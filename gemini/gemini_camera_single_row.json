@@ -671,7 +671,7 @@
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-c \"for i in 1 2 3 4 5; do /opt/homebrew/bin/cliclick c:1918,893; sleep 0.2; done\"",
+            "Value": "-c \"for i in 1 2 3 4 5; do /opt/homebrew/bin/cliclick c:1918,1062; sleep 0.2; done\"",
             "Description": ""
         },
         {
