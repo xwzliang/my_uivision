@@ -553,10 +553,14 @@ PY
 
 find_existing_output_for_row() {
   local row="$1"
+  local include_violation_output="${2:-1}"
   local output_path
 
   while IFS= read -r output_path; do
     [[ -z "$output_path" ]] && continue
+    if [[ "$include_violation_output" != "1" ]] && [[ "$(basename "$output_path")" == "violation.txt" ]]; then
+      continue
+    fi
     if [[ "$MODE" == "chat" || "$MODE" == "camera" ]]; then
       if [[ -s "$output_path" ]]; then
         printf '%s\n' "$output_path"
@@ -728,7 +732,7 @@ run_one_row() {
   fi
 
   if (( OVERWRITE_OUTPUT == 0 )); then
-    if existing_output_path="$(find_existing_output_for_row "$row")"; then
+    if existing_output_path="$(find_existing_output_for_row "$row" 0)"; then
       echo "Skipping row $current_row because output already exists and overwrite is disabled: $existing_output_path"
       return 3
     fi
