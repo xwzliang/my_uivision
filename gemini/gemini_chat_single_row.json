@@ -615,15 +615,33 @@
             "Description": ""
         },
         {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${COPY_POLL}) % 4 === 0 ? '1' : '0';",
+            "Value": "SHOULD_SCROLL_COPY_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${SHOULD_SCROLL_COPY_WAIT} == '1'",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-c \"for i in 1 2 3 4 5; do /opt/homebrew/bin/cliclick c:1918,1062; sleep 0.2; done\"",
+            "Value": "-c \"for i in 1 2; do /opt/homebrew/bin/cliclick c:1918,1062; sleep 0.25; done\"",
             "Description": ""
         },
         {
             "Command": "echo",
             "Target": "COPY_POLL=${COPY_POLL}, scrolling page while waiting for copy button",
             "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
             "Description": ""
         },
         {
@@ -681,6 +699,18 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "0",
+            "Value": "COPY_CLICK_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "COPY_CLICK_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
             "Value": "-c \"printf '' | pbcopy\"",
@@ -688,7 +718,7 @@
         },
         {
             "Command": "pause",
-            "Target": "800",
+            "Target": "3000",
             "Value": "",
             "Description": ""
         },
@@ -699,7 +729,7 @@
             "Description": ""
         },
         {
-            "Command": "click",
+            "Command": "XClick",
             "Target": "xpath=(//button[@data-test-id='copy-button' and not(@disabled)])[last()]",
             "Value": "",
             "Description": ""
@@ -707,6 +737,108 @@
         {
             "Command": "pause",
             "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"tmp=\\\"$(mktemp)\\\" && trap 'rm -f \\\"$tmp\\\"' EXIT && pbpaste > \\\"$tmp\\\" 2>/dev/null || true; if [ -s \\\"$tmp\\\" ]; then printf 'OK\\n' > /tmp/uivision_clipboard_check.csv; else printf 'EMPTY\\n' > /tmp/uivision_clipboard_check.csv; fi\"",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!csvReadLineNumber}",
+            "Value": "CSV_LINE_BACKUP",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/tmp/uivision_clipboard_check.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "CLIPBOARD_CHECK_RESULT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${CSV_LINE_BACKUP}",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${CLIPBOARD_CHECK_RESULT} != 'OK'",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clipboard was empty after copy click attempt ${COPY_CLICK_RETRY}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${COPY_CLICK_RETRY} < 3",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${COPY_CLICK_RETRY}) + 1",
+            "Value": "COPY_CLICK_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Retrying copy response button click because clipboard was empty, attempt ${COPY_CLICK_RETRY} of 3",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "COPY_CLICK_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clipboard stayed empty after repeated copy clicks, retrying row",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_RETRY_RECOVER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
             "Value": "",
             "Description": ""
         },
@@ -719,7 +851,7 @@
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && out='${OUTPUT_FILE_PATH}' && outdir=\\\"$(dirname \\\"$out\\\")\\\" && mkdir -p \\\"$outdir\\\" && tmp=\\\"$(mktemp)\\\" && pbpaste > \\\"$tmp\\\" && [ -s \\\"$tmp\\\" ] && mv \\\"$tmp\\\" \\\"$out\\\"\"",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && out='${OUTPUT_FILE_PATH}' && outdir=\\\"$(dirname \\\"$out\\\")\\\" && mkdir -p \\\"$outdir\\\" && tmp=\\\"$(mktemp)\\\" && trap 'rm -f \\\"$tmp\\\"' EXIT && for attempt in 1 2 3 4 5; do pbpaste > \\\"$tmp\\\" 2>/dev/null || true; if [ -s \\\"$tmp\\\" ]; then mv \\\"$tmp\\\" \\\"$out\\\" && trap - EXIT && exit 0; fi; sleep 1; done; exit 1\"",
             "Description": ""
         },
         {
@@ -730,7 +862,49 @@
         },
         {
             "Command": "echo",
-            "Target": "Writing copied response to output file failed, retrying row",
+            "Target": "Writing copied response to output file failed after copy click attempt ${COPY_CLICK_RETRY}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${COPY_CLICK_RETRY} < 3",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${COPY_CLICK_RETRY}) + 1",
+            "Value": "COPY_CLICK_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Retrying copy response button click attempt ${COPY_CLICK_RETRY} of 3",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "COPY_CLICK_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Writing copied response to output file failed after repeated copy clicks, retrying row",
             "Value": "red",
             "Description": ""
         },

@@ -398,6 +398,12 @@ restart_chrome() {
   sleep 3
   open -a "Google Chrome" >/dev/null 2>&1 || true
   sleep 5
+  echo "Restoring Chrome fullscreen after relaunch" >&2
+  osascript \
+    -e 'tell application "Google Chrome" to activate' \
+    -e 'tell application "System Events" to keystroke "f" using {control down, command down}' \
+    >/dev/null 2>&1 || true
+  sleep 2
 }
 
 count_uivision_tabs() {
