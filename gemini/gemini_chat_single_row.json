@@ -676,13 +676,13 @@
         },
         {
             "Command": "echo",
-            "Target": "Copy response button not found after full polling window, retrying row",
+            "Target": "Copy response button not found after full polling window, finishing macro without in-macro retry",
             "Value": "red",
             "Description": ""
         },
         {
             "Command": "gotoLabel",
-            "Target": "ROW_RETRY_RECOVER",
+            "Target": "ROW_DONE",
             "Value": "",
             "Description": ""
         },

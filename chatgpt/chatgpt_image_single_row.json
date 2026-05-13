@@ -1000,43 +1000,13 @@
         },
         {
             "Command": "echo",
-            "Target": "Final generated image wait failed after full polling window, retrying row",
+            "Target": "Final generated image wait failed after full polling window, finishing macro without in-macro retry",
             "Value": "red",
             "Description": ""
         },
         {
-            "Command": "echo",
-            "Target": "Closing current ChatGPT tab before row retry",
-            "Value": "blue",
-            "Description": ""
-        },
-        {
-            "Command": "selectWindow",
-            "Target": "TAB=CLOSE",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "1000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "5000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${ROW_RETRY}) + 1",
-            "Value": "ROW_RETRY",
-            "Description": ""
-        },
-        {
             "Command": "gotoLabel",
-            "Target": "ROW_RETRY_LOOP",
+            "Target": "ROW_DONE",
             "Value": "",
             "Description": ""
         },

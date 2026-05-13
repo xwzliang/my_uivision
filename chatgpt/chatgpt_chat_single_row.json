@@ -531,6 +531,12 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "0",
+            "Value": "DELIVERY_TIMEOUT_FOUND",
+            "Description": ""
+        },
+        {
             "Command": "label",
             "Target": "COPY_WAIT_LOOP",
             "Value": "",
@@ -540,6 +546,36 @@
             "Command": "gotoIf",
             "Target": "${COPY_POLL} >= 160",
             "Value": "COPY_WAIT_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//p[normalize-space()='Message delivery timed out. Please try again.']",
+            "Value": "DELIVERY_TIMEOUT_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${DELIVERY_TIMEOUT_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "DELIVERY_TIMEOUT_FOUND",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "COPY_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
             "Description": ""
         },
         {
@@ -628,19 +664,43 @@
         },
         {
             "Command": "if_v2",
+            "Target": "${DELIVERY_TIMEOUT_FOUND} == 1",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Detected ChatGPT message delivery timeout during polling, finishing macro without copying response",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
             "Target": "${COPY_BUTTON_FOUND} == 0",
             "Value": "",
             "Description": ""
         },
         {
             "Command": "echo",
-            "Target": "Copy response button not found after full polling window, retrying row",
+            "Target": "Copy response button not found after full polling window, finishing macro without in-macro retry",
             "Value": "red",
             "Description": ""
         },
         {
             "Command": "gotoLabel",
-            "Target": "ROW_RETRY_RECOVER",
+            "Target": "ROW_DONE",
             "Value": "",
             "Description": ""
         },
