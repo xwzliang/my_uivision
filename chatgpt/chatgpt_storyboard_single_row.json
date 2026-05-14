@@ -880,6 +880,30 @@
         },
         {
             "Command": "storeXpathCount",
+            "Target": "xpath=(//button[@aria-label='Copy response' and @data-testid='copy-turn-action-button' and not(@disabled)])[last()]",
+            "Value": "FINAL_IMAGE_COPY_BUTTON_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${FINAL_IMAGE_COPY_BUTTON_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "FINAL_IMAGE_COPY_ONLY_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
             "Target": "xpath=(//*[@data-message-author-role='assistant'][contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'violate') and contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'guardrails')])[last()]",
             "Value": "GUARDRAIL_RESPONSE_COUNT",
             "Description": ""
@@ -1000,43 +1024,13 @@
         },
         {
             "Command": "echo",
-            "Target": "Final generated image wait failed after full polling window, retrying segment",
+            "Target": "Final generated image wait failed after full polling window, finishing macro without in-macro retry",
             "Value": "red",
             "Description": ""
         },
         {
-            "Command": "echo",
-            "Target": "Closing current ChatGPT tab before segment retry",
-            "Value": "blue",
-            "Description": ""
-        },
-        {
-            "Command": "selectWindow",
-            "Target": "TAB=CLOSE",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "1000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "5000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${SEG_RETRY}) + 1",
-            "Value": "SEG_RETRY",
-            "Description": ""
-        },
-        {
             "Command": "gotoLabel",
-            "Target": "SEGMENT_RETRY_LOOP",
+            "Target": "SEGMENT_DONE",
             "Value": "",
             "Description": ""
         },
@@ -1583,6 +1577,30 @@
         {
             "Command": "gotoLabel",
             "Target": "SEGMENT_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "FINAL_IMAGE_COPY_ONLY_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Copy response button appeared during final image polling before any generated image, treating generation as failed",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "SEGMENT_PROCESS_FAILED row=${TARGET_ROW}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
             "Value": "",
             "Description": ""
         },

@@ -1004,7 +1004,11 @@ while (( pass_number <= MAX_PASSES )); do
       next_skipped_rows+=("$row")
     done
 
-    skipped_rows=("${next_skipped_rows[@]}")
+    if (( ${#next_skipped_rows[@]} == 0 )); then
+      skipped_rows=()
+    else
+      skipped_rows=("${next_skipped_rows[@]}")
+    fi
 
     if (( ${#skipped_rows[@]} == 0 )); then
       break

@@ -880,6 +880,30 @@
         },
         {
             "Command": "storeXpathCount",
+            "Target": "xpath=(//button[@aria-label='Copy response' and @data-testid='copy-turn-action-button' and not(@disabled)])[last()]",
+            "Value": "FINAL_IMAGE_COPY_BUTTON_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${FINAL_IMAGE_COPY_BUTTON_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "FINAL_IMAGE_COPY_ONLY_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
             "Target": "xpath=(//*[@data-message-author-role='assistant'][contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'violate') and contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'guardrails')])[last()]",
             "Value": "GUARDRAIL_RESPONSE_COUNT",
             "Description": ""
@@ -1559,6 +1583,30 @@
         {
             "Command": "gotoLabel",
             "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "FINAL_IMAGE_COPY_ONLY_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Copy response button appeared during final image polling before any generated image, treating generation as failed",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ROW_PROCESS_FAILED row=${TARGET_ROW}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
             "Value": "",
             "Description": ""
         },
