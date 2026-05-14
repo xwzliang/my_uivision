@@ -22,16 +22,18 @@ FAIL_SETTLE_TIME="${FAIL_SETTLE_TIME:-8}"
 MAX_PASSES="${MAX_PASSES:-5}"
 RUN_ONE_ROW_ONLY="${RUN_ONE_ROW_ONLY:-0}"
 OVERWRITE_OUTPUT="${OVERWRITE_OUTPUT:-0}"
+RELAUNCH_CHROME_AFTER_ROW="${RELAUNCH_CHROME_AFTER_ROW:-0}"
+INITIAL_CHROME_RELAUNCH_DONE=0
 HEALTH_CONTEXT_CSV="${HEALTH_CONTEXT_CSV:-/tmp/uivision_health_context.csv}"
 AUTOSTART_STUCK_TIMEOUT="${AUTOSTART_STUCK_TIMEOUT:-45}"
 AUTOSTART_STUCK_TIMEOUT_CAP="${AUTOSTART_STUCK_TIMEOUT_CAP:-120}"
 MAX_LAUNCH_ATTEMPTS="${MAX_LAUNCH_ATTEMPTS:-3}"
 
 usage() {
-  echo "Usage: $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [image|storyboard|sora|chat|camera] [start_row] [all|single] [overwrite]" >&2
-  echo "       $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [image|storyboard|sora|chat|camera] [start_row] [end_row] [all|single] [overwrite]" >&2
-  echo "       $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [image|storyboard|sora|chat|camera] [row1,row2,row3] [all|single] [overwrite]" >&2
-  echo "       $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [image|storyboard|sora|chat|camera] [start-end] [all|single] [overwrite]" >&2
+  echo "Usage: $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [--relaunch-chrome-after-row|--keep-chrome-after-row] [image|storyboard|sora|chat|camera] [start_row] [all|single] [overwrite]" >&2
+  echo "       $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [--relaunch-chrome-after-row|--keep-chrome-after-row] [image|storyboard|sora|chat|camera] [start_row] [end_row] [all|single] [overwrite]" >&2
+  echo "       $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [--relaunch-chrome-after-row|--keep-chrome-after-row] [image|storyboard|sora|chat|camera] [row1,row2,row3] [all|single] [overwrite]" >&2
+  echo "       $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [--relaunch-chrome-after-row|--keep-chrome-after-row] [image|storyboard|sora|chat|camera] [start-end] [all|single] [overwrite]" >&2
   exit 2
 }
 
@@ -71,6 +73,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --no-overwrite)
       OVERWRITE_OUTPUT=0
+      shift
+      ;;
+    --relaunch-chrome-after-row)
+      RELAUNCH_CHROME_AFTER_ROW=1
+      shift
+      ;;
+    --keep-chrome-after-row|--no-relaunch-chrome-after-row)
+      RELAUNCH_CHROME_AFTER_ROW=0
       shift
       ;;
     -h|--help)
@@ -336,6 +346,11 @@ fi
 if [[ ! "$OVERWRITE_OUTPUT" =~ ^[01]$ ]]; then
   echo "Invalid OVERWRITE_OUTPUT '$OVERWRITE_OUTPUT'; defaulting to 0" >&2
   OVERWRITE_OUTPUT=0
+fi
+
+if [[ ! "$RELAUNCH_CHROME_AFTER_ROW" =~ ^[01]$ ]]; then
+  echo "Invalid RELAUNCH_CHROME_AFTER_ROW '$RELAUNCH_CHROME_AFTER_ROW'; defaulting to 0" >&2
+  RELAUNCH_CHROME_AFTER_ROW=0
 fi
 
 if (( has_explicit_row_targets == 1 )) && (( RUN_ONE_ROW_ONLY == 1 )); then
@@ -722,6 +737,15 @@ wait_before_next_row() {
   sleep 5
 }
 
+finish_row_browser_cycle() {
+  stop_uivision_instances
+
+  if (( RELAUNCH_CHROME_AFTER_ROW == 1 )); then
+    echo "Relaunching Chrome after row completion because RELAUNCH_CHROME_AFTER_ROW=1"
+    restart_chrome
+  fi
+}
+
 run_one_row() {
   local row="$1"
   local pass="$2"
@@ -746,6 +770,12 @@ run_one_row() {
     prepare_output_paths_for_overwrite "$row"
   fi
 
+  if (( RELAUNCH_CHROME_AFTER_ROW == 1 )) && (( INITIAL_CHROME_RELAUNCH_DONE == 0 )); then
+    echo "Relaunching Chrome before processing the first row because RELAUNCH_CHROME_AFTER_ROW=1"
+    restart_chrome
+    INITIAL_CHROME_RELAUNCH_DONE=1
+  fi
+
   stop_uivision_instances
 
   CURRENT_LOG_FILE="$(build_log_file_path "$row" "$pass")"
@@ -756,7 +786,7 @@ run_one_row() {
   while true; do
     : > "$CURRENT_LOG_FILE"
 
-    echo "Provider=$PROVIDER Mode=$MODE Overwrite=$OVERWRITE_OUTPUT Macro=$MACRO_NAME"
+    echo "Provider=$PROVIDER Mode=$MODE Overwrite=$OVERWRITE_OUTPUT RelaunchChromeAfterRow=$RELAUNCH_CHROME_AFTER_ROW Macro=$MACRO_NAME"
     echo "Launching $MACRO_NAME for row $current_row (launch attempt ${launch_attempt}/${MAX_LAUNCH_ATTEMPTS})"
     echo "Log file: $CURRENT_LOG_FILE"
     echo "Row time limit: ${ROW_TIME_LIMIT}s"
@@ -793,19 +823,18 @@ run_one_row() {
 
   if (( wait_status == 5 )) && (( launch_attempt >= MAX_LAUNCH_ATTEMPTS )); then
     echo "Row $current_row exceeded ${MAX_LAUNCH_ATTEMPTS} UI.Vision launch attempts; marking for retry." >&2
-    stop_uivision_instances
-    restart_chrome
+    finish_row_browser_cycle
     return 1
   fi
 
   if (( wait_status == 1 )); then
     echo "Row $current_row did not finish within the allowed watchdog limits; marking for retry." >&2
-    stop_uivision_instances
+    finish_row_browser_cycle
     return 1
   fi
   if (( wait_status == 2 )); then
     echo "Row $current_row hit a UI.Vision command error; marking for retry." >&2
-    stop_uivision_instances
+    finish_row_browser_cycle
     return 1
   fi
 
@@ -822,19 +851,19 @@ run_one_row() {
 
   if grep -q "${FAILURE_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
     echo "Macro reported a failed run on row $current_row; marking for retry." >&2
-    stop_uivision_instances
+    finish_row_browser_cycle
     return 1
   fi
 
   if ! grep -q 'Macro completed' "$CURRENT_LOG_FILE"; then
     echo "Macro did not complete successfully for row $current_row; marking for retry. See $CURRENT_LOG_FILE" >&2
-    stop_uivision_instances
+    finish_row_browser_cycle
     return 1
   fi
 
   if ! grep -q "${SUCCESS_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
     echo "Macro finished without the expected success marker for row $current_row; marking for retry. See $CURRENT_LOG_FILE" >&2
-    stop_uivision_instances
+    finish_row_browser_cycle
     return 1
   fi
 
@@ -843,12 +872,12 @@ run_one_row() {
   fi
 
   if ! ensure_output_created_for_row "$current_row"; then
-    stop_uivision_instances
+    finish_row_browser_cycle
     return 1
   fi
 
   echo "Finished row $current_row"
-  stop_uivision_instances
+  finish_row_browser_cycle
   return 0
 }
 

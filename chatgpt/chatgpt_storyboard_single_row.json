@@ -1096,7 +1096,7 @@
         },
         {
             "Command": "XClick",
-            "Target": "xpath=((//img[contains(@alt,'Generated image')]/ancestor::div[@role='button'][1]) | (//img[contains(@alt,'Generated image')]))[last()]",
+            "Target": "xpath=((//img[contains(@alt,'Generated image')]/ancestor::div[@role='button'][1]) | (//img[contains(@alt,'Generated image')]))[1]",
             "Value": "",
             "Description": ""
         },
