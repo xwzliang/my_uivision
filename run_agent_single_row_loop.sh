@@ -24,10 +24,12 @@ RUN_ONE_ROW_ONLY="${RUN_ONE_ROW_ONLY:-0}"
 OVERWRITE_OUTPUT="${OVERWRITE_OUTPUT:-0}"
 RELAUNCH_CHROME_AFTER_ROW="${RELAUNCH_CHROME_AFTER_ROW:-0}"
 INITIAL_CHROME_RELAUNCH_DONE=0
+UPLOAD_BACKOFF_SECONDS="${UPLOAD_BACKOFF_SECONDS:-3600}"
 HEALTH_CONTEXT_CSV="${HEALTH_CONTEXT_CSV:-/tmp/uivision_health_context.csv}"
 AUTOSTART_STUCK_TIMEOUT="${AUTOSTART_STUCK_TIMEOUT:-45}"
 AUTOSTART_STUCK_TIMEOUT_CAP="${AUTOSTART_STUCK_TIMEOUT_CAP:-120}"
 MAX_LAUNCH_ATTEMPTS="${MAX_LAUNCH_ATTEMPTS:-3}"
+UPLOAD_BACKOFF_MARKER="UPLOAD_CAPACITY_RETRY_LATER"
 
 usage() {
   echo "Usage: $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [--relaunch-chrome-after-row|--keep-chrome-after-row] [image|storyboard|sora|chat|camera] [start_row] [all|single] [overwrite]" >&2
@@ -737,6 +739,13 @@ wait_before_next_row() {
   sleep 5
 }
 
+wait_before_upload_backoff_retry() {
+  local row="$1"
+
+  echo "Row $row hit upload capacity throttling; waiting ${UPLOAD_BACKOFF_SECONDS}s before retrying the same row"
+  sleep "$UPLOAD_BACKOFF_SECONDS"
+}
+
 finish_row_browser_cycle() {
   stop_uivision_instances
 
@@ -849,6 +858,12 @@ run_one_row() {
     return 2
   fi
 
+  if grep -q "${UPLOAD_BACKOFF_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
+    echo "Macro requested upload-capacity backoff on row $current_row; will sleep and retry the same row." >&2
+    finish_row_browser_cycle
+    return 4
+  fi
+
   if grep -q "${FAILURE_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
     echo "Macro reported a failed run on row $current_row; marking for retry." >&2
     finish_row_browser_cycle
@@ -921,6 +936,12 @@ while (( pass_number <= MAX_PASSES )); do
           continue
         fi
 
+        if (( status == 4 )); then
+          wait_before_upload_backoff_retry "$row"
+          target_index=$((target_index - 1))
+          continue
+        fi
+
         skipped_rows+=("$row")
       done
     else
@@ -958,6 +979,11 @@ while (( pass_number <= MAX_PASSES )); do
 
         if (( status == 2 )); then
           break
+        fi
+
+        if (( status == 4 )); then
+          wait_before_upload_backoff_retry "$row"
+          continue
         fi
 
         skipped_rows+=("$row")
@@ -998,6 +1024,12 @@ while (( pass_number <= MAX_PASSES )); do
       fi
       if (( status == 2 )); then
         echo "Row $row is now beyond the end of $source_csv; treating it as finished"
+        continue
+      fi
+
+      if (( status == 4 )); then
+        wait_before_upload_backoff_retry "$row"
+        skipped_index=$((skipped_index - 1))
         continue
       fi
 

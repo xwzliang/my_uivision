@@ -664,13 +664,91 @@
         },
         {
             "Command": "store",
-            "Target": "300",
-            "Value": "!TIMEOUT_WAIT",
+            "Target": "0",
+            "Value": "UPLOAD_WAIT_POLL",
             "Description": ""
         },
         {
-            "Command": "waitForElementPresent",
+            "Command": "label",
+            "Target": "UPLOAD_READY_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${UPLOAD_WAIT_POLL} >= 150",
+            "Value": "UPLOAD_WAIT_FAILED",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//*[contains(normalize-space(),'Max 0 uploads at a time')]",
+            "Value": "UPLOAD_CAPACITY_ERROR_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${UPLOAD_CAPACITY_ERROR_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "UPLOAD_CAPACITY_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
             "Target": "xpath=//button[@id='composer-submit-button' and not(@disabled)]",
+            "Value": "UPLOAD_SEND_READY_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${UPLOAD_SEND_READY_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "UPLOAD_READY_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${UPLOAD_WAIT_POLL}) + 1",
+            "Value": "UPLOAD_WAIT_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "UPLOAD_READY_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "UPLOAD_READY_DONE",
             "Value": "",
             "Description": ""
         },
@@ -1535,6 +1613,78 @@
         {
             "Command": "gotoLabel",
             "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "UPLOAD_WAIT_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Send button did not become enabled after upload wait, retrying row",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing current ChatGPT tab before row retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ROW_RETRY}) + 1",
+            "Value": "ROW_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "UPLOAD_CAPACITY_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Detected ChatGPT upload capacity error during file upload, exiting macro so bash can back off and retry later",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "UPLOAD_CAPACITY_RETRY_LATER row=${TARGET_ROW}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
             "Value": "",
             "Description": ""
         },
