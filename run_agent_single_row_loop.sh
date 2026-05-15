@@ -25,11 +25,14 @@ OVERWRITE_OUTPUT="${OVERWRITE_OUTPUT:-0}"
 RELAUNCH_CHROME_AFTER_ROW="${RELAUNCH_CHROME_AFTER_ROW:-0}"
 INITIAL_CHROME_RELAUNCH_DONE=0
 UPLOAD_BACKOFF_SECONDS="${UPLOAD_BACKOFF_SECONDS:-3600}"
+RATE_LIMIT_BACKOFF_PADDING_SECONDS="${RATE_LIMIT_BACKOFF_PADDING_SECONDS:-180}"
+LAST_RATE_LIMIT_BACKOFF_SECONDS=0
 HEALTH_CONTEXT_CSV="${HEALTH_CONTEXT_CSV:-/tmp/uivision_health_context.csv}"
 AUTOSTART_STUCK_TIMEOUT="${AUTOSTART_STUCK_TIMEOUT:-45}"
 AUTOSTART_STUCK_TIMEOUT_CAP="${AUTOSTART_STUCK_TIMEOUT_CAP:-120}"
 MAX_LAUNCH_ATTEMPTS="${MAX_LAUNCH_ATTEMPTS:-3}"
 UPLOAD_BACKOFF_MARKER="UPLOAD_CAPACITY_RETRY_LATER"
+RATE_LIMIT_BACKOFF_MARKER="IMAGE_RATE_LIMIT_RETRY_LATER"
 
 usage() {
   echo "Usage: $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [--relaunch-chrome-after-row|--keep-chrome-after-row] [image|storyboard|sora|chat|camera] [start_row] [all|single] [overwrite]" >&2
@@ -739,11 +742,91 @@ wait_before_next_row() {
   sleep 5
 }
 
+format_retry_clock_time() {
+  local wait_seconds="$1"
+
+  python3 - "$wait_seconds" <<'PY'
+from datetime import datetime, timedelta
+import sys
+
+wait_seconds = int(sys.argv[1])
+retry_time = datetime.now() + timedelta(seconds=wait_seconds)
+print(retry_time.strftime("%H:%M:%S"))
+PY
+}
+
 wait_before_upload_backoff_retry() {
   local row="$1"
+  local retry_clock_time
 
-  echo "Row $row hit upload capacity throttling; waiting ${UPLOAD_BACKOFF_SECONDS}s before retrying the same row"
+  retry_clock_time="$(format_retry_clock_time "$UPLOAD_BACKOFF_SECONDS")"
+
+  echo "Row $row hit upload capacity throttling; waiting ${UPLOAD_BACKOFF_SECONDS}s before retrying the same row at ${retry_clock_time}"
   sleep "$UPLOAD_BACKOFF_SECONDS"
+}
+
+extract_rate_limit_backoff_seconds() {
+  local log_file="$1"
+  local row="$2"
+  python3 - "$log_file" "$row" <<'PY'
+import re
+import sys
+
+log_file, row = sys.argv[1], sys.argv[2]
+target_marker = f"IMAGE_RATE_LIMIT_RETRY_LATER row={row}"
+text_prefix = "IMAGE_RATE_LIMIT_TEXT="
+
+last_text = None
+seen_marker = False
+
+with open(log_file, encoding="utf-8") as handle:
+    for raw_line in handle:
+        line = raw_line.strip()
+        if text_prefix in line:
+            idx = line.find(text_prefix)
+            last_text = line[idx + len(text_prefix):]
+        if target_marker in line:
+            seen_marker = True
+
+if not seen_marker or not last_text:
+    raise SystemExit(1)
+
+text = last_text.lower()
+total = 0
+
+hour_match = re.search(r'(\d+)\s*hour', text)
+if hour_match:
+    total += int(hour_match.group(1)) * 3600
+
+minute_match = re.search(r'(\d+)\s*minute', text)
+if minute_match:
+    total += int(minute_match.group(1)) * 60
+
+second_match = re.search(r'(\d+)\s*second', text)
+if second_match:
+    total += int(second_match.group(1))
+
+if total <= 0:
+    total = 3600
+
+print(total)
+PY
+}
+
+wait_before_rate_limit_backoff_retry() {
+  local row="$1"
+  local retry_seconds="${LAST_RATE_LIMIT_BACKOFF_SECONDS:-0}"
+  local total_wait
+  local retry_clock_time
+
+  if [[ ! "$retry_seconds" =~ ^[0-9]+$ ]]; then
+    retry_seconds=0
+  fi
+
+  total_wait=$((retry_seconds + RATE_LIMIT_BACKOFF_PADDING_SECONDS))
+  retry_clock_time="$(format_retry_clock_time "$total_wait")"
+  echo "Row $row hit ChatGPT image generation rate limiting; waiting ${retry_seconds}s plus ${RATE_LIMIT_BACKOFF_PADDING_SECONDS}s buffer before retrying the same row at ${retry_clock_time}"
+  sleep "$total_wait"
 }
 
 finish_row_browser_cycle() {
@@ -763,6 +846,7 @@ run_one_row() {
   local wait_status
   local autostart_recovery_count=0
 
+  LAST_RATE_LIMIT_BACKOFF_SECONDS=0
   current_row="$row"
 
   if ! source_row_exists "$row"; then
@@ -864,6 +948,13 @@ run_one_row() {
     return 4
   fi
 
+  if grep -q "${RATE_LIMIT_BACKOFF_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
+    LAST_RATE_LIMIT_BACKOFF_SECONDS="$(extract_rate_limit_backoff_seconds "$CURRENT_LOG_FILE" "$current_row" || printf '3600')"
+    echo "Macro requested image-generation rate-limit backoff on row $current_row for ${LAST_RATE_LIMIT_BACKOFF_SECONDS}s; will sleep and retry the same row." >&2
+    finish_row_browser_cycle
+    return 6
+  fi
+
   if grep -q "${FAILURE_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
     echo "Macro reported a failed run on row $current_row; marking for retry." >&2
     finish_row_browser_cycle
@@ -942,6 +1033,12 @@ while (( pass_number <= MAX_PASSES )); do
           continue
         fi
 
+        if (( status == 6 )); then
+          wait_before_rate_limit_backoff_retry "$row"
+          target_index=$((target_index - 1))
+          continue
+        fi
+
         skipped_rows+=("$row")
       done
     else
@@ -983,6 +1080,11 @@ while (( pass_number <= MAX_PASSES )); do
 
         if (( status == 4 )); then
           wait_before_upload_backoff_retry "$row"
+          continue
+        fi
+
+        if (( status == 6 )); then
+          wait_before_rate_limit_backoff_retry "$row"
           continue
         fi
 
@@ -1029,6 +1131,12 @@ while (( pass_number <= MAX_PASSES )); do
 
       if (( status == 4 )); then
         wait_before_upload_backoff_retry "$row"
+        skipped_index=$((skipped_index - 1))
+        continue
+      fi
+
+      if (( status == 6 )); then
+        wait_before_rate_limit_backoff_retry "$row"
         skipped_index=$((skipped_index - 1))
         continue
       fi

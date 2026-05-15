@@ -676,7 +676,7 @@
         },
         {
             "Command": "gotoIf",
-            "Target": "${UPLOAD_WAIT_POLL} >= 150",
+            "Target": "${UPLOAD_WAIT_POLL} >= 200",
             "Value": "UPLOAD_WAIT_FAILED",
             "Description": ""
         },
@@ -941,6 +941,66 @@
         {
             "Command": "gotoLabel",
             "Target": "UPLOAD_CAPACITY_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//*[@data-message-author-role='assistant'][contains(normalize-space(.),'plus plan limit for image generations requests') and contains(normalize-space(.),'limit resets in')])[last()]",
+            "Value": "IMAGE_RATE_LIMIT_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${IMAGE_RATE_LIMIT_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "",
+            "Value": "IMAGE_RATE_LIMIT_TEXT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "storeText",
+            "Target": "xpath=(//*[@data-message-author-role='assistant'][contains(normalize-space(.),'plus plan limit for image generations requests') and contains(normalize-space(.),'limit resets in')])[last()]",
+            "Value": "IMAGE_RATE_LIMIT_TEXT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "300",
+            "Value": "!TIMEOUT_WAIT",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "IMAGE_RATE_LIMIT_RETRY_LATER",
             "Value": "",
             "Description": ""
         },
@@ -1685,6 +1745,36 @@
         {
             "Command": "gotoLabel",
             "Target": "ROW_RETRY_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "IMAGE_RATE_LIMIT_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Detected ChatGPT image generation plan limit during polling, exiting so bash can back off and retry later",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "IMAGE_RATE_LIMIT_TEXT=${IMAGE_RATE_LIMIT_TEXT}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "IMAGE_RATE_LIMIT_RETRY_LATER row=${TARGET_ROW}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
             "Value": "",
             "Description": ""
         },
