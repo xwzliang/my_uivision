@@ -609,6 +609,12 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "0",
+            "Value": "TOO_MANY_REQUESTS_HITS",
+            "Description": ""
+        },
+        {
             "Command": "echo",
             "Target": "Opening ChatGPT attach menu for image ${ATTACH_I}",
             "Value": "blue",
@@ -678,6 +684,30 @@
             "Command": "gotoIf",
             "Target": "${UPLOAD_WAIT_POLL} >= 200",
             "Value": "UPLOAD_WAIT_FAILED",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//div[@role='dialog']//h2[normalize-space()='Too many requests']",
+            "Value": "TOO_MANY_REQUESTS_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${TOO_MANY_REQUESTS_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "TOO_MANY_REQUESTS_UPLOAD_WAIT",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
             "Description": ""
         },
         {
@@ -922,8 +952,32 @@
         },
         {
             "Command": "gotoIf",
-            "Target": "${FINAL_IMAGE_POLL} >= 150",
+            "Target": "${FINAL_IMAGE_POLL} >= 200",
             "Value": "FINAL_IMAGE_WAIT_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//div[@role='dialog']//h2[normalize-space()='Too many requests']",
+            "Value": "TOO_MANY_REQUESTS_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${TOO_MANY_REQUESTS_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "TOO_MANY_REQUESTS_FINAL_IMAGE_WAIT",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
             "Description": ""
         },
         {
@@ -1300,43 +1354,13 @@
         },
         {
             "Command": "echo",
-            "Target": "Fullscreen view did not open after clicking generated image",
+            "Target": "Fullscreen view did not open after clicking generated image, attempting download flow once before retrying row",
             "Value": "red",
             "Description": ""
         },
         {
-            "Command": "if_v2",
-            "Target": "${OPEN_IMAGE_RETRY} < 3",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${OPEN_IMAGE_RETRY}) + 1",
-            "Value": "OPEN_IMAGE_RETRY",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Retrying generated image viewer open attempt ${OPEN_IMAGE_RETRY} of 3",
-            "Value": "blue",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "1000",
-            "Value": "",
-            "Description": ""
-        },
-        {
             "Command": "gotoLabel",
-            "Target": "OPEN_IMAGE_VIEWER_RETRY",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "end",
-            "Target": "",
+            "Target": "OS_LEVEL_SAVE",
             "Value": "",
             "Description": ""
         },
@@ -1769,6 +1793,186 @@
         {
             "Command": "echo",
             "Target": "IMAGE_RATE_LIMIT_RETRY_LATER row=${TARGET_ROW}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "TOO_MANY_REQUESTS_UPLOAD_WAIT",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${TOO_MANY_REQUESTS_HITS}) + 1",
+            "Value": "TOO_MANY_REQUESTS_HITS",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Detected ChatGPT too many requests dialog during upload polling, clicking Got it and waiting 3 minutes before resuming poll (hit ${TOO_MANY_REQUESTS_HITS} of 3 before macro exit)",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "XClick",
+            "Target": "xpath=(//div[@role='dialog']//button[normalize-space()='Got it' or .//div[normalize-space()='Got it']])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${TOO_MANY_REQUESTS_HITS} > 3",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "TOO_MANY_REQUESTS_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "180000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "UPLOAD_READY_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "TOO_MANY_REQUESTS_FINAL_IMAGE_WAIT",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${TOO_MANY_REQUESTS_HITS}) + 1",
+            "Value": "TOO_MANY_REQUESTS_HITS",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Detected ChatGPT too many requests dialog during final image polling, clicking Got it and waiting 3 minutes before resuming poll (hit ${TOO_MANY_REQUESTS_HITS} of 3 before macro exit)",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "XClick",
+            "Target": "xpath=(//div[@role='dialog']//button[normalize-space()='Got it' or .//div[normalize-space()='Got it']])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${TOO_MANY_REQUESTS_HITS} > 3",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "TOO_MANY_REQUESTS_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "180000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "FINAL_IMAGE_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "TOO_MANY_REQUESTS_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Detected ChatGPT too many requests dialog more than 3 times during polling, clicking Got it and exiting so bash can back off and retry later",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "XClick",
+            "Target": "xpath=(//div[@role='dialog']//button[normalize-space()='Got it' or .//div[normalize-space()='Got it']])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "TOO_MANY_REQUESTS_RETRY_LATER row=${TARGET_ROW}",
             "Value": "red",
             "Description": ""
         },

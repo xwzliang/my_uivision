@@ -33,6 +33,7 @@ AUTOSTART_STUCK_TIMEOUT_CAP="${AUTOSTART_STUCK_TIMEOUT_CAP:-120}"
 MAX_LAUNCH_ATTEMPTS="${MAX_LAUNCH_ATTEMPTS:-3}"
 UPLOAD_BACKOFF_MARKER="UPLOAD_CAPACITY_RETRY_LATER"
 RATE_LIMIT_BACKOFF_MARKER="IMAGE_RATE_LIMIT_RETRY_LATER"
+TOO_MANY_REQUESTS_BACKOFF_MARKER="TOO_MANY_REQUESTS_RETRY_LATER"
 
 usage() {
   echo "Usage: $0 [--provider gemini|chatgpt] [--overwrite|--no-overwrite] [--relaunch-chrome-after-row|--keep-chrome-after-row] [image|storyboard|sora|chat|camera] [start_row] [all|single] [overwrite]" >&2
@@ -765,6 +766,20 @@ wait_before_upload_backoff_retry() {
   sleep "$UPLOAD_BACKOFF_SECONDS"
 }
 
+wait_before_too_many_requests_backoff_retry() {
+  local row="$1"
+  local wait_minutes
+  local wait_seconds
+  local retry_clock_time
+
+  wait_minutes=$((3 + RANDOM % 4))
+  wait_seconds=$((wait_minutes * 60))
+  retry_clock_time="$(format_retry_clock_time "$wait_seconds")"
+
+  echo "Row $row hit ChatGPT too-many-requests throttling; waiting ${wait_minutes} minutes (${wait_seconds}s) before retrying the same row at ${retry_clock_time}"
+  sleep "$wait_seconds"
+}
+
 extract_rate_limit_backoff_seconds() {
   local log_file="$1"
   local row="$2"
@@ -842,6 +857,8 @@ run_one_row() {
   local row="$1"
   local pass="$2"
   local existing_output_path
+  local expected_output_path=""
+  local output_path_candidate
   local launch_attempt=1
   local wait_status
   local autostart_recovery_count=0
@@ -876,11 +893,25 @@ run_one_row() {
   printf '"%s","%s","%s"\n' "$CURRENT_LOG_FILE" "$current_row" "$MACRO_NAME" > "$HEALTH_CONTEXT_CSV"
   target_url="file://$UIV_HTML?direct=1&macro=$MACRO_NAME&closeRPA=1&savelog=$CURRENT_LOG_FILE"
 
+  while IFS= read -r output_path_candidate; do
+    [[ -z "$output_path_candidate" ]] && continue
+    if [[ "$(basename "$output_path_candidate")" == "violation.txt" ]]; then
+      continue
+    fi
+    expected_output_path="$output_path_candidate"
+    break
+  done < <(get_output_paths_for_row "$row")
+
   while true; do
     : > "$CURRENT_LOG_FILE"
 
     echo "Provider=$PROVIDER Mode=$MODE Overwrite=$OVERWRITE_OUTPUT RelaunchChromeAfterRow=$RELAUNCH_CHROME_AFTER_ROW Macro=$MACRO_NAME"
     echo "Launching $MACRO_NAME for row $current_row (launch attempt ${launch_attempt}/${MAX_LAUNCH_ATTEMPTS})"
+    if [[ -n "$expected_output_path" ]]; then
+      echo "Expected output path for row $current_row: $expected_output_path"
+    else
+      echo "Expected output path for row $current_row: <unknown>"
+    fi
     echo "Log file: $CURRENT_LOG_FILE"
     echo "Row time limit: ${ROW_TIME_LIMIT}s"
     osascript "$APPLE_SCRIPT"
@@ -946,6 +977,12 @@ run_one_row() {
     echo "Macro requested upload-capacity backoff on row $current_row; will sleep and retry the same row." >&2
     finish_row_browser_cycle
     return 4
+  fi
+
+  if grep -q "${TOO_MANY_REQUESTS_BACKOFF_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
+    echo "Macro requested too-many-requests backoff on row $current_row; will sleep and retry the same row." >&2
+    finish_row_browser_cycle
+    return 7
   fi
 
   if grep -q "${RATE_LIMIT_BACKOFF_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
@@ -1039,6 +1076,12 @@ while (( pass_number <= MAX_PASSES )); do
           continue
         fi
 
+        if (( status == 7 )); then
+          wait_before_too_many_requests_backoff_retry "$row"
+          target_index=$((target_index - 1))
+          continue
+        fi
+
         skipped_rows+=("$row")
       done
     else
@@ -1085,6 +1128,11 @@ while (( pass_number <= MAX_PASSES )); do
 
         if (( status == 6 )); then
           wait_before_rate_limit_backoff_retry "$row"
+          continue
+        fi
+
+        if (( status == 7 )); then
+          wait_before_too_many_requests_backoff_retry "$row"
           continue
         fi
 
@@ -1137,6 +1185,12 @@ while (( pass_number <= MAX_PASSES )); do
 
       if (( status == 6 )); then
         wait_before_rate_limit_backoff_retry "$row"
+        skipped_index=$((skipped_index - 1))
+        continue
+      fi
+
+      if (( status == 7 )); then
+        wait_before_too_many_requests_backoff_retry "$row"
         skipped_index=$((skipped_index - 1))
         continue
       fi
