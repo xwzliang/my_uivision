@@ -556,6 +556,65 @@ except FileNotFoundError:
 PY
 }
 
+find_blocking_failed_dependency_row() {
+  local row="$1"
+  shift || true
+
+  if [[ "$MODE" != "image" ]]; then
+    return 1
+  fi
+
+  if (( $# == 0 )); then
+    return 1
+  fi
+
+  python3 - "$source_csv" "$row" "$@" <<'PY'
+import csv
+import sys
+
+source_csv = sys.argv[1]
+target_row = int(sys.argv[2])
+candidate_rows = []
+for raw in sys.argv[3:]:
+    try:
+        candidate_rows.append(int(raw))
+    except ValueError:
+        pass
+
+candidate_rows = sorted({row for row in candidate_rows if row < target_row})
+if not candidate_rows:
+    raise SystemExit(1)
+
+def clean(value: str) -> str:
+    return (value or "").strip().strip('"').strip()
+
+def split_paths(value: str):
+    return [part.strip() for part in clean(value).split("|") if part.strip()]
+
+target_inputs = set()
+candidate_outputs = {}
+
+with open(source_csv, newline="", encoding="utf-8") as handle:
+    for current_index, row in enumerate(csv.reader(handle), start=1):
+        cols = [clean(col) for col in row]
+        if current_index == target_row and len(cols) >= 2:
+            target_inputs = set(split_paths(cols[1]))
+        if current_index in candidate_rows and len(cols) >= 3 and cols[2]:
+            candidate_outputs[current_index] = cols[2]
+
+if not target_inputs:
+    raise SystemExit(1)
+
+for candidate_row in candidate_rows:
+    output_path = candidate_outputs.get(candidate_row, "")
+    if output_path and output_path in target_inputs:
+        print(candidate_row)
+        raise SystemExit(0)
+
+raise SystemExit(1)
+PY
+}
+
 source_row_exists() {
   local row="$1"
 
@@ -1042,6 +1101,13 @@ while (( pass_number <= MAX_PASSES )); do
 
       for ((target_index=0; target_index<${#target_rows[@]}; target_index++)); do
         row="${target_rows[target_index]}"
+        if (( ${#skipped_rows[@]} > 0 )); then
+          if blocking_row="$(find_blocking_failed_dependency_row "$row" "${skipped_rows[@]}")"; then
+            echo "Skipping row $row for now because its input references output from unresolved previous failed row $blocking_row"
+            skipped_rows+=("$row")
+            continue
+          fi
+        fi
         if run_one_row "$row" "$pass_number"; then
           status=0
         else
@@ -1094,6 +1160,17 @@ while (( pass_number <= MAX_PASSES )); do
       fi
 
       while true; do
+        if (( ${#skipped_rows[@]} > 0 )); then
+          if blocking_row="$(find_blocking_failed_dependency_row "$row" "${skipped_rows[@]}")"; then
+            echo "Skipping row $row for now because its input references output from unresolved previous failed row $blocking_row"
+            skipped_rows+=("$row")
+            if (( RUN_ONE_ROW_ONLY == 1 )); then
+              break
+            fi
+            row=$((row + 1))
+            continue
+          fi
+        fi
         if run_one_row "$row" "$pass_number"; then
           status=0
         else
@@ -1157,6 +1234,13 @@ while (( pass_number <= MAX_PASSES )); do
 
     for ((skipped_index=0; skipped_index<${#skipped_rows[@]}; skipped_index++)); do
       row="${skipped_rows[skipped_index]}"
+      if (( ${#next_skipped_rows[@]} > 0 )); then
+        if blocking_row="$(find_blocking_failed_dependency_row "$row" "${next_skipped_rows[@]}")"; then
+          echo "Skipping row $row again because its input still references output from unresolved previous failed row $blocking_row"
+          next_skipped_rows+=("$row")
+          continue
+        fi
+      fi
       if run_one_row "$row" "$pass_number"; then
         status=0
       else

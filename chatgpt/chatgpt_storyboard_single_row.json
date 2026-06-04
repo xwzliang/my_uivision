@@ -1012,7 +1012,7 @@
         },
         {
             "Command": "gotoIf",
-            "Target": "${FINAL_IMAGE_POLL} >= 200",
+            "Target": "${FINAL_IMAGE_POLL} >= 400",
             "Value": "FINAL_IMAGE_WAIT_DONE",
             "Description": ""
         },
@@ -1353,6 +1353,12 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "0",
+            "Value": "OS_SAVE_RETRY",
+            "Description": ""
+        },
+        {
             "Command": "label",
             "Target": "OPEN_IMAGE_VIEWER_RETRY",
             "Value": "",
@@ -1618,7 +1624,49 @@
         },
         {
             "Command": "echo",
-            "Target": "OS-level save failed, retrying segment",
+            "Target": "OS-level save failed",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${OS_SAVE_RETRY} < 2",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${OS_SAVE_RETRY}) + 1",
+            "Value": "OS_SAVE_RETRY",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Retrying OS-level save attempt ${OS_SAVE_RETRY} of 2 before segment retry",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "OS_LEVEL_SAVE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "OS-level save failed after 3 total attempts, retrying segment",
             "Value": "red",
             "Description": ""
         },

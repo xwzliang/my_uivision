@@ -580,7 +580,7 @@
         },
         {
             "Command": "click",
-            "Target": "css=button[data-test-id='bard-mode-option-pro']",
+            "Target": "xpath=(//gem-menu-item[.//span[contains(@class,'label')][contains(normalize-space(.),'Pro')]])[1]",
             "Value": "",
             "Description": ""
         },
@@ -832,7 +832,7 @@
         },
         {
             "Command": "waitForElementPresent",
-            "Target": "xpath=//button[contains(@class,'send-button') and @aria-disabled='false']",
+            "Target": "xpath=//div[@data-test-id='send-button-container']//button[@aria-label='Send message' and not(@disabled)]",
             "Value": "",
             "Description": ""
         },
@@ -850,7 +850,7 @@
         },
         {
             "Command": "click",
-            "Target": "xpath=(//button[contains(@class,'send-button') and @aria-disabled='false'])[1]",
+            "Target": "xpath=(//div[@data-test-id='send-button-container']//button[@aria-label='Send message' and not(@disabled)])[1]",
             "Value": "",
             "Description": ""
         },
