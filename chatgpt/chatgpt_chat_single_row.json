@@ -1396,7 +1396,7 @@
         },
         {
             "Command": "pause",
-            "Target": "180000",
+            "Target": "7000",
             "Value": "",
             "Description": ""
         },

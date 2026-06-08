@@ -995,6 +995,12 @@
         {
             "Command": "store",
             "Target": "0",
+            "Value": "TOO_MANY_REQUESTS_HITS",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
             "Value": "FINAL_IMAGE_FOUND",
             "Description": ""
         },
@@ -1263,6 +1269,42 @@
             "Description": ""
         },
         {
+            "Command": "executeScript_Sandbox",
+            "Target": "var n=Number(${FINAL_IMAGE_POLL}); return (n > 0 && n % 100 === 0) ? '1' : '0';",
+            "Value": "SHOULD_REFRESH_FINAL_IMAGE_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${SHOULD_REFRESH_FINAL_IMAGE_POLL} == '1'",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "FINAL_IMAGE_POLL=${FINAL_IMAGE_POLL}, refreshing page during final image polling",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "refresh",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "pause",
             "Target": "1500",
             "Value": "",
@@ -1324,7 +1366,7 @@
         },
         {
             "Command": "pause",
-            "Target": "15000",
+            "Target": "5000",
             "Value": "",
             "Description": ""
         },
@@ -1380,6 +1422,42 @@
             "Command": "echo",
             "Target": "PREVIEW_POLL=${PREVIEW_POLL}, waiting for Preview overlay to disappear before download",
             "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var n=Number(${PREVIEW_POLL}); return (n > 0 && n % 50 === 0) ? '1' : '0';",
+            "Value": "SHOULD_REFRESH_PREVIEW_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${SHOULD_REFRESH_PREVIEW_POLL} == '1'",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "PREVIEW_POLL=${PREVIEW_POLL}, refreshing page during Preview overlay polling",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "refresh",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "3000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
             "Description": ""
         },
         {
@@ -2140,7 +2218,7 @@
         },
         {
             "Command": "pause",
-            "Target": "180000",
+            "Target": "5000",
             "Value": "",
             "Description": ""
         },
@@ -2206,7 +2284,7 @@
         },
         {
             "Command": "pause",
-            "Target": "180000",
+            "Target": "7000",
             "Value": "",
             "Description": ""
         },
