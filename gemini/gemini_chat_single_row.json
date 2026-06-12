@@ -268,25 +268,25 @@
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${url_raw}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); if(!s || s.toLowerCase()==='none'){return 'https://gemini.google.com/app';} return s;",
+            "Target": "var s=${url_raw}; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); if(!s || s.toLowerCase()==='none'){return 'https://gemini.google.com/app';} return s;",
             "Value": "CHAT_URL",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${text_prompt_raw}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Target": "var s=${text_prompt_raw}; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
             "Value": "TEXT_PROMPT",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${output_file_path_raw}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Target": "var s=${output_file_path_raw}; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
             "Value": "OUTPUT_FILE_PATH",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var p='${OUTPUT_FILE_PATH}'; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'chat-output.txt';} var parts=p.split('/').filter(function(x){ return x; }); var name=parts.length ? parts[parts.length-1] : 'chat-output.txt'; name=(name||'').replace(/^\\\"+/, '').replace(/\\\"+$/, ''); return name || 'chat-output.txt';",
+            "Target": "var p=${OUTPUT_FILE_PATH}; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'chat-output.txt';} var parts=p.split('/').filter(function(x){ return x; }); var name=parts.length ? parts[parts.length-1] : 'chat-output.txt'; name=(name||'').replace(/^\\\"+/, '').replace(/\\\"+$/, ''); return name || 'chat-output.txt';",
             "Value": "JOB_NAME",
             "Description": ""
         },

@@ -304,31 +304,31 @@
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${png_paths_raw}'; s=s.trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); return s;",
+            "Target": "var s=${png_paths_raw}; s=s.trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); return s;",
             "Value": "png_paths",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${BASE}'; s=(s||'').trim(); s=s.replace(/^[\\\"']+/, ''); s=s.replace(/[\\\"']+$/, ''); s=s.replace(/\\/+$/, ''); return s;",
+            "Target": "var s=${BASE}; s=(s||'').trim(); s=s.replace(/^[\\\"']+/, ''); s=s.replace(/[\\\"']+$/, ''); s=s.replace(/\\/+$/, ''); return s;",
             "Value": "RESOLVED_BASE",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${segment_dir}'; s=(s||'').trim(); s=s.replace(/^[\\\"']+/, ''); s=s.replace(/[\\\"']+$/, ''); s=s.replace(/^\\/+/, ''); s=s.replace(/\\/+$/, ''); return s;",
+            "Target": "var s=${segment_dir}; s=(s||'').trim(); s=s.replace(/^[\\\"']+/, ''); s=s.replace(/[\\\"']+$/, ''); s=s.replace(/^\\/+/, ''); s=s.replace(/\\/+$/, ''); return s;",
             "Value": "RESOLVED_SEGMENT_DIR",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var base='${RESOLVED_BASE}'; base=(base||'').trim(); base=base.replace(/^[\\\"']+/, ''); base=base.replace(/[\\\"']+$/, ''); base=base.replace(/\\/+$/, ''); var dir='${RESOLVED_SEGMENT_DIR}'; dir=(dir||'').trim(); dir=dir.replace(/^[\\\"']+/, ''); dir=dir.replace(/[\\\"']+$/, ''); dir=dir.replace(/^\\/+/, ''); dir=dir.replace(/\\/+$/, ''); return base + '/segments_prompts/' + dir + '/output/storyboard.png';",
+            "Target": "var base=${RESOLVED_BASE}; base=(base||'').trim(); base=base.replace(/^[\\\"']+/, ''); base=base.replace(/[\\\"']+$/, ''); base=base.replace(/\\/+$/, ''); var dir=${RESOLVED_SEGMENT_DIR}; dir=(dir||'').trim(); dir=dir.replace(/^[\\\"']+/, ''); dir=dir.replace(/[\\\"']+$/, ''); dir=dir.replace(/^\\/+/, ''); dir=dir.replace(/\\/+$/, ''); return base + '/segments_prompts/' + dir + '/output/storyboard.png';",
             "Value": "RESOLVED_STORYBOARD_OUTPUT_PATH",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var p='${RESOLVED_STORYBOARD_OUTPUT_PATH}'; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'violation.txt';} var idx=p.lastIndexOf('/'); return (idx >= 0 ? p.slice(0, idx + 1) : '') + 'violation.txt';",
+            "Target": "var p=${RESOLVED_STORYBOARD_OUTPUT_PATH}; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'violation.txt';} var idx=p.lastIndexOf('/'); return (idx >= 0 ? p.slice(0, idx + 1) : '') + 'violation.txt';",
             "Value": "VIOLATION_OUTPUT_PATH",
             "Description": ""
         },
@@ -358,7 +358,7 @@
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${png_paths}'; if (!s) { return '0'; } var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return String(arr.length);",
+            "Target": "var s=${png_paths}; if (!s) { return '0'; } var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return String(arr.length);",
             "Value": "PNGCOUNT",
             "Description": ""
         },
@@ -431,7 +431,7 @@
         {
             "Command": "selectWindow",
             "Target": "TAB=OPEN",
-            "Value": "https://chatgpt.com/g/g-69fb3cfb226881918211585ab330d80b-5fen-jing-gu-shi-ban-9gong-ge",
+            "Value": "https://chatgpt.com/images",
             "Description": ""
         },
         {
@@ -531,66 +531,6 @@
             "Description": ""
         },
         {
-            "Command": "storeXpathCount",
-            "Target": "xpath=//div[contains(@class,'text-2xl') and normalize-space()='5分镜故事板9宫格']",
-            "Value": "PAGE_TITLE_MATCH_COUNT",
-            "Description": ""
-        },
-        {
-            "Command": "storeXpathCount",
-            "Target": "xpath=//div[contains(@class,'text-sm') and normalize-space()='By community builder']",
-            "Value": "PAGE_BUILDER_MATCH_COUNT",
-            "Description": ""
-        },
-        {
-            "Command": "if_v2",
-            "Target": "${PAGE_TITLE_MATCH_COUNT} == 0 || ${PAGE_BUILDER_MATCH_COUNT} == 0",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Restoring chrome window size before exiting page identity failure",
-            "Value": "blue",
-            "Description": ""
-        },
-        {
-            "Command": "XType",
-            "Target": "${KEY_CTRL+KEY_CMD+KEY_F}",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "1000",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Opened page did not match expected ChatGPT storyboard GPT identity, marking segment as failed",
-            "Value": "red",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "SEGMENT_PROCESS_FAILED row=${TARGET_ROW}",
-            "Value": "red",
-            "Description": ""
-        },
-        {
-            "Command": "gotoLabel",
-            "Target": "MACRO_END",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "end",
-            "Target": "",
-            "Value": "",
-            "Description": ""
-        },
-        {
             "Command": "echo",
             "Target": "Clicking prompt textbox",
             "Value": "blue",
@@ -664,13 +604,13 @@
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${png_paths}'; var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return arr[${I}] || '';",
+            "Target": "var s=${png_paths}; var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return arr[${I}] || '';",
             "Value": "PNGFILE_RAW",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var p='${PNGFILE_RAW}'; p=p.trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); p=p.trim(); return p;",
+            "Target": "var p=${PNGFILE_RAW}; p=p.trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); p=p.trim(); return p;",
             "Value": "PNGFILE",
             "Description": ""
         },

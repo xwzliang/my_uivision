@@ -274,49 +274,49 @@
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${prompt_text}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Target": "var s=${prompt_text}; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
             "Value": "PROMPT",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${attach_image_path_raw}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Target": "var s=${attach_image_path_raw}; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
             "Value": "ATTACH_IMAGE_PATH",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${output_image_path_raw}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Target": "var s=${output_image_path_raw}; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
             "Value": "OUTPUT_IMAGE_PATH",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${ATTACH_IMAGE_PATH}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Target": "var s=${ATTACH_IMAGE_PATH}; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
             "Value": "RESOLVED_ATTACH_IMAGE_PATH",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${RESOLVED_ATTACH_IMAGE_PATH}'; if (!s) { return '0'; } var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return String(arr.length);",
+            "Target": "var s=${RESOLVED_ATTACH_IMAGE_PATH}; if (!s) { return '0'; } var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return String(arr.length);",
             "Value": "ATTACH_IMAGE_COUNT",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${OUTPUT_IMAGE_PATH}'; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Target": "var s=${OUTPUT_IMAGE_PATH}; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
             "Value": "RESOLVED_OUTPUT_IMAGE_PATH",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var p='${RESOLVED_OUTPUT_IMAGE_PATH}'; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'violation.txt';} var idx=p.lastIndexOf('/'); return (idx >= 0 ? p.slice(0, idx + 1) : '') + 'violation.txt';",
+            "Target": "var p=${RESOLVED_OUTPUT_IMAGE_PATH}; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'violation.txt';} var idx=p.lastIndexOf('/'); return (idx >= 0 ? p.slice(0, idx + 1) : '') + 'violation.txt';",
             "Value": "VIOLATION_OUTPUT_PATH",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var p='${RESOLVED_OUTPUT_IMAGE_PATH}'; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'image-output';} var parts=p.split('/').filter(function(x){ return x; }); var name=parts.length ? parts[parts.length-1] : 'image-output'; name=(name||'').replace(/^\\\"+/, '').replace(/\\\"+$/, ''); return name || 'image-output';",
+            "Target": "var p=${RESOLVED_OUTPUT_IMAGE_PATH}; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); if(!p){return 'image-output';} var parts=p.split('/').filter(function(x){ return x; }); var name=parts.length ? parts[parts.length-1] : 'image-output'; name=(name||'').replace(/^\\\"+/, '').replace(/\\\"+$/, ''); return name || 'image-output';",
             "Value": "JOB_NAME",
             "Description": ""
         },
@@ -413,7 +413,7 @@
         {
             "Command": "selectWindow",
             "Target": "TAB=OPEN",
-            "Value": "https://chatgpt.com/g/g-69ee28e311c08191b315b49129acb939-sheng-cheng-tu-pian",
+            "Value": "https://chatgpt.com/images",
             "Description": ""
         },
         {
@@ -586,13 +586,13 @@
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s='${RESOLVED_ATTACH_IMAGE_PATH}'; var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return arr[${ATTACH_I}] || '';",
+            "Target": "var s=${RESOLVED_ATTACH_IMAGE_PATH}; var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return arr[${ATTACH_I}] || '';",
             "Value": "ATTACH_IMAGE_FILE_RAW",
             "Description": ""
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var p='${ATTACH_IMAGE_FILE_RAW}'; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); p=p.trim(); return p;",
+            "Target": "var p=${ATTACH_IMAGE_FILE_RAW}; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); p=p.trim(); return p;",
             "Value": "ATTACH_IMAGE_FILE",
             "Description": ""
         },
