@@ -616,30 +616,6 @@
         },
         {
             "Command": "echo",
-            "Target": "Opening ChatGPT attach menu for image ${ATTACH_I}",
-            "Value": "blue",
-            "Description": ""
-        },
-        {
-            "Command": "click",
-            "Target": "css=button#composer-plus-btn",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
-            "Target": "Opened attach menu",
-            "Value": "green",
-            "Description": ""
-        },
-        {
-            "Command": "pause",
-            "Target": "1200",
-            "Value": "",
-            "Description": ""
-        },
-        {
-            "Command": "echo",
             "Target": "Typing file path into ChatGPT file input: ${ATTACH_IMAGE_FILE}",
             "Value": "blue",
             "Description": ""
