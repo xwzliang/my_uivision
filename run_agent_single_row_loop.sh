@@ -524,6 +524,8 @@ import sys
 source_csv, row_arg, mode, base_dir = sys.argv[1:]
 row_number = int(row_arg)
 
+csv.field_size_limit(sys.maxsize)
+
 def clean(value: str) -> str:
     return (value or "").strip().strip('"').strip()
 
@@ -574,6 +576,7 @@ import sys
 
 source_csv = sys.argv[1]
 target_row = int(sys.argv[2])
+csv.field_size_limit(sys.maxsize)
 candidate_rows = []
 for raw in sys.argv[3:]:
     try:
@@ -624,6 +627,8 @@ import sys
 
 source_csv, row_arg = sys.argv[1:]
 target_row = int(row_arg)
+
+csv.field_size_limit(sys.maxsize)
 
 try:
     with open(source_csv, newline="", encoding="utf-8") as handle:

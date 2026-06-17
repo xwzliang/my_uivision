@@ -640,7 +640,7 @@
         },
         {
             "Command": "storeXpathCount",
-            "Target": "xpath=//p[contains(normalize-space(),'Something went wrong while generating the response.')]",
+            "Target": "xpath=//p[contains(normalize-space(),'Something went wrong')]",
             "Value": "GENERATION_ERROR_COUNT",
             "Description": ""
         },
@@ -1305,9 +1305,15 @@
             "Description": ""
         },
         {
-            "Command": "store",
-            "Target": "true",
-            "Value": "!errorignore",
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//button[@id='composer-submit-button' and @data-testid='stop-button' and @aria-label='Stop answering' and not(@disabled)])[1]",
+            "Value": "STOP_BUTTON_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${STOP_BUTTON_COUNT} > 0",
+            "Value": "",
             "Description": ""
         },
         {
@@ -1317,9 +1323,32 @@
             "Description": ""
         },
         {
-            "Command": "store",
-            "Target": "false",
-            "Value": "!errorignore",
+            "Command": "echo",
+            "Target": "Stop button found and clicked before exiting failed polling state",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "STOP_AND_FAIL_POLLING_ERROR_CONTINUE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Stop button not present, continuing failed polling exit without clicking",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "STOP_AND_FAIL_POLLING_ERROR_CONTINUE",
             "Description": ""
         },
         {
