@@ -263,7 +263,31 @@
         {
             "Command": "store",
             "Target": "${!COL3}",
-            "Value": "output_file_path_raw",
+            "Value": "attach_file_path_or_output_raw",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "",
+            "Value": "output_file_path_col4_raw",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL4}",
+            "Value": "output_file_path_col4_raw",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
             "Description": ""
         },
         {
@@ -280,7 +304,7 @@
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s=${output_file_path_raw}; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Target": "var attach=${attach_file_path_or_output_raw}; var out4=${output_file_path_col4_raw}; attach=(attach||'').trim(); attach=attach.replace(/^\\\"+/, ''); attach=attach.replace(/\\\"+$/, ''); attach=attach.trim(); out4=(out4||'').trim(); out4=out4.replace(/^\\\"+/, ''); out4=out4.replace(/\\\"+$/, ''); out4=out4.trim(); return out4 || attach;",
             "Value": "OUTPUT_FILE_PATH",
             "Description": ""
         },

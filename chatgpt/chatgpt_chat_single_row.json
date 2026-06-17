@@ -263,7 +263,31 @@
         {
             "Command": "store",
             "Target": "${!COL3}",
-            "Value": "output_file_path_raw",
+            "Value": "attach_file_path_or_output_raw",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "",
+            "Value": "output_file_path_col4_raw",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL4}",
+            "Value": "output_file_path_col4_raw",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
             "Description": ""
         },
         {
@@ -280,8 +304,20 @@
         },
         {
             "Command": "executeScript_Sandbox",
-            "Target": "var s=${output_file_path_raw}; s=(s||'').trim(); s=s.replace(/^\\\"+/, ''); s=s.replace(/\\\"+$/, ''); s=s.trim(); return s;",
+            "Target": "var attach=${attach_file_path_or_output_raw}; var out4=${output_file_path_col4_raw}; attach=(attach||'').trim(); attach=attach.replace(/^\\\"+/, ''); attach=attach.replace(/\\\"+$/, ''); attach=attach.trim(); out4=(out4||'').trim(); out4=out4.replace(/^\\\"+/, ''); out4=out4.replace(/\\\"+$/, ''); out4=out4.trim(); if(out4){ return attach; } return '';",
+            "Value": "ATTACH_FILE_PATH",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var attach=${attach_file_path_or_output_raw}; var out4=${output_file_path_col4_raw}; attach=(attach||'').trim(); attach=attach.replace(/^\\\"+/, ''); attach=attach.replace(/\\\"+$/, ''); attach=attach.trim(); out4=(out4||'').trim(); out4=out4.replace(/^\\\"+/, ''); out4=out4.replace(/\\\"+$/, ''); out4=out4.trim(); return out4 || attach;",
             "Value": "OUTPUT_FILE_PATH",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s=${ATTACH_FILE_PATH}; if (!s) { return '0'; } var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return String(arr.length);",
+            "Value": "ATTACH_FILE_COUNT",
             "Description": ""
         },
         {
@@ -299,6 +335,18 @@
         {
             "Command": "echo",
             "Target": "TEXT_PROMPT=${TEXT_PROMPT}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ATTACH_FILE_PATH=${ATTACH_FILE_PATH}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ATTACH_FILE_COUNT=${ATTACH_FILE_COUNT}",
             "Value": "green",
             "Description": ""
         },
@@ -394,8 +442,14 @@
         },
         {
             "Command": "waitForElementPresent",
-            "Target": "xpath=//*[@id='prompt-textarea' and @contenteditable='true' and @role='textbox']",
+            "Target": "xpath=(//*[@id='prompt-textarea' and @contenteditable='true' and @role='textbox'] | //*[@contenteditable='true' and @role='textbox'])[last()]",
             "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//*[@id='prompt-textarea' and @contenteditable='true' and @role='textbox'] | //*[@contenteditable='true' and @role='textbox'])[last()]",
+            "Value": "PROMPT_TEXTBOX_COUNT",
             "Description": ""
         },
         {
@@ -406,7 +460,7 @@
         },
         {
             "Command": "if_v2",
-            "Target": "${!statusOK} == false",
+            "Target": "${PROMPT_TEXTBOX_COUNT} == 0",
             "Value": "",
             "Description": ""
         },
@@ -442,7 +496,7 @@
         },
         {
             "Command": "click",
-            "Target": "xpath=//*[@id='prompt-textarea' and @contenteditable='true' and @role='textbox']",
+            "Target": "xpath=(//*[@id='prompt-textarea' and @contenteditable='true' and @role='textbox'] | //*[@contenteditable='true' and @role='textbox'])[last()]",
             "Value": "",
             "Description": ""
         },
@@ -460,7 +514,7 @@
         },
         {
             "Command": "editContent",
-            "Target": "xpath=//*[@id='prompt-textarea' and @contenteditable='true' and @role='textbox']",
+            "Target": "xpath=(//*[@id='prompt-textarea' and @contenteditable='true' and @role='textbox'] | //*[@contenteditable='true' and @role='textbox'])[last()]",
             "Value": "${TEXT_PROMPT}",
             "Description": ""
         },
@@ -474,6 +528,288 @@
             "Command": "pause",
             "Target": "1500",
             "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${ATTACH_FILE_PATH} != ''",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "ATTACH_I",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "CHAT_ATTACH_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "---- CHAT ATTACH LOOP START: ATTACH_I=${ATTACH_I}, ATTACH_FILE_COUNT=${ATTACH_FILE_COUNT} ----",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${ATTACH_I} >= ${ATTACH_FILE_COUNT}",
+            "Value": "CHAT_ATTACH_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var s=${ATTACH_FILE_PATH}; var arr=s.split('|').filter(function(x){ return x && x.trim(); }); return arr[${ATTACH_I}] || '';",
+            "Value": "ATTACH_FILE_RAW",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "var p=${ATTACH_FILE_RAW}; p=(p||'').trim(); p=p.replace(/^\\\"+/, ''); p=p.replace(/\\\"+$/, ''); p=p.trim(); return p;",
+            "Value": "ATTACH_FILE",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ATTACH_FILE_RAW=${ATTACH_FILE_RAW}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ATTACH_FILE=${ATTACH_FILE}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "TOO_MANY_REQUESTS_HITS",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Typing file path into ChatGPT file input: ${ATTACH_FILE}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "type",
+            "Target": "xpath=(//input[@type='file'])[last()]",
+            "Value": "${ATTACH_FILE}",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Typed file path into file input",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Waiting for send button to be enabled before uploading next file",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "UPLOAD_WAIT_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "CHAT_UPLOAD_READY_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${UPLOAD_WAIT_POLL} >= 200",
+            "Value": "CHAT_UPLOAD_WAIT_FAILED",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//div[@role='dialog']//h2[normalize-space()='Too many requests']",
+            "Value": "TOO_MANY_REQUESTS_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${TOO_MANY_REQUESTS_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "CHAT_TOO_MANY_REQUESTS_UPLOAD_WAIT",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//*[contains(normalize-space(),'Max 0 uploads at a time')]",
+            "Value": "UPLOAD_CAPACITY_ERROR_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${UPLOAD_CAPACITY_ERROR_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "UPLOAD_CAPACITY_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//button[@id='composer-submit-button' and not(@disabled)]",
+            "Value": "UPLOAD_SEND_READY_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${UPLOAD_SEND_READY_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "CHAT_UPLOAD_READY_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${UPLOAD_WAIT_POLL}) + 1",
+            "Value": "UPLOAD_WAIT_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "CHAT_UPLOAD_READY_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "CHAT_UPLOAD_READY_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Send button enabled after upload",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Sending ESC to close attach menu",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ESC}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "ESC sent",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Finished upload cycle for file index ${ATTACH_I}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${ATTACH_I}) + 1",
+            "Value": "ATTACH_I",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Incremented ATTACH_I to ${ATTACH_I}",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "CHAT_ATTACH_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "CHAT_ATTACH_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Optional file attach finished",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "No attach file path provided for this row",
+            "Value": "purple",
             "Description": ""
         },
         {
@@ -515,6 +851,126 @@
         {
             "Command": "pause",
             "Target": "5000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "CHAT_POST_UPLOAD_EXCEPTION_LABELS_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "CHAT_UPLOAD_WAIT_FAILED",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Send button did not become enabled after upload wait, retrying row",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "ROW_RETRY_RECOVER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "CHAT_TOO_MANY_REQUESTS_UPLOAD_WAIT",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${TOO_MANY_REQUESTS_HITS}) + 1",
+            "Value": "TOO_MANY_REQUESTS_HITS",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Detected ChatGPT too many requests dialog during upload polling, clicking Got it and waiting 3 minutes before resuming poll (hit ${TOO_MANY_REQUESTS_HITS} of 3 before macro exit)",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "XClick",
+            "Target": "xpath=(//div[@role='dialog']//button[normalize-space()='Got it' or .//div[normalize-space()='Got it']])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${TOO_MANY_REQUESTS_HITS} > 3",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "TOO_MANY_REQUESTS_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "7000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "CHAT_UPLOAD_READY_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "UPLOAD_CAPACITY_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Detected ChatGPT upload capacity error during file upload, exiting macro so bash can back off and retry later",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "UPLOAD_CAPACITY_RETRY_LATER row=${TARGET_ROW}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "CHAT_POST_UPLOAD_EXCEPTION_LABELS_DONE",
             "Value": "",
             "Description": ""
         },

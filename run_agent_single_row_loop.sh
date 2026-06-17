@@ -538,10 +538,18 @@ try:
             cols = [clean(col) for col in row]
             outputs = []
             if mode in {"image", "chat", "camera"}:
-                if len(cols) >= 3 and cols[2]:
-                    outputs.append(cols[2])
+                output_path = ""
+                if mode == "chat":
+                    if len(cols) >= 4 and cols[3]:
+                        output_path = cols[3]
+                    elif len(cols) >= 3 and cols[2]:
+                        output_path = cols[2]
+                elif len(cols) >= 3 and cols[2]:
+                    output_path = cols[2]
+                if output_path:
+                    outputs.append(output_path)
                     if mode == "image":
-                        outputs.append(os.path.join(os.path.dirname(cols[2]), "violation.txt"))
+                        outputs.append(os.path.join(os.path.dirname(output_path), "violation.txt"))
             elif mode == "storyboard":
                 if len(cols) >= 2 and cols[1]:
                     outputs.append(os.path.join(base_dir, "segments_prompts", cols[1], "output", "storyboard.png"))
