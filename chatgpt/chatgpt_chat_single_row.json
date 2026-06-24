@@ -592,19 +592,121 @@
         },
         {
             "Command": "echo",
-            "Target": "Typing file path into ChatGPT file input: ${ATTACH_FILE}",
+            "Target": "Opening ChatGPT attach menu for file: ${ATTACH_FILE}",
             "Value": "blue",
             "Description": ""
         },
         {
-            "Command": "type",
-            "Target": "xpath=(//input[@type='file'])[last()]",
-            "Value": "${ATTACH_FILE}",
+            "Command": "XClick",
+            "Target": "xpath=(//button[@data-testid='composer-plus-btn' and @aria-label='Add files and more'])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
             "Description": ""
         },
         {
             "Command": "echo",
-            "Target": "Typed file path into file input",
+            "Target": "Choosing Upload photos & files from ChatGPT attach menu",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XClick",
+            "Target": "xpath=(//div[@role='menuitem' and .//div[normalize-space()='Upload photos & files']])[1]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1200",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Copying upload path to pasteboard: ${ATTACH_FILE}",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XRunAndWait",
+            "Target": "/bin/bash",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && printf %s '${ATTACH_FILE}' | pbcopy\"",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Opening macOS Go to the folder sheet in file picker",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_CMD+KEY_SHIFT+KEY_G}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_CMD+KEY_V}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ENTER}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "XType",
+            "Target": "${KEY_ENTER}",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "2500",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "File picker flow completed for ${ATTACH_FILE}",
+            "Value": "green",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Upload picker submitted selected file",
             "Value": "green",
             "Description": ""
         },
@@ -1006,7 +1108,7 @@
         },
         {
             "Command": "gotoIf",
-            "Target": "${COPY_POLL} >= 160",
+            "Target": "${COPY_POLL} >= 400",
             "Value": "COPY_WAIT_DONE",
             "Description": ""
         },
