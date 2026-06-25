@@ -610,13 +610,13 @@
         },
         {
             "Command": "echo",
-            "Target": "Choosing Upload photos & files from ChatGPT attach menu",
+            "Target": "Choosing Add photos & files from ChatGPT attach menu",
             "Value": "blue",
             "Description": ""
         },
         {
             "Command": "XClick",
-            "Target": "xpath=(//div[@role='menuitem' and .//div[normalize-space()='Upload photos & files']])[1]",
+            "Target": "xpath=(//div[@tabindex='0' and contains(concat(' ', normalize-space(@class), ' '), ' __menu-item ') and .//span[normalize-space()='Add photos & files']])[1]",
             "Value": "",
             "Description": ""
         },
