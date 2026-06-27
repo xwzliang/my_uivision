@@ -1366,7 +1366,7 @@
         },
         {
             "Command": "storeXpathCount",
-            "Target": "xpath=(//button[contains(concat(' ', normalize-space(@class), ' '), ' behavior-btn ') and contains(concat(' ', normalize-space(@class), ' '), ' entity-underline ') and contains(concat(' ', normalize-space(@class), ' '), ' inline ') and not(@title) and not(@aria-label) and starts-with(normalize-space(.), 'Download')])[last()]",
+            "Target": "xpath=(//button[contains(concat(' ', normalize-space(@class), ' '), ' behavior-btn ') and contains(concat(' ', normalize-space(@class), ' '), ' entity-underline ') and contains(concat(' ', normalize-space(@class), ' '), ' inline ') and not(@title) and not(@aria-label)])[last()]",
             "Value": "INLINE_DOWNLOAD_BUTTON_COUNT",
             "Description": ""
         },
@@ -1402,7 +1402,7 @@
         },
         {
             "Command": "XClick",
-            "Target": "xpath=(//button[contains(concat(' ', normalize-space(@class), ' '), ' behavior-btn ') and contains(concat(' ', normalize-space(@class), ' '), ' entity-underline ') and contains(concat(' ', normalize-space(@class), ' '), ' inline ') and not(@title) and not(@aria-label) and starts-with(normalize-space(.), 'Download')])[last()]",
+            "Target": "xpath=(//button[contains(concat(' ', normalize-space(@class), ' '), ' behavior-btn ') and contains(concat(' ', normalize-space(@class), ' '), ' entity-underline ') and contains(concat(' ', normalize-space(@class), ' '), ' inline ') and not(@title) and not(@aria-label)])[last()]",
             "Value": "",
             "Description": ""
         },
