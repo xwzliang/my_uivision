@@ -875,12 +875,42 @@
         {
             "Command": "XRunAndWait",
             "Target": "/bin/bash",
-            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && out='${OUTPUT_FILE_PATH}' && outdir=\\\"$(dirname \\\"$out\\\")\\\" && mkdir -p \\\"$outdir\\\" && tmp=\\\"$(mktemp)\\\" && trap 'rm -f \\\"$tmp\\\"' EXIT && for attempt in 1 2 3 4 5; do pbpaste > \\\"$tmp\\\" 2>/dev/null || true; if [ -s \\\"$tmp\\\" ]; then mv \\\"$tmp\\\" \\\"$out\\\" && trap - EXIT && exit 0; fi; sleep 1; done; exit 1\"",
+            "Value": "-c \"export LC_CTYPE='en_US.UTF-8' && export LANG='en_US.UTF-8' && result='/tmp/uivision_output_write_check_${TARGET_ROW}.csv' && out='${OUTPUT_FILE_PATH}' && outdir=\\\"$(dirname \\\"$out\\\")\\\" && rm -f \\\"$result\\\" && mkdir -p \\\"$outdir\\\" 2>/dev/null || true; tmp=\\\"$(mktemp)\\\" && trap 'rm -f \\\"$tmp\\\"' EXIT && for attempt in 1 2 3 4 5; do pbpaste > \\\"$tmp\\\" 2>/dev/null || true; if [ -s \\\"$tmp\\\" ]; then mv -f \\\"$tmp\\\" \\\"$out\\\" 2>/dev/null || true; break; fi; sleep 1; done; if [ -s \\\"$out\\\" ]; then printf 'OK\\n' > \\\"$result\\\"; else printf 'FAILED\\n' > \\\"$result\\\"; fi; exit 0\"",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!csvReadLineNumber}",
+            "Value": "CSV_LINE_BACKUP",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "1",
+            "Value": "!csvReadLineNumber",
+            "Description": ""
+        },
+        {
+            "Command": "csvRead",
+            "Target": "/tmp/uivision_output_write_check_${TARGET_ROW}.csv",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${!COL1}",
+            "Value": "OUTPUT_WRITE_CHECK_RESULT",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "${CSV_LINE_BACKUP}",
+            "Value": "!csvReadLineNumber",
             "Description": ""
         },
         {
             "Command": "if_v2",
-            "Target": "${!statusOK} == false",
+            "Target": "${OUTPUT_WRITE_CHECK_RESULT} != 'OK'",
             "Value": "",
             "Description": ""
         },
