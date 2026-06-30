@@ -639,32 +639,32 @@
             "Description": ""
         },
         {
-            "Command": "executeScript_Sandbox",
-            "Target": "return Number(${COPY_POLL}) % 4 === 0 ? '1' : '0';",
+            "Command": "comment",
+            "Target": "executeScript_Sandbox // return Number(${COPY_POLL}) % 4 === 0 ? '1' : '0';",
             "Value": "SHOULD_SCROLL_COPY_WAIT",
             "Description": ""
         },
         {
-            "Command": "if_v2",
-            "Target": "${SHOULD_SCROLL_COPY_WAIT} == '1'",
+            "Command": "comment",
+            "Target": "if_v2 // ${SHOULD_SCROLL_COPY_WAIT} == '1'",
             "Value": "",
             "Description": ""
         },
         {
-            "Command": "XRunAndWait",
-            "Target": "/bin/bash",
+            "Command": "comment",
+            "Target": "XRunAndWait // /bin/bash",
             "Value": "-c \"for i in 1 2; do /opt/homebrew/bin/cliclick c:1918,1062; sleep 0.25; done\"",
             "Description": ""
         },
         {
-            "Command": "echo",
-            "Target": "COPY_POLL=${COPY_POLL}, scrolling page while waiting for copy button",
+            "Command": "comment",
+            "Target": "echo // COPY_POLL=${COPY_POLL}, scrolling page while waiting for copy button",
             "Value": "purple",
             "Description": ""
         },
         {
-            "Command": "end",
-            "Target": "",
+            "Command": "comment",
+            "Target": "end //",
             "Value": "",
             "Description": ""
         },
