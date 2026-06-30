@@ -1060,6 +1060,24 @@
         },
         {
             "Command": "echo",
+            "Target": "Closing ChatGPT tab before upload-capacity backoff",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
             "Target": "UPLOAD_CAPACITY_RETRY_LATER row=${TARGET_ROW}",
             "Value": "red",
             "Description": ""
