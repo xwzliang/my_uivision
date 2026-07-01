@@ -514,6 +514,42 @@
         },
         {
             "Command": "echo",
+            "Target": "Checking for visible ChatGPT image quota reset message before pasting prompt",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//*[contains(concat(' ', normalize-space(@class), ' '), ' text-token-text-secondary ') and contains(normalize-space(.),'images left') and contains(normalize-space(.),'usage to reset at')]",
+            "Value": "IMAGE_QUOTA_RESET_MESSAGE_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${IMAGE_QUOTA_RESET_MESSAGE_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeText",
+            "Target": "xpath=(//*[contains(concat(' ', normalize-space(@class), ' '), ' text-token-text-secondary ') and contains(normalize-space(.),'images left') and contains(normalize-space(.),'usage to reset at')])[last()]",
+            "Value": "IMAGE_RATE_LIMIT_TEXT",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "IMAGE_RATE_LIMIT_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
             "Target": "Clicking prompt textbox",
             "Value": "blue",
             "Description": ""
@@ -849,8 +885,98 @@
             "Description": ""
         },
         {
+            "Command": "store",
+            "Target": "true",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
             "Command": "waitForElementPresent",
             "Target": "xpath=//button[@id='composer-submit-button' and not(@disabled)]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "false",
+            "Value": "!errorignore",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//button[@id='composer-submit-button' and not(@disabled)]",
+            "Value": "FINAL_SEND_READY_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${FINAL_SEND_READY_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "FINAL_SEND_READY",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Final send button stayed disabled, checking for visible image quota reset message",
+            "Value": "purple",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "",
+            "Value": "IMAGE_RATE_LIMIT_TEXT",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//*[contains(concat(' ', normalize-space(@class), ' '), ' text-token-text-secondary ') and contains(normalize-space(.),'images left') and contains(normalize-space(.),'usage to reset at')]",
+            "Value": "IMAGE_QUOTA_RESET_MESSAGE_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${IMAGE_QUOTA_RESET_MESSAGE_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "storeText",
+            "Target": "xpath=(//*[contains(concat(' ', normalize-space(@class), ' '), ' text-token-text-secondary ') and contains(normalize-space(.),'images left') and contains(normalize-space(.),'usage to reset at')])[last()]",
+            "Value": "IMAGE_RATE_LIMIT_TEXT",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "IMAGE_RATE_LIMIT_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "SEND_DISABLED_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "FINAL_SEND_READY",
             "Value": "",
             "Description": ""
         },
@@ -2020,6 +2146,24 @@
         },
         {
             "Command": "echo",
+            "Target": "Closing ChatGPT tab before image-rate-limit backoff",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
             "Target": "IMAGE_RATE_LIMIT_TEXT=${IMAGE_RATE_LIMIT_TEXT}",
             "Value": "red",
             "Description": ""
@@ -2027,6 +2171,48 @@
         {
             "Command": "echo",
             "Target": "IMAGE_RATE_LIMIT_RETRY_LATER row=${TARGET_ROW}",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "MACRO_END",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "SEND_DISABLED_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Send button stayed disabled and no image quota reset message was found, exiting so bash can retry in 30 minutes",
+            "Value": "red",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Closing ChatGPT tab before send-disabled backoff",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "selectWindow",
+            "Target": "TAB=CLOSE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "SEND_DISABLED_RETRY_LATER row=${TARGET_ROW}",
             "Value": "red",
             "Description": ""
         },

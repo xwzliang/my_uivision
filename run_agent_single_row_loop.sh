@@ -25,6 +25,7 @@ OVERWRITE_OUTPUT="${OVERWRITE_OUTPUT:-0}"
 RELAUNCH_CHROME_AFTER_ROW="${RELAUNCH_CHROME_AFTER_ROW:-0}"
 INITIAL_CHROME_RELAUNCH_DONE=0
 UPLOAD_BACKOFF_SECONDS="${UPLOAD_BACKOFF_SECONDS:-1800}"
+SEND_DISABLED_BACKOFF_SECONDS="${SEND_DISABLED_BACKOFF_SECONDS:-1800}"
 RATE_LIMIT_BACKOFF_PADDING_SECONDS="${RATE_LIMIT_BACKOFF_PADDING_SECONDS:-180}"
 LAST_RATE_LIMIT_BACKOFF_SECONDS=0
 HEALTH_CONTEXT_CSV="${HEALTH_CONTEXT_CSV:-/tmp/uivision_health_context.csv}"
@@ -32,6 +33,7 @@ AUTOSTART_STUCK_TIMEOUT="${AUTOSTART_STUCK_TIMEOUT:-45}"
 AUTOSTART_STUCK_TIMEOUT_CAP="${AUTOSTART_STUCK_TIMEOUT_CAP:-120}"
 MAX_LAUNCH_ATTEMPTS="${MAX_LAUNCH_ATTEMPTS:-3}"
 UPLOAD_BACKOFF_MARKER="UPLOAD_CAPACITY_RETRY_LATER"
+SEND_DISABLED_BACKOFF_MARKER="SEND_DISABLED_RETRY_LATER"
 RATE_LIMIT_BACKOFF_MARKER="IMAGE_RATE_LIMIT_RETRY_LATER"
 TOO_MANY_REQUESTS_BACKOFF_MARKER="TOO_MANY_REQUESTS_RETRY_LATER"
 
@@ -838,6 +840,16 @@ wait_before_upload_backoff_retry() {
   sleep "$UPLOAD_BACKOFF_SECONDS"
 }
 
+wait_before_send_disabled_backoff_retry() {
+  local row="$1"
+  local retry_clock_time
+
+  retry_clock_time="$(format_retry_clock_time "$SEND_DISABLED_BACKOFF_SECONDS")"
+
+  echo "Row $row ended with a disabled send button and no quota reset message; waiting ${SEND_DISABLED_BACKOFF_SECONDS}s before retrying the same row at ${retry_clock_time}"
+  sleep "$SEND_DISABLED_BACKOFF_SECONDS"
+}
+
 wait_before_too_many_requests_backoff_retry() {
   local row="$1"
   local wait_minutes
@@ -858,6 +870,7 @@ extract_rate_limit_backoff_seconds() {
   python3 - "$log_file" "$row" <<'PY'
 import re
 import sys
+from datetime import datetime, timedelta
 
 log_file, row = sys.argv[1], sys.argv[2]
 target_marker = f"IMAGE_RATE_LIMIT_RETRY_LATER row={row}"
@@ -892,6 +905,22 @@ if minute_match:
 second_match = re.search(r'(\d+)\s*second', text)
 if second_match:
     total += int(second_match.group(1))
+
+until_match = re.search(r'(?:until|reset(?:s)?\s+at)\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)', text)
+if total <= 0 and until_match:
+    hour = int(until_match.group(1))
+    minute = int(until_match.group(2) or 0)
+    ampm = until_match.group(3)
+    if ampm == "pm" and hour < 12:
+        hour += 12
+    if ampm == "am" and hour == 12:
+        hour = 0
+
+    now = datetime.now()
+    retry_at = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    if retry_at <= now:
+        retry_at += timedelta(days=1)
+    total = max(60, int((retry_at - now).total_seconds()))
 
 if total <= 0:
     total = 3600
@@ -1057,6 +1086,12 @@ run_one_row() {
     return 7
   fi
 
+  if grep -q "${SEND_DISABLED_BACKOFF_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
+    echo "Macro requested send-disabled backoff on row $current_row; will sleep and retry the same row." >&2
+    finish_row_browser_cycle
+    return 8
+  fi
+
   if grep -q "${RATE_LIMIT_BACKOFF_MARKER} row=${current_row}" "$CURRENT_LOG_FILE"; then
     LAST_RATE_LIMIT_BACKOFF_SECONDS="$(extract_rate_limit_backoff_seconds "$CURRENT_LOG_FILE" "$current_row" || printf '3600')"
     echo "Macro requested image-generation rate-limit backoff on row $current_row for ${LAST_RATE_LIMIT_BACKOFF_SECONDS}s; will sleep and retry the same row." >&2
@@ -1161,6 +1196,12 @@ while (( pass_number <= MAX_PASSES )); do
           continue
         fi
 
+        if (( status == 8 )); then
+          wait_before_send_disabled_backoff_retry "$row"
+          target_index=$((target_index - 1))
+          continue
+        fi
+
         skipped_rows+=("$row")
       done
     else
@@ -1226,6 +1267,11 @@ while (( pass_number <= MAX_PASSES )); do
           continue
         fi
 
+        if (( status == 8 )); then
+          wait_before_send_disabled_backoff_retry "$row"
+          continue
+        fi
+
         skipped_rows+=("$row")
         if (( RUN_ONE_ROW_ONLY == 1 )); then
           break
@@ -1288,6 +1334,12 @@ while (( pass_number <= MAX_PASSES )); do
 
       if (( status == 7 )); then
         wait_before_too_many_requests_backoff_retry "$row"
+        skipped_index=$((skipped_index - 1))
+        continue
+      fi
+
+      if (( status == 8 )); then
+        wait_before_send_disabled_backoff_retry "$row"
         skipped_index=$((skipped_index - 1))
         continue
       fi
