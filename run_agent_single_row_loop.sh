@@ -187,10 +187,45 @@ if [[ ! -f "$BASE_CSV" ]]; then
   exit 1
 fi
 
+BASE_CSV_SNAPSHOT_B64="$(python3 - "$BASE_CSV" <<'PY'
+import base64
+import sys
+
+with open(sys.argv[1], "rb") as handle:
+    sys.stdout.write(base64.b64encode(handle.read()).decode("ascii"))
+PY
+)"
+
+restore_base_csv_snapshot() {
+  python3 - "$BASE_CSV" "$BASE_CSV_SNAPSHOT_B64" <<'PY'
+import base64
+import os
+import sys
+import tempfile
+
+path, encoded = sys.argv[1], sys.argv[2]
+data = base64.b64decode(encoded.encode("ascii"))
+directory = os.path.dirname(path) or "."
+prefix = os.path.basename(path) + "."
+tmp_path = None
+
+try:
+    fd, tmp_path = tempfile.mkstemp(prefix=prefix, suffix=".tmp", dir=directory)
+    with os.fdopen(fd, "wb") as handle:
+        handle.write(data)
+    os.replace(tmp_path, path)
+finally:
+    if tmp_path and os.path.exists(tmp_path):
+        os.unlink(tmp_path)
+PY
+}
+
 if [[ ! -f "$APPLE_SCRIPT" ]]; then
   echo "Missing AppleScript launcher: $APPLE_SCRIPT" >&2
   exit 1
 fi
+
+restore_base_csv_snapshot
 
 base_dir="$(awk -F',' 'NR==1 { print $1; exit }' "$BASE_CSV" | tr -d '\r')"
 base_dir="${base_dir#\"}"
@@ -1004,6 +1039,7 @@ run_one_row() {
   done < <(get_output_paths_for_row "$row")
 
   while true; do
+    restore_base_csv_snapshot
     : > "$CURRENT_LOG_FILE"
 
     echo "Provider=$PROVIDER Mode=$MODE Overwrite=$OVERWRITE_OUTPUT RelaunchChromeAfterRow=$RELAUNCH_CHROME_AFTER_ROW Macro=$MACRO_NAME"

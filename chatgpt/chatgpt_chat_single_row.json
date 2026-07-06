@@ -766,7 +766,7 @@
         },
         {
             "Command": "storeXpathCount",
-            "Target": "xpath=//*[contains(normalize-space(),'Max 0 uploads at a time')]",
+            "Target": "xpath=//*[contains(normalize-space(),'Max ') and contains(normalize-space(),' uploads at a time')]",
             "Value": "UPLOAD_CAPACITY_ERROR_COUNT",
             "Description": ""
         },
