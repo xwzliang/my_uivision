@@ -651,6 +651,30 @@
             "Description": ""
         },
         {
+            "Command": "storeXpathCount",
+            "Target": "xpath=//*[contains(normalize-space(),'Max ') and contains(normalize-space(),' uploads at a time')]",
+            "Value": "UPLOAD_CAPACITY_ERROR_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${UPLOAD_CAPACITY_ERROR_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "UPLOAD_CAPACITY_RETRY_LATER",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
             "Command": "echo",
             "Target": "Typing file path into ChatGPT file input: ${ATTACH_IMAGE_FILE}",
             "Value": "blue",

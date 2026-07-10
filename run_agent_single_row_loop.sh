@@ -16,8 +16,8 @@ ROW_CONTROL_CSV="${ROW_CONTROL_CSV:-/Users/broliang/Pictures/short_drama/ui_visi
 UIV_HTML="${UIV_HTML:-/Users/broliang/uivision/ui.vision.html}"
 LOG_FILE="${LOG_FILE:-/Users/broliang/uivision/uivision.log}"
 APPLE_SCRIPT="${APPLE_SCRIPT:-$SCRIPT_DIR/launch_uivision_macro.scpt}"
-LOG_TIMEOUT="${LOG_TIMEOUT:-2400}"
-ROW_TIME_LIMIT="${ROW_TIME_LIMIT:-2400}"
+LOG_TIMEOUT="${LOG_TIMEOUT:-1200}"
+ROW_TIME_LIMIT="${ROW_TIME_LIMIT:-1200}"
 FAIL_SETTLE_TIME="${FAIL_SETTLE_TIME:-8}"
 MAX_PASSES="${MAX_PASSES:-5}"
 RUN_ONE_ROW_ONLY="${RUN_ONE_ROW_ONLY:-0}"
@@ -331,8 +331,8 @@ if [[ ! "$MAX_PASSES" =~ ^[1-9][0-9]*$ ]]; then
 fi
 
 if [[ ! "$ROW_TIME_LIMIT" =~ ^[1-9][0-9]*$ ]]; then
-  echo "Invalid ROW_TIME_LIMIT '$ROW_TIME_LIMIT'; defaulting to 2400" >&2
-  ROW_TIME_LIMIT="2400"
+  echo "Invalid ROW_TIME_LIMIT '$ROW_TIME_LIMIT'; defaulting to 1200" >&2
+  ROW_TIME_LIMIT="1200"
 fi
 
 if [[ ! "$FAIL_SETTLE_TIME" =~ ^[1-9][0-9]*$ ]]; then
