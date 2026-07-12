@@ -490,6 +490,7 @@ wait_for_row_result() {
   local last_log_activity_at
   local log_idle_seconds=0
   local open_uivision_tabs=0
+  local unknown_error_line=""
 
   started_at="$(date +%s)"
   last_log_activity_at="$started_at"
@@ -531,6 +532,27 @@ wait_for_row_result() {
 
       if grep -q '\[error\] E225: DOM failed to be ready in 30sec\.' "$CURRENT_LOG_FILE"; then
         echo "Detected UI.Vision DOM-ready failure for row $current_row; forcing relaunch." >&2
+        return 5
+      fi
+
+      if grep -qi 'Another debugger is already attached to the tab' "$CURRENT_LOG_FILE"; then
+        echo "Detected UI.Vision debugger attachment conflict for row $current_row; forcing relaunch." >&2
+        return 5
+      fi
+
+      unknown_error_line="$(
+        awk '
+          /^\[error\]/ &&
+          $0 !~ /^\[error\]\[ignored\]/ &&
+          $0 !~ /\[error\] E225: DOM failed to be ready in 30sec\./ &&
+          $0 !~ /Another debugger is already attached to the tab/ {
+            print
+            exit
+          }
+        ' "$CURRENT_LOG_FILE"
+      )"
+      if [[ -n "$unknown_error_line" ]]; then
+        echo "Detected unknown UI.Vision error for row $current_row; forcing relaunch: $unknown_error_line" >&2
         return 5
       fi
 
@@ -1072,7 +1094,7 @@ run_one_row() {
       if (( launch_attempt >= MAX_LAUNCH_ATTEMPTS )); then
         break
       fi
-      echo "UI.Vision hit a DOM-ready failure for row $current_row; retrying launch." >&2
+      echo "UI.Vision hit a recoverable browser/debugger failure for row $current_row; retrying launch." >&2
       stop_uivision_instances
       launch_attempt=$((launch_attempt + 1))
       sleep 2

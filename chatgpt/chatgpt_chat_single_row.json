@@ -1384,7 +1384,7 @@
         },
         {
             "Command": "storeXpathCount",
-            "Target": "xpath=(//button[contains(concat(' ', normalize-space(@class), ' '), ' behavior-btn ') and contains(concat(' ', normalize-space(@class), ' '), ' entity-underline ') and contains(concat(' ', normalize-space(@class), ' '), ' inline ') and not(@title) and not(@aria-label)])[last()]",
+            "Target": "xpath=(//button[contains(concat(' ', normalize-space(@class), ' '), ' behavior-btn ') and contains(concat(' ', normalize-space(@class), ' '), ' entity-underline ') and contains(concat(' ', normalize-space(@class), ' '), ' inline ') and not(@title)])[last()]",
             "Value": "INLINE_DOWNLOAD_BUTTON_COUNT",
             "Description": ""
         },
@@ -1420,13 +1420,97 @@
         },
         {
             "Command": "XClick",
-            "Target": "xpath=(//button[contains(concat(' ', normalize-space(@class), ' '), ' behavior-btn ') and contains(concat(' ', normalize-space(@class), ' '), ' entity-underline ') and contains(concat(' ', normalize-space(@class), ' '), ' inline ') and not(@title) and not(@aria-label)])[last()]",
+            "Target": "xpath=(//button[contains(concat(' ', normalize-space(@class), ' '), ' behavior-btn ') and contains(concat(' ', normalize-space(@class), ' '), ' entity-underline ') and contains(concat(' ', normalize-space(@class), ' '), ' inline ') and not(@title)])[last()]",
             "Value": "",
             "Description": ""
         },
         {
             "Command": "pause",
             "Target": "2000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Waiting for preview Download button after inline file click",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "store",
+            "Target": "0",
+            "Value": "PREVIEW_DOWNLOAD_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "PREVIEW_DOWNLOAD_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoIf",
+            "Target": "${PREVIEW_DOWNLOAD_POLL} >= 120",
+            "Value": "PREVIEW_DOWNLOAD_WAIT_DONE",
+            "Description": ""
+        },
+        {
+            "Command": "storeXpathCount",
+            "Target": "xpath=(//button[@aria-label='Download' and not(@disabled)])[last()]",
+            "Value": "PREVIEW_DOWNLOAD_BUTTON_COUNT",
+            "Description": ""
+        },
+        {
+            "Command": "if_v2",
+            "Target": "${PREVIEW_DOWNLOAD_BUTTON_COUNT} > 0",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "echo",
+            "Target": "Clicking preview Download button",
+            "Value": "blue",
+            "Description": ""
+        },
+        {
+            "Command": "XClick",
+            "Target": "xpath=(//button[@aria-label='Download' and not(@disabled)])[last()]",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "PREVIEW_DOWNLOAD_WAIT_DONE",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "end",
+            "Target": "",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "pause",
+            "Target": "1000",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "executeScript_Sandbox",
+            "Target": "return Number(${PREVIEW_DOWNLOAD_POLL}) + 1",
+            "Value": "PREVIEW_DOWNLOAD_POLL",
+            "Description": ""
+        },
+        {
+            "Command": "gotoLabel",
+            "Target": "PREVIEW_DOWNLOAD_WAIT_LOOP",
+            "Value": "",
+            "Description": ""
+        },
+        {
+            "Command": "label",
+            "Target": "PREVIEW_DOWNLOAD_WAIT_DONE",
             "Value": "",
             "Description": ""
         },
