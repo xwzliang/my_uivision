@@ -6,7 +6,7 @@
     { "Command": "store", "Target": "600", "Value": "!TIMEOUT_WAIT", "Description": "Default upload wait: 10 minutes." },
     { "Command": "store", "Target": "1", "Value": "!csvReadLineNumber", "Description": "" },
     { "Command": "csvRead", "Target": "/Users/broliang/uivision/datasources/xiaohongshu_upload_current.csv", "Value": "", "Description": "video,title,caption,publish_at,category,cover" },
-    { "Command": "open", "Target": "https://creator.xiaohongshu.com/publish/publish?from=homepage&target=video", "Value": "", "Description": "" },
+    { "Command": "selectWindow", "Target": "TAB=OPEN", "Value": "https://creator.xiaohongshu.com/publish/publish?from=homepage&target=video", "Description": "Open the upload page in a new tab." },
     { "Command": "waitForPageToLoad", "Target": "", "Value": "", "Description": "" },
     { "Command": "pause", "Target": "3000", "Value": "", "Description": "" },
     { "Command": "type", "Target": "css=div[class^='upload-content'] input.upload-input", "Value": "${!COL1}", "Description": "" },

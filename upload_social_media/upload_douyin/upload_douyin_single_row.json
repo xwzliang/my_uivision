@@ -17,7 +17,7 @@
     { "Command": "echo", "Target": "DOUYIN_PUBLISH_MODE=${PUBLISH_MODE} publish_at=${PUBLISH_AT}", "Value": "blue", "Description": "" },
     { "Command": "store", "Target": "30", "Value": "!TIMEOUT_PAGELOAD", "Description": "Do not wait two minutes for Douyin's long-lived page requests." },
     { "Command": "store", "Target": "true", "Value": "!errorignore", "Description": "The upload UI can be usable even when open reports a page-load timeout." },
-    { "Command": "open", "Target": "https://creator.douyin.com/creator-micro/content/upload", "Value": "", "Description": "The Chrome profile must already be logged in." },
+    { "Command": "selectWindow", "Target": "TAB=OPEN", "Value": "https://creator.douyin.com/creator-micro/content/upload", "Description": "Open the upload page in a new tab; the Chrome profile must already be logged in." },
     { "Command": "store", "Target": "false", "Value": "!errorignore", "Description": "Resume strict error handling after navigation." },
     { "Command": "store", "Target": "120", "Value": "!TIMEOUT_PAGELOAD", "Description": "Restore the normal page-load timeout." },
     { "Command": "waitForElementPresent", "Target": "css=div[class^='container'] input[type='file']", "Value": "", "Description": "Use the real upload control—not the browser load event—as the readiness signal." },

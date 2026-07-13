@@ -57,10 +57,10 @@
       "Description": ""
     },
     {
-      "Command": "open",
-      "Target": "https://cp.kuaishou.com/article/publish/video",
-      "Value": "",
-      "Description": ""
+      "Command": "selectWindow",
+      "Target": "TAB=OPEN",
+      "Value": "https://cp.kuaishou.com/article/publish/video",
+      "Description": "Open the upload page in a new tab."
     },
     {
       "Command": "waitForPageToLoad",

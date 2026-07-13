@@ -6,7 +6,7 @@
     { "Command": "store", "Target": "600", "Value": "!TIMEOUT_WAIT", "Description": "Default upload wait: 10 minutes." },
     { "Command": "store", "Target": "1", "Value": "!csvReadLineNumber", "Description": "" },
     { "Command": "csvRead", "Target": "/Users/broliang/uivision/datasources/baijiahao_upload_current.csv", "Value": "", "Description": "video,title,caption,publish_at,category,cover" },
-    { "Command": "open", "Target": "https://baijiahao.baidu.com/builder/rc/edit?type=videoV2", "Value": "", "Description": "" },
+    { "Command": "selectWindow", "Target": "TAB=OPEN", "Value": "https://baijiahao.baidu.com/builder/rc/edit?type=videoV2", "Description": "Open the upload page in a new tab." },
     { "Command": "waitForPageToLoad", "Target": "", "Value": "", "Description": "" },
     { "Command": "pause", "Target": "3000", "Value": "", "Description": "" },
     { "Command": "type", "Target": "css=div[class^='video-main-container'] input[type='file']", "Value": "${!COL1}", "Description": "" },

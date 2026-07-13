@@ -9,10 +9,10 @@
         "Description": ""
       },
       {
-        "Command": "open",
-        "Target": "https://studio.youtube.com/channel/UCUGLdSAbIfhiKi_wYfQ8pOw",
-        "Value": "",
-        "Description": ""
+        "Command": "selectWindow",
+        "Target": "TAB=OPEN",
+        "Value": "https://studio.youtube.com/channel/UCUGLdSAbIfhiKi_wYfQ8pOw",
+        "Description": "Open YouTube Studio in a new tab."
       },
       {
         "Command": "pause",

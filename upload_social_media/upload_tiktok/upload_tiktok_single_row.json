@@ -6,7 +6,7 @@
     { "Command": "store", "Target": "600", "Value": "!TIMEOUT_WAIT", "Description": "Default upload wait: 10 minutes." },
     { "Command": "store", "Target": "1", "Value": "!csvReadLineNumber", "Description": "" },
     { "Command": "csvRead", "Target": "/Users/broliang/uivision/datasources/tiktok_upload_current.csv", "Value": "", "Description": "video,title,caption,publish_at,category,cover" },
-    { "Command": "open", "Target": "https://www.tiktok.com/tiktokstudio/upload", "Value": "", "Description": "" },
+    { "Command": "selectWindow", "Target": "TAB=OPEN", "Value": "https://www.tiktok.com/tiktokstudio/upload", "Description": "Open the upload page in a new tab." },
     { "Command": "waitForPageToLoad", "Target": "", "Value": "", "Description": "" },
     { "Command": "pause", "Target": "4000", "Value": "", "Description": "" },
     { "Command": "type", "Target": "css=input[type='file'][accept*='video']", "Value": "${!COL1}", "Description": "Hidden input behind Select video." },
