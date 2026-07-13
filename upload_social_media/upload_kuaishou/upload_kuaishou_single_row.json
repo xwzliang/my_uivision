@@ -333,16 +333,16 @@
       "Description": ""
     },
     {
-      "Command": "comment",
-      "Target": "click | xpath=(//*[normalize-space()='发布'])[last()]",
+      "Command": "click",
+      "Target": "xpath=(//*[normalize-space()='发布'])[last()]",
       "Value": "",
-      "Description": "DRY RUN: publish and confirmation are disabled."
+      "Description": "LIVE: publish the prepared Kuaishou video."
     },
     {
       "Command": "echo",
-      "Target": "KUAISHOU_UPLOAD_DRY_RUN_COMPLETED file=${!COL1}",
+      "Target": "KUAISHOU_UPLOAD_COMPLETED file=${!COL1}",
       "Value": "green",
-      "Description": ""
+      "Description": "The live publish control was clicked."
     }
   ]
 }

@@ -78,8 +78,8 @@
     { "Command": "end", "Target": "", "Value": "", "Description": "" },
     { "Command": "end", "Target": "", "Value": "", "Description": "" },
     { "Command": "pause", "Target": "1000", "Value": "", "Description": "" },
-    { "Command": "comment", "Target": "click | xpath=(//button[normalize-space()='发布'])[1]", "Value": "", "Description": "DRY RUN: actual publishing is intentionally disabled for workflow testing." },
-    { "Command": "echo", "Target": "DOUYIN_UPLOAD_DRY_RUN_COMPLETED file=${VIDEO_PATH} publish_click=skipped", "Value": "green", "Description": "Video is uploaded and the form is prepared, but it has not been published." },
+    { "Command": "click", "Target": "xpath=(//button[normalize-space()='发布'])[1]", "Value": "", "Description": "LIVE: publish the prepared Douyin video." },
+    { "Command": "echo", "Target": "DOUYIN_UPLOAD_COMPLETED file=${VIDEO_PATH}", "Value": "green", "Description": "The live publish button was clicked." },
     { "Command": "label", "Target": "MACRO_END", "Value": "", "Description": "" }
   ]
 }

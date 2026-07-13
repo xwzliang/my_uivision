@@ -84,10 +84,10 @@ PY
 
 wait_for_result() {
   local log_file="$1" elapsed=0 marker
-  marker="$(printf '%s' "$PLATFORM" | tr '[:lower:]' '[:upper:]')_UPLOAD_DRY_RUN_COMPLETED"
+  marker="$(printf '%s' "$PLATFORM" | tr '[:lower:]' '[:upper:]')_UPLOAD_"
   while (( elapsed < LOG_TIMEOUT )); do
     if [[ -s "$log_file" ]]; then
-      grep -q "$marker" "$log_file" && return 0
+      grep -Eq "${marker}(DRY_RUN_)?COMPLETED" "$log_file" && return 0
       grep -q 'Macro failed' "$log_file" && return 1
       grep -q '^\[error\]' "$log_file" && return 1
     fi
@@ -109,7 +109,12 @@ for ((row=START_ROW; row<=END_ROW; row++)); do
     osascript -e "tell application \"Google Chrome\" to open location \"$target_url\""
     if wait_for_result "$log_file"; then
       success=1
-      echo "Row $row dry run completed; publish click was skipped"
+      marker="$(printf '%s' "$PLATFORM" | tr '[:lower:]' '[:upper:]')_UPLOAD_DRY_RUN_COMPLETED"
+      if grep -q "$marker" "$log_file"; then
+        echo "Row $row dry run completed; publish click was skipped"
+      else
+        echo "Row $row published successfully"
+      fi
       break
     fi
     echo "Row $row attempt $attempt failed; log: $log_file" >&2
@@ -118,4 +123,4 @@ for ((row=START_ROW; row<=END_ROW; row++)); do
   (( success == 1 )) || { echo "Giving up on row $row after $MAX_ATTEMPTS attempts" >&2; exit 1; }
 done
 
-echo "All requested $PLATFORM dry runs completed."
+echo "All requested $PLATFORM rows completed."
