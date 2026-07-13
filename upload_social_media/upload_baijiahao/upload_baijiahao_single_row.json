@@ -1,0 +1,26 @@
+{
+  "Name": "BaijiahaoUploadVideoSingleRow",
+  "CreationDate": "2026-07-13",
+  "Commands": [
+    { "Command": "store", "Target": "false", "Value": "!errorignore", "Description": "" },
+    { "Command": "store", "Target": "600", "Value": "!TIMEOUT_WAIT", "Description": "Default upload wait: 10 minutes." },
+    { "Command": "store", "Target": "1", "Value": "!csvReadLineNumber", "Description": "" },
+    { "Command": "csvRead", "Target": "/Users/broliang/uivision/datasources/baijiahao_upload_current.csv", "Value": "", "Description": "video,title,caption,publish_at,category,cover" },
+    { "Command": "open", "Target": "https://baijiahao.baidu.com/builder/rc/edit?type=videoV2", "Value": "", "Description": "" },
+    { "Command": "waitForPageToLoad", "Target": "", "Value": "", "Description": "" },
+    { "Command": "pause", "Target": "3000", "Value": "", "Description": "" },
+    { "Command": "type", "Target": "css=div[class^='video-main-container'] input[type='file']", "Value": "${!COL1}", "Description": "" },
+    { "Command": "pause", "Target": "5000", "Value": "", "Description": "Wait for formMain." },
+    { "Command": "type", "Target": "css=input[placeholder='添加标题获得更多推荐']", "Value": "${!COL2}", "Description": "" },
+    { "Command": "click", "Target": "xpath=(//*[@contenteditable='true'] | //textarea)[1]", "Value": "", "Description": "" },
+    { "Command": "XType", "Target": "${KEY_CMD+KEY_A}${KEY_BACKSPACE}${!COL3}", "Value": "", "Description": "Description and topics." },
+    { "Command": "if_v2", "Target": "'${!COL4}' != ''", "Value": "", "Description": "" },
+    { "Command": "click", "Target": "xpath=//*[contains(@class,'op-btn-outter-content')][contains(.,'定时发布')]//button", "Value": "", "Description": "" },
+    { "Command": "echo", "Target": "BAIJIAHAO_SCHEDULE_REQUESTED=${!COL4}; choose date/hour/minute in the open picker during dry run", "Value": "orange", "Description": "Baidu uses three virtualized pickers." },
+    { "Command": "end", "Target": "", "Value": "", "Description": "" },
+    { "Command": "waitForElementNotPresent", "Target": "xpath=//*[contains(@class,'cover-overlay')][contains(.,'上传中')]", "Value": "", "Description": "Wait until video transfer stops." },
+    { "Command": "waitForElementVisible", "Target": "css=div.cheetah-spin-container img", "Value": "", "Description": "Upstream also waits for the generated cover image." },
+    { "Command": "comment", "Target": "click | xpath=(//button[contains(.,'发布')])[last()]", "Value": "", "Description": "DRY RUN: actual publish is disabled." },
+    { "Command": "echo", "Target": "BAIJIAHAO_UPLOAD_DRY_RUN_COMPLETED file=${!COL1}", "Value": "green", "Description": "" }
+  ]
+}

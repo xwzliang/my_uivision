@@ -1,0 +1,24 @@
+{
+  "Name": "TiktokUploadVideoSingleRow",
+  "CreationDate": "2026-07-13",
+  "Commands": [
+    { "Command": "store", "Target": "false", "Value": "!errorignore", "Description": "" },
+    { "Command": "store", "Target": "600", "Value": "!TIMEOUT_WAIT", "Description": "Default upload wait: 10 minutes." },
+    { "Command": "store", "Target": "1", "Value": "!csvReadLineNumber", "Description": "" },
+    { "Command": "csvRead", "Target": "/Users/broliang/uivision/datasources/tiktok_upload_current.csv", "Value": "", "Description": "video,title,caption,publish_at,category,cover" },
+    { "Command": "open", "Target": "https://www.tiktok.com/tiktokstudio/upload", "Value": "", "Description": "" },
+    { "Command": "waitForPageToLoad", "Target": "", "Value": "", "Description": "" },
+    { "Command": "pause", "Target": "4000", "Value": "", "Description": "" },
+    { "Command": "type", "Target": "css=input[type='file'][accept*='video']", "Value": "${!COL1}", "Description": "Hidden input behind Select video." },
+    { "Command": "pause", "Target": "3000", "Value": "", "Description": "" },
+    { "Command": "click", "Target": "css=div.public-DraftEditor-content", "Value": "", "Description": "" },
+    { "Command": "XType", "Target": "${KEY_CMD+KEY_A}${KEY_BACKSPACE}${!COL2}${KEY_ENTER}${!COL3}${KEY_ESC}", "Value": "", "Description": "Title, description, and hashtags." },
+    { "Command": "if_v2", "Target": "'${!COL4}' != ''", "Value": "", "Description": "" },
+    { "Command": "click", "Target": "xpath=//*[contains(.,'Schedule')]/ancestor::*[self::label or self::div][1]", "Value": "", "Description": "" },
+    { "Command": "echo", "Target": "TIKTOK_SCHEDULE_REQUESTED=${!COL4}; verify TikTok date/time controls during dry run", "Value": "orange", "Description": "TikTok uses separate calendar, hour, and five-minute controls." },
+    { "Command": "end", "Target": "", "Value": "", "Description": "" },
+    { "Command": "waitForElementVisible", "Target": "xpath=(//div[contains(@class,'btn-post')]//button[not(@disabled)] | //button[contains(.,'Post') and not(@disabled)])[1]", "Value": "", "Description": "Upstream waits until the Post button is enabled." },
+    { "Command": "comment", "Target": "click | xpath=(//button[contains(.,'Post')] | //div[contains(@class,'btn-post')])[last()]", "Value": "", "Description": "DRY RUN: actual post is disabled." },
+    { "Command": "echo", "Target": "TIKTOK_UPLOAD_DRY_RUN_COMPLETED file=${!COL1}", "Value": "green", "Description": "" }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "Name": "BilibiliUploadVideoSingleRow",
+  "CreationDate": "2026-07-13",
+  "Commands": [
+    { "Command": "store", "Target": "false", "Value": "!errorignore", "Description": "" },
+    { "Command": "store", "Target": "600", "Value": "!TIMEOUT_WAIT", "Description": "Default upload wait: 10 minutes." },
+    { "Command": "store", "Target": "1", "Value": "!csvReadLineNumber", "Description": "" },
+    { "Command": "csvRead", "Target": "/Users/broliang/uivision/datasources/bilibili_upload_current.csv", "Value": "", "Description": "video,title,caption,publish_at,tid,cover" },
+    { "Command": "open", "Target": "https://member.bilibili.com/platform/upload/video/frame", "Value": "", "Description": "Must already be logged in." },
+    { "Command": "waitForPageToLoad", "Target": "", "Value": "", "Description": "" },
+    { "Command": "pause", "Target": "3000", "Value": "", "Description": "" },
+    { "Command": "type", "Target": "css=input[type='file'][accept*='video']", "Value": "${!COL1}", "Description": "Studio equivalent of biliup upload <file>." },
+    { "Command": "pause", "Target": "5000", "Value": "", "Description": "" },
+    { "Command": "type", "Target": "xpath=(//input[contains(@placeholder,'标题')])[1]", "Value": "${!COL2}", "Description": "--title" },
+    { "Command": "click", "Target": "xpath=(//*[@contenteditable='true'])[last()]", "Value": "", "Description": "" },
+    { "Command": "XType", "Target": "${KEY_CMD+KEY_A}${KEY_BACKSPACE}${!COL3}", "Value": "", "Description": "--desc and --tag" },
+    { "Command": "if_v2", "Target": "'${!COL5}' != ''", "Value": "", "Description": "" },
+    { "Command": "click", "Target": "xpath=(//*[contains(text(),'分区')]/following::input)[1]", "Value": "", "Description": "Bilibili --tid is represented by the Studio category chooser." },
+    { "Command": "echo", "Target": "BILIBILI_CATEGORY_TID=${!COL5} - select matching category if Studio does not retain it", "Value": "orange", "Description": "Numeric tid cannot be typed reliably into Studio's visual tree picker." },
+    { "Command": "end", "Target": "", "Value": "", "Description": "" },
+    { "Command": "waitForElementVisible", "Target": "xpath=//*[contains(normalize-space(),'上传完成') or normalize-space()='100%']", "Value": "", "Description": "Wait for Bilibili transfer completion." },
+    { "Command": "comment", "Target": "click | xpath=(//span[normalize-space()='立即投稿']/ancestor::button | //button[contains(.,'立即投稿')])[1]", "Value": "", "Description": "DRY RUN: actual submission is disabled." },
+    { "Command": "echo", "Target": "BILIBILI_UPLOAD_DRY_RUN_COMPLETED file=${!COL1}", "Value": "green", "Description": "" }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "Name": "XiaohongshuUploadVideoSingleRow",
+  "CreationDate": "2026-07-13",
+  "Commands": [
+    { "Command": "store", "Target": "false", "Value": "!errorignore", "Description": "" },
+    { "Command": "store", "Target": "600", "Value": "!TIMEOUT_WAIT", "Description": "Default upload wait: 10 minutes." },
+    { "Command": "store", "Target": "1", "Value": "!csvReadLineNumber", "Description": "" },
+    { "Command": "csvRead", "Target": "/Users/broliang/uivision/datasources/xiaohongshu_upload_current.csv", "Value": "", "Description": "video,title,caption,publish_at,category,cover" },
+    { "Command": "open", "Target": "https://creator.xiaohongshu.com/publish/publish?from=homepage&target=video", "Value": "", "Description": "" },
+    { "Command": "waitForPageToLoad", "Target": "", "Value": "", "Description": "" },
+    { "Command": "pause", "Target": "3000", "Value": "", "Description": "" },
+    { "Command": "type", "Target": "css=div[class^='upload-content'] input.upload-input", "Value": "${!COL1}", "Description": "" },
+    { "Command": "pause", "Target": "5000", "Value": "", "Description": "Wait for editor fields." },
+    { "Command": "type", "Target": "css=input[placeholder*='填写标题']", "Value": "${!COL2}", "Description": "20-character title enforced by runner." },
+    { "Command": "click", "Target": "css=p[data-placeholder*='输入正文描述']", "Value": "", "Description": "" },
+    { "Command": "XType", "Target": "${KEY_CMD+KEY_A}${KEY_BACKSPACE}${!COL3}${KEY_ESC}", "Value": "", "Description": "Caption and up to ten topics." },
+    { "Command": "if_v2", "Target": "'${!COL4}' != ''", "Value": "", "Description": "" },
+    { "Command": "click", "Target": "xpath=//*[contains(@class,'custom-switch-card')][contains(.,'定时发布')]//*[contains(@class,'d-switch')]", "Value": "", "Description": "" },
+    { "Command": "type", "Target": "xpath=(//input[contains(@placeholder,'日期') or contains(@placeholder,'时间')])[1]", "Value": "${!COL4}${KEY_ENTER}", "Description": "" },
+    { "Command": "end", "Target": "", "Value": "", "Description": "" },
+    { "Command": "waitForElementVisible", "Target": "xpath=//*[contains(normalize-space(),'上传成功') or contains(normalize-space(),'重新上传') or contains(normalize-space(),'编辑封面') or normalize-space()='100%']", "Value": "", "Description": "Match the upstream preview completion indicators." },
+    { "Command": "comment", "Target": "click | xpath=(//button[contains(.,'发布')])[last()]", "Value": "", "Description": "DRY RUN: actual publish is disabled." },
+    { "Command": "echo", "Target": "XIAOHONGSHU_UPLOAD_DRY_RUN_COMPLETED file=${!COL1}", "Value": "green", "Description": "" }
+  ]
+}
