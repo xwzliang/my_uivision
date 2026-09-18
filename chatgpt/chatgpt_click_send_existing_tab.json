@@ -1,0 +1,42 @@
+{
+  "Name": "ChatGPTClickSendExistingTab",
+  "CreationDate": "2026-9-18",
+  "Commands": [
+    {
+      "Command": "echo",
+      "Target": "Attach to existing ChatGPT tab",
+      "Value": "blue",
+      "Description": ""
+    },
+    {
+      "Command": "selectWindow",
+      "Target": "title=ChatGPT*",
+      "Value": "",
+      "Description": "Select an already-open ChatGPT tab; do not navigate or create a new tab."
+    },
+    {
+      "Command": "waitForElementPresent",
+      "Target": "xpath=(//button[(@id='composer-submit-button' or @data-testid='send-button' or @aria-label='Send prompt' or @aria-label='Send message') and not(@disabled)])[1]",
+      "Value": "",
+      "Description": "Wait until the existing prepared prompt can be sent."
+    },
+    {
+      "Command": "pause",
+      "Target": "300",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "XClick",
+      "Target": "xpath=(//button[(@id='composer-submit-button' or @data-testid='send-button' or @aria-label='Send prompt' or @aria-label='Send message') and not(@disabled)])[1]",
+      "Value": "",
+      "Description": "Native UI.Vision XClick on the enabled send button."
+    },
+    {
+      "Command": "echo",
+      "Target": "Clicked ChatGPT send button with XClick",
+      "Value": "green",
+      "Description": ""
+    }
+  ]
+}
