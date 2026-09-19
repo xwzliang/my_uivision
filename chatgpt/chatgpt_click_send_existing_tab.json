@@ -9,14 +9,44 @@
       "Description": ""
     },
     {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!errorIgnore",
+      "Description": "Allow fallback tab selection without failing early"
+    },
+    {
       "Command": "selectWindow",
       "Target": "title=ChatGPT*",
       "Value": "",
-      "Description": "Select an already-open ChatGPT tab; do not navigate or create a new tab."
+      "Description": "First try selecting a tab whose title starts with ChatGPT"
+    },
+    {
+      "Command": "gotoIf_v2",
+      "Target": "${!statusOK} == true",
+      "Value": "TAB_READY",
+      "Description": "If matched, proceed to button check"
+    },
+    {
+      "Command": "selectWindow",
+      "Target": "title=*ChatGPT*",
+      "Value": "",
+      "Description": "Fallback: select any tab containing ChatGPT anywhere in title"
+    },
+    {
+      "Command": "label",
+      "Target": "TAB_READY",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "false",
+      "Value": "!errorIgnore",
+      "Description": "Restore strict error checking"
     },
     {
       "Command": "waitForElementPresent",
-      "Target": "xpath=(//button[(@id='composer-submit-button' or @data-testid='send-button' or @aria-label='Send prompt' or @aria-label='Send message') and not(@disabled)])[1]",
+      "Target": "xpath=(//button[(@id='composer-submit-button' or @data-testid='send-button' or @aria-label='Send prompt' or @aria-label='Send message' or contains(@class, 'composer-submit-button-color')) and not(@disabled) and not(@aria-disabled='true')])[1]",
       "Value": "",
       "Description": "Wait until the existing prepared prompt can be sent."
     },
@@ -28,7 +58,7 @@
     },
     {
       "Command": "XClick",
-      "Target": "xpath=(//button[(@id='composer-submit-button' or @data-testid='send-button' or @aria-label='Send prompt' or @aria-label='Send message') and not(@disabled)])[1]",
+      "Target": "xpath=(//button[(@id='composer-submit-button' or @data-testid='send-button' or @aria-label='Send prompt' or @aria-label='Send message' or contains(@class, 'composer-submit-button-color')) and not(@disabled) and not(@aria-disabled='true')])[1]",
       "Value": "",
       "Description": "Native UI.Vision XClick on the enabled send button."
     },
